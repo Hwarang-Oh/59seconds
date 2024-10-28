@@ -1,4 +1,4 @@
-### 241015 Hwarang Daily Commit
+### 241015 Sangwoo Daily Commit
 
 1. 프로젝트 주제에 대해 고민했다.
 - 사용자에게 감동을 줄 수 있는 주제가 무엇이 있을까?
