@@ -1,0 +1,1 @@
+기획 부분이 수정되어서 전반적인 API 수정과 ERD 수정=> ElasticSearch와 MongoDB 사용 필요 
