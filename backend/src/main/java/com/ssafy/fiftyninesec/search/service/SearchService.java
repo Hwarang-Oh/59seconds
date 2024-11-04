@@ -54,7 +54,7 @@ public class SearchService {
     }
 
     public List<EventRoomSearchResponseDto> searchEventRooms(EventRoomSearchRequestDto requestDto) {
-        List<EventRoomSearch> eventRooms = eventRoomSearchRepository.findByTitleContaining(requestDto.getKeyword());
+        List<EventRoomSearch> eventRooms = eventRoomSearchRepository.findByTitle(requestDto.getKeyword());
         return eventRooms.stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
