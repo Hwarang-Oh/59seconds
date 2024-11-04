@@ -43,7 +43,7 @@ pipeline {
                         stage('Build & Push Frontend Docker Image') {
                             steps {
                                 dir('frontend') {
-                                    withDockerRegistry(credentialsId: "${DOCKER_CREDENTIALS_ID}") {
+                                    withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS_ID}", url: "https://index.docker.io/v1/"]) {
                                         sh "docker build -t ${FRONTEND_DOCKERHUB_REPO}:latest ."
                                         sh "docker push ${FRONTEND_DOCKERHUB_REPO}:latest"
                                     }
@@ -90,7 +90,7 @@ pipeline {
                         stage('Build & Push Backend Docker Image') {
                             steps {
                                 dir('backend') {
-                                    withDockerRegistry(credentialsId: "${DOCKER_CREDENTIALS_ID}") {
+                                    withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS_ID}", url: "https://index.docker.io/v1/"]) {
                                         sh "docker build -t ${BACKEND_DOCKERHUB_REPO}:latest ."
                                         sh "docker push ${BACKEND_DOCKERHUB_REPO}:latest"
                                     }
