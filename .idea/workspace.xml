@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="32b504b9-156b-416c-9b7d-9369f77331b0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/event/controller/EventController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/solution/controller/EventController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/event/dto/EventRoomRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/solution/dto/EventRoomRequestDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/event/entity/EventRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/solution/entity/EventRoom.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/event/repository/EventRoomRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/solution/repository/EventRoomRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/event/service/EventService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/solution/service/EventService.java" afterDir="false" />
-    </list>
+    <list default="true" id="32b504b9-156b-416c-9b7d-9369f77331b0" name="Changes" comment="init: else" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -65,7 +53,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "feature/package",
+    "git-widget-placeholder": "feature/9-be-search",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -100,11 +88,33 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1730685736023</updated>
-      <workItem from="1730685737828" duration="601000" />
+      <workItem from="1730685737828" duration="1288000" />
     </task>
+    <task id="LOCAL-00001" summary="init: search">
+      <option name="closed" value="true" />
+      <created>1730686480388</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1730686480388</updated>
+    </task>
+    <task id="LOCAL-00002" summary="init: else">
+      <option name="closed" value="true" />
+      <created>1730686603705</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1730686603705</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="init: search" />
+    <MESSAGE value="init: else" />
+    <option name="LAST_COMMIT_MESSAGE" value="init: else" />
   </component>
 </project>
