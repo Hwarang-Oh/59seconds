@@ -6,9 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="32b504b9-156b-416c-9b7d-9369f77331b0" name="Changes" comment="Merge">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/entity/EventRoomSearch.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/entity/EventRoomSearch.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/repository/EventRoomSearchRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/repository/EventRoomSearchRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/service/SearchService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/service/SearchService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,7 +22,12 @@
       <state>
         <projects_view>
           <tree_state>
-            <expand />
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="fiftyninesec" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
             <select />
           </tree_state>
         </projects_view>
@@ -64,7 +66,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Spring Boot.FiftyninesecApplication.executor": "Run",
-    "git-widget-placeholder": "feature/9-be-search",
+    "git-widget-placeholder": "develop",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
