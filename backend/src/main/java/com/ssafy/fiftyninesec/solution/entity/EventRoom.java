@@ -1,12 +1,19 @@
 package com.ssafy.fiftyninesec.solution.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
+@Builder
 @Table(name = "EventRoom")
 public class EventRoom {
 
@@ -16,20 +23,21 @@ public class EventRoom {
 
     private Integer memberId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String title;
 
+    @Column(length = 255)
     private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status; // "UPCOMING" 또는 "COMPLETED"
+    private EventStatus status;
+
+    private LocalDateTime startTime;
+
+    private LocalDateTime endTime;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    private LocalDateTime eventTime;
-
     private Integer winnerNum;
 
     private String enterCode;
@@ -42,8 +50,6 @@ public class EventRoom {
 
     private String rectangleImage;
 
-    public enum Status {
-        UPCOMING,
-        COMPLETED
-    }
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 }

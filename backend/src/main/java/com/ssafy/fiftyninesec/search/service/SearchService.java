@@ -32,19 +32,21 @@ public class SearchService {
 
     private EventRoomSearch convertToES(EventRoom mysqlRoom) {
         EventRoomSearch esRoom = new EventRoomSearch();
+
         esRoom.setRoomId(mysqlRoom.getRoomId());
         esRoom.setMemberId(mysqlRoom.getMemberId());
         esRoom.setTitle(mysqlRoom.getTitle());
         esRoom.setDescription(mysqlRoom.getDescription());
         esRoom.setStatus(mysqlRoom.getStatus().name());
         esRoom.setCreatedAt(mysqlRoom.getCreatedAt());
-        esRoom.setEventTime(mysqlRoom.getEventTime());
+        esRoom.setEventTime(mysqlRoom.getStartTime()); // startTime으로 설정 (eventTime이 아닌 경우)
         esRoom.setWinnerNum(mysqlRoom.getWinnerNum());
         esRoom.setEnterCode(mysqlRoom.getEnterCode());
         esRoom.setUnlockCount(mysqlRoom.getUnlockCount());
         esRoom.setBannerImage(mysqlRoom.getBannerImage());
         esRoom.setSquareImage(mysqlRoom.getSquareImage());
         esRoom.setRectangleImage(mysqlRoom.getRectangleImage());
+
         return esRoom;
     }
 
