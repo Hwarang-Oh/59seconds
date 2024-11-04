@@ -27,18 +27,18 @@
         "order": 1,
         "type": "상품",
         "name": "상품명을 입력해주세요",
-        "recommendedPeople": "인원수 선택"
+        "recommendedPeople": 3
       },
       {
         "order": 2,
         "type": "쿠폰",
         "name": "쿠폰명을 입력해주세요",
-        "recommendedPeople": "인원수 선택"
+        "recommendedPeople": 1
       }
     ],
     "eventPeriod": {
-      "start": "YYYY-MM-DD",
-      "end": "YYYY-MM-DD"
+      "start": "2024-11-04T14:30",
+      "end": "2024-11-04T16:30"
     },
     "participationCode": "이벤트 참여 코드를 입력해주세요"
   }
