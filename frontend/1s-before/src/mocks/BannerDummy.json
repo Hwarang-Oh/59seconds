@@ -1,0 +1,32 @@
+{
+  "largeBanner": [
+    {
+      "id": 1,
+      "image": "/YenaYena.png",
+      "title": "예나의 네모네모 이야기!\n네모네모 나눔 이벤트",
+      "content": "아니 이걸 그냥 준다고?! 예나가 준비한 특급 선물들!\n깜짝 네모네모 이벤트!",
+      "date": "2021.07.01 ~ 2021.07.31"
+    }
+  ],
+  "normalBanner": [
+    {
+      "id": 1,
+      "image": "/YenaYena.png",
+      "title": "예나의 네모네모 이야기!\n네모네모 나눔 이벤트",
+      "content": "아니 이걸 그냥 준다고?! 예나가 준비한 특급 선물들!\n깜짝 네모네모 이벤트!",
+      "details": "네모네모 이벤트에 준비된 특급 선물 1",
+      "date": "2021.07.01 ~ 2021.07.31",
+      "participants": 1000,
+      "isDeadline": true
+    }
+  ],
+  "cardBanner": [
+    {
+      "id": 1,
+      "image": "/YenaYena.png",
+      "title": "예나의 네모네모 이야기!\n네모네모 나눔 이벤트",
+      "leftTime": "2021.07.01 ~ 2021.07.31",
+      "details": "네모네모 이벤트에 준비된 특급 선물 1"
+    }
+  ]
+}

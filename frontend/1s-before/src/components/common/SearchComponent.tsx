@@ -1,32 +1,15 @@
-'use client';
-import styled from '@emotion/styled';
-import SearchIcon from '@/components/common/SearchIcon';
+import SearchIcon from '@/components/icon/SearchIcon';
 
 export default function SearchComponent() {
   return (
-    <SearchBar>
-      <SearchInput placeholder='관심있는 이벤트를 검색해보세요.' />
+    <div className='flex items-center justify-between px-4 rounded-[25px] border-[3px] border-search-border w-[450px] h-[50px] cursor-pointer'>
+      <input
+        className='w-full text-[16px] font-normal leading-[18px] 
+        placeholder:text-search-input placeholder:font-normal placeholder:leading-[18px]
+        focus:outline-none focus:border-transparent'
+        placeholder='관심있는 이벤트를 검색해보세요.'
+      />
       <SearchIcon />
-    </SearchBar>
+    </div>
   );
 }
-
-const SearchBar = styled.div`
-  display: flex;
-  width: 450px;
-  height: 50px;
-  padding: 15px 17px 15px 21px;
-  justify-content: flex-end;
-  align-items: flex-start;
-  gap: 175px;
-  border-radius: 25px;
-  border: 3px solid rgba(71, 73, 114, 0.6);
-`;
-
-const SearchInput = styled.input`
-  color: rgba(71, 73, 114, 0.32);
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 18px; /* 112.5% */
-`;
