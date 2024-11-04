@@ -89,6 +89,7 @@ pipeline {
                                 dir('backend') {
                                     sh 'chmod +x ./gradlew'
                                     sh './gradlew clean build -Pprofile=prod -x test'
+                                    sh 'ls -l build/libs/'
                                 }
                             }
                         }
