@@ -11,7 +11,8 @@ public class EventRoomSearchResponseDto {
     private String description;
     private String status;
     private LocalDateTime createdAt;
-    private LocalDateTime eventTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private Integer winnerNum;
     private String bannerImage;
     private String squareImage;
