@@ -39,7 +39,7 @@ pipeline {
                     stages {
                         stage('Build Frontend') {
                             steps {
-                                dir('frontend') {
+                                dir('frontend/1s-before') {
                                     sh 'npm install'
                                     sh 'npm run build'
                                 }
@@ -47,7 +47,7 @@ pipeline {
                         }
                         stage('Build & Push Frontend Docker Image') {
                             steps {
-                                dir('frontend') {
+                                dir('frontend/1s-before') {  // Dockerfile 위치로 변경
                                     withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS_ID}", url: "https://index.docker.io/v1/"]) {
                                         sh "docker build -t ${FRONTEND_DOCKERHUB_REPO}:latest ."
                                         sh "docker push ${FRONTEND_DOCKERHUB_REPO}:latest"
