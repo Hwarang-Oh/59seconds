@@ -10,6 +10,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class EventService {
@@ -19,15 +22,16 @@ public class EventService {
 
     @Transactional
     public void createEventRoom(EventRoomRequestDto request) {
-
         EventRoom eventRoom = EventRoom.builder()
                 .title(request.getEventInfo().getTitle())
                 .description(request.getEventInfo().getDescription())
                 .status(EventStatus.NOT_STARTED)
-                .eventTime(request.getEventPeriod().getStart())
+                .startTime(request.getEventPeriod().getStart()) // 이벤트 시작 시간 설정
+                .endTime(request.getEventPeriod().getEnd())     // 이벤트 종료 시간 설정
                 .winnerNum(request.getProductsOrCoupons().size())
                 .enterCode(request.getParticipationCode())
                 .bannerImage(request.getEventInfo().getBackgroundImage())
+                .createdAt(LocalDateTime.now()) // 생성 시간 설정
                 .build();
 
         eventRoomRepository.save(eventRoom);
@@ -37,7 +41,7 @@ public class EventService {
                     .roomId(eventRoom.getRoomId())
                     .prizeType(product.getType())
                     .prizeName(product.getName())
-                    .winnerCount(product.getRecommendedPeople())
+                    .winnerCount(Optional.ofNullable(product.getRecommendedPeople()).orElse(0)) // 추천 인원 수 처리
                     .build();
             prizeRepository.save(prize);
         });

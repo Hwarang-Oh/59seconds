@@ -9,53 +9,47 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "EventRoom")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 @Builder
+@Table(name = "EventRoom")
 public class EventRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer roomId;
 
-    @Column(name = "member_id")
     private Integer memberId;
 
-    @Column(name = "title", nullable = false, length = 255)
+    @Column(nullable = false, length = 255)
     private String title;
 
-    @Column(name = "description", length = 255)
+    @Column(length = 255)
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false,
-            columnDefinition = "ENUM('NOT_STARTED', 'ONGOING', 'COMPLETED', 'COMPLETED_NO_WINNER_INFO')")
+    @Column(nullable = false)
     private EventStatus status;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime startTime;
 
-    @Column(name = "event_time")
-    private LocalDateTime eventTime;
+    private LocalDateTime endTime;
 
-    @Column(name = "winner_num")
+    @Column(nullable = false)
     private Integer winnerNum;
 
-    @Column(name = "enter_code", length = 10)
     private String enterCode;
 
-    @Column(name = "unlock_count")
     private Integer unlockCount;
 
-    @Column(name = "banner_image", length = 100)
     private String bannerImage;
 
-    @Column(name = "square_image", length = 100)
     private String squareImage;
 
-    @Column(name = "rectangle_image", length = 100)
     private String rectangleImage;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 }
