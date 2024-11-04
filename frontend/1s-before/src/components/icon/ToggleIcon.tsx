@@ -1,36 +1,25 @@
-'use client';
-import { useState } from 'react';
-import styled from '@emotion/styled';
+import { ToggleProps } from '@/types/common/common';
 
-const ToggleContainer = styled.div`
-  cursor: pointer;
-`;
-
-export default function HeaderToggle() {
-  const [toggle, setToggle] = useState(false);
-  const handleToggle = () => {
-    setToggle(!toggle);
-  };
-
+export default function ToggleIcon({ toggle, handleToggle }: Readonly<ToggleProps>) {
   return (
-    <ToggleContainer onClick={handleToggle}>
+    <div className='cursor-pointer' onClick={handleToggle}>
       <svg
         xmlns='http://www.w3.org/2000/svg'
         width='56'
         height='22'
         viewBox='0 0 56 22'
         fill='none'>
-        <g filter='url(#filter0_i_281_211)'>
+        <g filter='url(#Base)'>
           <rect y='0.5' width='53' height='20' rx='10' fill={toggle ? '#FFE4D5' : '#474972'} />
-          <g filter='url(#filter1_dd_281_211)'>
-            <rect x={toggle ? '25' : '38'} y='3.5' width='14' height='14' rx='7' fill='white' />
+          <g filter='url(#Circle)'>
+            <rect x={toggle ? '1' : '38'} y='3.5' width='14' height='14' rx='7' fill='white' />
           </g>
         </g>
         <defs>
           <filter
-            id='filter0_i_281_211'
+            id='Base'
             x='0'
-            y='0.5'
+            y='0'
             width='53'
             height='20.8551'
             filterUnits='userSpaceOnUse'
@@ -49,10 +38,11 @@ export default function HeaderToggle() {
             <feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0' />
             <feBlend mode='normal' in2='shape' result='effect1_innerShadow_281_211' />
           </filter>
+
           <filter
-            id='filter1_dd_281_211'
-            x='34.5796'
-            y='0.934663'
+            id='Circle'
+            x={toggle ? '0.57955' : '34.5796'}
+            y='0.434663'
             width='20.8409'
             height='20.8409'
             filterUnits='userSpaceOnUse'
@@ -93,6 +83,6 @@ export default function HeaderToggle() {
           </filter>
         </defs>
       </svg>
-    </ToggleContainer>
+    </div>
   );
 }
