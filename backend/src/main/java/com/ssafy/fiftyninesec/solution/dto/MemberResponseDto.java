@@ -1,9 +1,11 @@
 package com.ssafy.fiftyninesec.solution.dto;
 
-import lombok.Builder;
+import com.ssafy.fiftyninesec.solution.entity.Member;
 import lombok.Getter;
+import lombok.Builder;
 
 @Getter
+@Builder
 public class MemberResponseDto {
     private Long id;
     private String participateName;
@@ -13,16 +15,15 @@ public class MemberResponseDto {
     private String profileImage;
     private String creatorIntroduce;
 
-    @Builder
-    public MemberResponseDto(Long id, String participateName, String creatorName,
-                          String address, String phone, String profileImage,
-                          String creatorIntroduce) {
-        this.id = id;
-        this.participateName = participateName;
-        this.creatorName = creatorName;
-        this.address = address;
-        this.phone = phone;
-        this.profileImage = profileImage;
-        this.creatorIntroduce = creatorIntroduce;
+    public static MemberResponseDto of(Member member) {
+        return MemberResponseDto.builder()
+                .id(member.getId())
+                .participateName(member.getParticipateName())
+                .creatorName(member.getCreatorName())
+                .address(member.getAddress())
+                .phone(member.getPhone())
+                .profileImage(member.getProfileImage())
+                .creatorIntroduce(member.getCreatorIntroduce())
+                .build();
     }
 }
