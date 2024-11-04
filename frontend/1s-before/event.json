@@ -1,0 +1,45 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "author": "typicode"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  },
+  "event": {
+    "eventInfo": {
+      "title": "이벤트 제목을 입력해주세요",
+      "description": "이벤트에 대한 상세한 설명을 입력해주세요",
+      "backgroundImage": "이미지 URL 또는 파일 경로"
+    },
+    "productsOrCoupons": [
+      {
+        "order": 1,
+        "type": "상품",
+        "name": "상품명을 입력해주세요",
+        "recommendedPeople": "인원수 선택"
+      },
+      {
+        "order": 2,
+        "type": "쿠폰",
+        "name": "쿠폰명을 입력해주세요",
+        "recommendedPeople": "인원수 선택"
+      }
+    ],
+    "eventPeriod": {
+      "start": "YYYY-MM-DD",
+      "end": "YYYY-MM-DD"
+    },
+    "participationCode": "이벤트 참여 코드를 입력해주세요"
+  }
+}
