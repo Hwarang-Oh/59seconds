@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ProductOrCoupon {
   id: string;
@@ -21,15 +21,15 @@ interface EventFormData {
 
 export default function EventDetailCreate() {
   const [formData, setFormData] = useState<EventFormData>({
-    title: "",
-    description: "",
+    title: '',
+    description: '',
     backgroundImage: null,
     productsOrCoupons: [
-      { id: uuidv4(), order: 1, type: "상품", name: "", recommendedPeople: "" },
+      { id: uuidv4(), order: 1, type: '상품', name: '', recommendedPeople: '' },
     ],
-    startDate: "",
-    endDate: "",
-    participationCode: "",
+    startDate: '',
+    endDate: '',
+    participationCode: '',
   });
 
   const handleInputChange = (
@@ -54,9 +54,9 @@ export default function EventDetailCreate() {
         {
           id: uuidv4(),
           order: prev.productsOrCoupons.length + 1,
-          type: "상품",
-          name: "",
-          recommendedPeople: "",
+          type: '상품',
+          name: '',
+          recommendedPeople: '',
         },
       ],
     }));
@@ -80,7 +80,7 @@ export default function EventDetailCreate() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form Data:", JSON.stringify(formData, null, 2));
+    console.log('Form Data:', JSON.stringify(formData, null, 2));
   };
 
   return (
@@ -147,7 +147,7 @@ export default function EventDetailCreate() {
             <select
               value={item.type}
               onChange={(e) =>
-                handleProductOrCouponChange(index, "type", e.target.value)
+                handleProductOrCouponChange(index, 'type', e.target.value)
               }
               className="p-2 border rounded w-20"
             >
@@ -158,12 +158,12 @@ export default function EventDetailCreate() {
               type="text"
               value={item.name}
               onChange={(e) =>
-                handleProductOrCouponChange(index, "name", e.target.value)
+                handleProductOrCouponChange(index, 'name', e.target.value)
               }
               placeholder={
-                item.type === "상품"
-                  ? "상품명을 입력하세요"
-                  : "쿠폰명을 입력하세요"
+                item.type === '상품'
+                  ? '상품명을 입력하세요'
+                  : '쿠폰명을 입력하세요'
               }
               className="p-2 border rounded flex-1"
             />
@@ -173,7 +173,7 @@ export default function EventDetailCreate() {
               onChange={(e) =>
                 handleProductOrCouponChange(
                   index,
-                  "recommendedPeople",
+                  'recommendedPeople',
                   e.target.value
                 )
               }

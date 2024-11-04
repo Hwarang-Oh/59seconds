@@ -1,7 +1,7 @@
-"use client";
-import EventDetailCreate from "@/components/eventCreate/EventDetailCreate";
-import EventOwnerCreate from "@/components/eventCreate/EventOwnerCreate";
-import PreviewComponent from "@/components/eventCreate/PreviewComponent";
+'use client';
+import EventDetailCreate from '@/components/eventCreate/EventDetailCreate';
+import EventOwnerCreate from '@/components/eventCreate/EventOwnerCreate';
+import PreviewComponent from '@/components/eventCreate/PreviewComponent';
 
 export default function EventCreate() {
   return (

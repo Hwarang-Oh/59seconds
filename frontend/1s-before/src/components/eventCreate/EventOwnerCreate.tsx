@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 interface EventOwnerData {
   name: string;
@@ -9,9 +9,9 @@ interface EventOwnerData {
 
 export default function EventOwnerCreate() {
   const [ownerData, setOwnerData] = useState<EventOwnerData>({
-    name: "",
-    snsLink: "",
-    bio: "",
+    name: '',
+    snsLink: '',
+    bio: '',
     profileImage: null,
   });
 
@@ -31,7 +31,7 @@ export default function EventOwnerCreate() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Event Owner Data:", JSON.stringify(ownerData, null, 2));
+    console.log('Event Owner Data:', JSON.stringify(ownerData, null, 2));
   };
 
   return (
