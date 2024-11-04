@@ -1,0 +1,103 @@
+{
+  "Banner": [
+    {
+      "id": 1,
+      "image": "/image/Yena.png",
+      "rectImage": "/image/YenaYena.png",
+      "title": "예나의 네모네모 이야기!\n네모네모 나눔 이벤트",
+      "content": "아니 이걸 그냥 준다고?!\n예나가 준비한 특급 선물들!\n깜짝 네모네모 이벤트!",
+      "details": "특급 선물 1",
+      "date": "2024.11.14 오후 6시",
+      "participants": 1000,
+      "isDeadline": true
+    },
+    {
+      "id": 2,
+      "image": "/image/Yena.png",
+      "rectImage": "/image/YenaYena.png",
+      "title": "예나의 네모네모 이야기!\n네모네모 나눔 이벤트",
+      "content": "아니 이걸 그냥 준다고?!\n예나가 준비한 특급 선물들!\n깜짝 네모네모 이벤트!",
+      "details": "특급 선물 2",
+      "date": "2024.11.15 오후 6시",
+      "participants": 960,
+      "isDeadline": true
+    },
+    {
+      "id": 3,
+      "image": "/image/Yena.png",
+      "rectImage": "/image/YenaYena.png",
+      "title": "예나의 네모네모 이야기!\n네모네모 나눔 이벤트",
+      "content": "아니 이걸 그냥 준다고?!\n예나가 준비한 특급 선물들!\n깜짝 네모네모 이벤트!",
+      "details": "특급 선물 3",
+      "date": "2024.11.15 오후 7시",
+      "participants": 1123,
+      "isDeadline": false
+    },
+    {
+      "id": 4,
+      "image": "/image/Yena.png",
+      "rectImage": "/image/YenaYena.png",
+      "title": "예나의 네모네모 이야기!\n네모네모 나눔 이벤트",
+      "content": "아니 이걸 그냥 준다고?!\n예나가 준비한 특급 선물들!\n깜짝 네모네모 이벤트!",
+      "details": "특급 선물 4",
+      "date": "2024.11.16 오후 7시",
+      "participants": 743,
+      "isDeadline": false
+    },
+    {
+      "id": 5,
+      "image": "/image/Yena.png",
+      "rectImage": "/image/YenaYena.png",
+      "title": "예나의 네모네모 이야기!\n네모네모 나눔 이벤트",
+      "content": "아니 이걸 그냥 준다고?!\n예나가 준비한 특급 선물들!\n깜짝 네모네모 이벤트!",
+      "details": "특급 선물 5",
+      "date": "2024.11.17 오후 7시",
+      "participants": 12390,
+      "isDeadline": false
+    }
+  ],
+  "cardBanner": [
+    {
+      "id": 1,
+      "image": "/image/YenaYena.png",
+      "title": "예나의 네모네모 이야기!\n네모네모 나눔 이벤트",
+      "leftTime": "24:00:00",
+      "details": "특급 선물 1"
+    },
+    {
+      "id": 2,
+      "image": "/image/YenaYena.png",
+      "title": "예나의 네모네모 이야기!\n네모네모 나눔 이벤트",
+      "leftTime": "22:00:00",
+      "details": "특급 선물 2"
+    },
+    {
+      "id": 3,
+      "image": "/image/YenaYena.png",
+      "title": "예나의 네모네모 이야기!\n네모네모 나눔 이벤트",
+      "leftTime": "20:00:00",
+      "details": "특급 선물 3"
+    },
+    {
+      "id": 4,
+      "image": "/image/YenaYena.png",
+      "title": "예나의 네모네모 이야기!\n네모네모 나눔 이벤트",
+      "leftTime": "17:00:00",
+      "details": "특급 선물 4"
+    },
+    {
+      "id": 5,
+      "image": "/image/YenaYena.png",
+      "title": "예나의 네모네모 이야기!\n네모네모 나눔 이벤트",
+      "leftTime": "11:00:00",
+      "details": "특급 선물 5"
+    },
+    {
+      "id": 6,
+      "image": "/image/YenaYena.png",
+      "title": "예나의 네모네모 이야기!\n네모네모 나눔 이벤트",
+      "leftTime": "24:00:00",
+      "details": "특급 선물 6"
+    }
+  ]
+}

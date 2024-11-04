@@ -1,1 +1,4 @@
-export interface FirstCommonType {}
+export interface ToggleProps {
+  toggle: boolean;
+  handleToggle: () => void;
+}
