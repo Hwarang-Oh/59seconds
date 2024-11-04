@@ -105,12 +105,17 @@ export default function EventOwnerCreate() {
       </div>
 
       <div className="space-y-2">
-        <label
-          htmlFor="bio"
-          className="block text-sm font-medium text-gray-700"
-        >
-          소개글
-        </label>
+        <div className="flex flex-row justify-between items-center">
+          <label
+            htmlFor="bio"
+            className="block text-sm font-medium text-gray-700"
+          >
+            소개글
+          </label>
+          <button type="button" className="text-blue-500">
+            수정
+          </button>
+        </div>
         <textarea
           id="bio"
           name="bio"
@@ -119,9 +124,6 @@ export default function EventOwnerCreate() {
           placeholder="당신에 대해 소개해주세요."
           className="w-full p-2 border rounded h-24"
         />
-        <button type="button" className="text-blue-500">
-          수정
-        </button>
       </div>
 
       <div className="flex justify-between">
