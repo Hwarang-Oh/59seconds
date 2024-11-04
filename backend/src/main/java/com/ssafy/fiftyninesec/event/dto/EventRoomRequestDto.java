@@ -1,1 +1,1 @@
-// 채워
+package com.ssafy.fiftyninesec.event.dto;// 채워
