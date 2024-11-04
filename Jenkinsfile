@@ -134,8 +134,8 @@ pipeline {
                 mattermostSend (
                     color: 'good',
                     message: "빌드 성공 :hwarang_sun:: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Details>)",
-                    endpoint: 'https://meeting.ssafy.com/hooks/t9ynte38ctn4fbfs89u3n97ito',
-                    channel: 'A404'
+                    endpoint: 'https://meeting.ssafy.com/hooks/s88btx34q7fzmcbp5fnxzdtq1o',
+                    channel: 'a404-jenkins'
                 )
             }
         }
@@ -144,8 +144,8 @@ pipeline {
                 mattermostSend (
                     color: 'danger',
                     message: "빌드 실패 :cryingpatamon:: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Details>)",
-                    endpoint: 'https://meeting.ssafy.com/hooks/t9ynte38ctn4fbfs89u3n97ito',
-                    channel: 'A404'
+                    endpoint: 'https://meeting.ssafy.com/hooks/s88btx34q7fzmcbp5fnxzdtq1o',
+                    channel: 'a404-jenkins'
                 )
             }
         }
