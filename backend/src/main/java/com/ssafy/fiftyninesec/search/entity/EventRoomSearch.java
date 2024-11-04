@@ -16,10 +16,10 @@ public class EventRoomSearch {
 
     private Integer memberId;
 
-    @Field(type = FieldType.Text, analyzer = "korean_analyzer")
+    @Field(type = FieldType.Text)
     private String title;
 
-    @Field(type = FieldType.Text, analyzer = "korean_analyzer")
+    @Field(type = FieldType.Text)
     private String description;
 
     @Field(type = FieldType.Keyword)
