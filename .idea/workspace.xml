@@ -4,26 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="32b504b9-156b-416c-9b7d-9369f77331b0" name="Changes" comment="Merge">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/backend/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/controller/SearchController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/controller/SearchController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/dto/KeywordDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/dto/KeywordDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/dto/SearchEventRoomRequestDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/dto/EventRoomSearchRequestDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/dto/SearchEventRoomResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/dto/EventRoomSearchResponseDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/dto/SearchLogDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/dto/SearchLogDto.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/entity/Keyword.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/entity/Keyword.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/entity/SearchLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/entity/SearchLog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/repository/KeywordRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/repository/KeywordRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/repository/SearchLogRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/repository/SearchLogRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/service/LogService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/service/LogService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/service/SearchService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/search/service/SearchService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/solution/entity/EventRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/solution/entity/EventRoom.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/solution/repository/EventRoomRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/ssafy/fiftyninesec/solution/repository/EventRoomRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application-local.yml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application-local.yml" afterDir="false" />
-    </list>
+    <list default="true" id="32b504b9-156b-416c-9b7d-9369f77331b0" name="Changes" comment="Feat: 엘라스틱서치 기본검색기능 추가" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -113,7 +94,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1730685736023</updated>
-      <workItem from="1730685737828" duration="6312000" />
+      <workItem from="1730685737828" duration="6758000" />
     </task>
     <task id="LOCAL-00001" summary="init: search">
       <option name="closed" value="true" />
@@ -139,7 +120,15 @@
       <option name="project" value="LOCAL" />
       <updated>1730687172528</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Feat: 엘라스틱서치 기본검색기능 추가">
+      <option name="closed" value="true" />
+      <created>1730695500658</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1730695500658</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -149,6 +138,7 @@
     <MESSAGE value="init: search" />
     <MESSAGE value="init: else" />
     <MESSAGE value="Merge" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge" />
+    <MESSAGE value="Feat: 엘라스틱서치 기본검색기능 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="Feat: 엘라스틱서치 기본검색기능 추가" />
   </component>
 </project>
