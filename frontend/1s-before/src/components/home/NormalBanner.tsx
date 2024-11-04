@@ -1,6 +1,9 @@
-import { NormalBannerProps } from '@/types/home';
 import Image from 'next/image';
+import ParticipantButton from '@/components/home/ParticipantButton';
+import { NormalBannerProps } from '@/types/home';
+import DeadlineButton from './DeadlineButton';
 export default function NormalBanner({
+  id,
   image,
   title,
   details,
@@ -24,14 +27,8 @@ export default function NormalBanner({
 
       {/* 참가자 수와 마감 임박 배지 */}
       <div className='flex justify-between items-center px-4 pb-4'>
-        <span className='text-xs bg-blue-100 text-blue-600 font-semibold px-2 py-1 rounded-full'>
-          {participants}
-        </span>
-        {isDeadline && (
-          <span className='text-xs bg-red-100 text-red-600 font-semibold px-2 py-1 rounded-full'>
-            마감임박
-          </span>
-        )}
+        <ParticipantButton participants={participants} />
+        {isDeadline && <DeadlineButton />}
       </div>
     </div>
   );
