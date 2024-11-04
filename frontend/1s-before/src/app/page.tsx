@@ -4,6 +4,7 @@ import NormalBanner from '@/components/home/NormalBanner';
 import CardBanner from '@/components/home/CardBanner';
 import LargeBannerCarousel from '@/components/home/LargeBannerCarousel';
 import NormalBannerList from '@/components/home/NormalBannerList';
+import Footer from '@/components/common/Footer';
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
         leftTime={BannerDummy.cardBanner[0].leftTime}
         details={BannerDummy.cardBanner[0].details}
       />
+      <Footer />
     </div>
   );
 }
