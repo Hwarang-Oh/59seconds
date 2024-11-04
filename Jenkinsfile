@@ -1,5 +1,10 @@
 pipeline {
     agent any
+
+    tools {
+        nodejs 'NodeJS 20.x'
+    }
+
     environment {
         DOCKER_CREDENTIALS_ID = 'dockerhub-access'
         GITLAB_CREDENTIALS_ID = 'gitlab-access-leeju1013'
