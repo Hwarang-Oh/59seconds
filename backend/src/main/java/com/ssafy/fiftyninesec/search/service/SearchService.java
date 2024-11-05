@@ -5,6 +5,7 @@ import com.ssafy.fiftyninesec.search.dto.EventRoomSearchResponseDto;
 import com.ssafy.fiftyninesec.search.entity.EventRoomSearch;
 import com.ssafy.fiftyninesec.search.repository.EventRoomSearchRepository;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
+import com.ssafy.fiftyninesec.solution.entity.Member;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -35,9 +37,13 @@ public class SearchService {
     }
 
     private EventRoomSearch convertToES(EventRoom mysqlRoom) {
+        Long memberId = Optional.ofNullable(mysqlRoom.getMember())
+                .map(Member::getId)
+                .orElseThrow(() -> new RuntimeException("Member is null for EventRoom ID: " + mysqlRoom.getRoomId()));
+
         EventRoomSearch esRoom = new EventRoomSearch();
         esRoom.setRoomId(mysqlRoom.getRoomId());
-        esRoom.setMemberId(mysqlRoom.getMember().getId());
+        esRoom.setMemberId(memberId);
         esRoom.setTitle(mysqlRoom.getTitle());
         esRoom.setDescription(mysqlRoom.getDescription());
         esRoom.setStatus(mysqlRoom.getStatus().name());

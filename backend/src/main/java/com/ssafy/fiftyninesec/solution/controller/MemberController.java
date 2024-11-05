@@ -4,7 +4,6 @@ import com.ssafy.fiftyninesec.solution.dto.MemberResponseDto;
 import com.ssafy.fiftyninesec.solution.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
