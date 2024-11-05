@@ -19,6 +19,8 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          time_zone: Asia/Seoul
 
   data:
     mongodb:
@@ -33,3 +35,7 @@ spring:
       path: /api/v1/docs
     swagger-ui:
       path: /api/v1/swagger-ui.html
+
+
+  jackson:
+    time-zone: Asia/Seoul
