@@ -1,17 +1,23 @@
 package com.ssafy.fiftyninesec.solution.service;
 
 import com.ssafy.fiftyninesec.solution.dto.EventRoomRequestDto;
+import com.ssafy.fiftyninesec.solution.dto.RoomUnlockResponse;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.entity.EventStatus;
 import com.ssafy.fiftyninesec.solution.entity.Prize;
+import com.ssafy.fiftyninesec.solution.exception.RoomNotFoundException;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import com.ssafy.fiftyninesec.solution.repository.PrizeRepository;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
+import io.minio.errors.MinioException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +29,7 @@ public class EventService {
 
     private final EventRoomRepository eventRoomRepository;
     private final PrizeRepository prizeRepository;
+    private final MinioClient minioClient;
 
     @Transactional
     public void createEvent(EventRoomRequestDto eventRoomRequestDto) {
@@ -73,13 +80,74 @@ public class EventService {
 
         attachments.forEach(file -> {
             try {
-                // 예시: 파일 저장 로직 (구체적인 로직은 환경에 맞게 구현)
                 log.info("Uploading file: {}", file.getOriginalFilename());
-                // File storage code here
+                InputStream fileInputStream = file.getInputStream();
+
+                // MinIO에 파일 업로드
+                minioClient.putObject(
+                        PutObjectArgs.builder()
+                                .bucket("test-bucket") // 사용할 버킷 이름
+                                .object(file.getOriginalFilename()) // 저장할 객체 이름
+                                .stream(fileInputStream, file.getSize(), -1)
+                                .contentType(file.getContentType())
+                                .build()
+                );
+
+                log.info("File uploaded successfully: {}", file.getOriginalFilename());
             } catch (Exception e) {
                 log.error("Failed to upload file: {}", file.getOriginalFilename(), e);
             }
         });
     }
 
+    @Transactional
+    public RoomUnlockResponse unlockRoom(Long roomId, String enterCode) {
+        try {
+            EventRoom room = eventRoomRepository.findById(roomId)
+                    .orElseThrow(() -> new RoomNotFoundException("Room not found with id: " + roomId));
+
+            // null 체크 추가
+            String savedEnterCode = room.getEnterCode();
+            if (savedEnterCode == null || !savedEnterCode.equals(enterCode)) {
+                return RoomUnlockResponse.builder()
+                        .success(false)
+                        .message("암호가 일치하지 않습니다.")
+                        .build();
+            }
+
+            // 잠금해제 수 증가
+            room.increaseUnlockCount();
+            eventRoomRepository.save(room);
+
+            return RoomUnlockResponse.builder()
+                    .success(true)
+                    .message("암호가 성공적으로 풀렸습니다.")
+                    .build();
+        } catch (Exception e) {
+            log.error("Error while unlocking room: ", e);
+            return RoomUnlockResponse.builder()
+                    .success(false)
+                    .message("서버 오류가 발생했습니다.")
+                    .build();
+        }
+    }
+
+    public String testMinio(MultipartFile file) {
+        try {
+            String bucketName = "test-bucket"; // 사용할 버킷 이름
+            String objectName = file.getOriginalFilename(); // 저장할 객체 이름
+
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .stream(file.getInputStream(), file.getSize(), -1)
+                            .contentType(file.getContentType())
+                            .build()
+            );
+            return "File uploaded successfully: " + objectName;
+        } catch (Exception e) {
+            return "Failed to upload file: " + e.getMessage();
+        }
+    }
 }

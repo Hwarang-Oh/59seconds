@@ -7,24 +7,18 @@ import lombok.*;
 @Table(name = "Prize")
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Prize {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long prizeId;
-
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     private EventRoom eventRoom;
-
     private String prizeType;
-
     private Integer winnerCount;
-
     private String prizeName;
-
     private Integer ranking;
 }

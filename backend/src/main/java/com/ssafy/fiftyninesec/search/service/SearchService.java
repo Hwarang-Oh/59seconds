@@ -37,7 +37,7 @@ public class SearchService {
     private EventRoomSearch convertToES(EventRoom mysqlRoom) {
         EventRoomSearch esRoom = new EventRoomSearch();
         esRoom.setRoomId(mysqlRoom.getRoomId());
-        esRoom.setMemberId(mysqlRoom.getMemberId());
+        esRoom.setMemberId(mysqlRoom.getMember().getId());
         esRoom.setTitle(mysqlRoom.getTitle());
         esRoom.setDescription(mysqlRoom.getDescription());
         esRoom.setStatus(mysqlRoom.getStatus().name());

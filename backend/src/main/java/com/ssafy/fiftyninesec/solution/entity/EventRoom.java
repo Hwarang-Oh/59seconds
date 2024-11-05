@@ -10,6 +10,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "EventRoom")
 @Setter
@@ -20,7 +21,7 @@ public class EventRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer roomId;
+    private Long roomId;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -29,6 +30,7 @@ public class EventRoom {
     @Column(nullable = false, length = 255)
     private String title;
 
+    @Column(length = 255)
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -54,4 +56,8 @@ public class EventRoom {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    public void increaseUnlockCount() {
+        this.unlockCount = this.unlockCount + 1;
+    }
 }
