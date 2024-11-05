@@ -1,34 +1,52 @@
 package com.ssafy.fiftyninesec.solution.controller;
 
 import com.ssafy.fiftyninesec.solution.dto.EventRoomRequestDto;
+import com.ssafy.fiftyninesec.solution.dto.RoomUnlockRequest;
+import com.ssafy.fiftyninesec.solution.dto.RoomUnlockResponse;
+import com.ssafy.fiftyninesec.solution.dto.WinnerResponseDto;
 import com.ssafy.fiftyninesec.solution.service.EventService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/rooms")
-@RequiredArgsConstructor
 public class EventController {
 
     EventService eventService;
 
-    @Operation(summary = "이벤트 생성", description = "새로운 이벤트를 생성합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "이벤트 생성 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "500", description = "서버 오류")
-    })
+    public EventController(EventService eventService) {
+        this.eventService = eventService;  // null이 아님을 보장
+    }
+
     @PostMapping
-    ResponseEntity<Void> createEventRoom(@RequestBody EventRoomRequestDto eventRoomRequestDto) {
-        eventService.createEventRoom(eventRoomRequestDto);
+    ResponseEntity<Void> createEvent(@RequestBody EventRoomRequestDto eventRoomRequestDto) {
+        eventService.createEvent(eventRoomRequestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{roomId}/unlock")
+    public ResponseEntity<RoomUnlockResponse> unlockRoom(
+            @PathVariable Long roomId,
+            @Valid @RequestBody RoomUnlockRequest request
+    ) {
+        return ResponseEntity.ok(eventService.unlockRoom(roomId, request.getEnterCode()));
+    }
+
+    @GetMapping("/{roomId}/winners")
+    public ResponseEntity<WinnerResponseDto> getWinners(@PathVariable Long roomId) {
+        return ResponseEntity.ok(eventService.getWinners(roomId));
+    }
+
+    // TEST -----------------------------------------------------------------------------------------
+    @PostMapping("/test/upload")
+    public ResponseEntity<?> testMinio(@RequestParam("file") MultipartFile file) {
+        eventService.testMinio(file);
         return ResponseEntity.ok().build();
     }
 

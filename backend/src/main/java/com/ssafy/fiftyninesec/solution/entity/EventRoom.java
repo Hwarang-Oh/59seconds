@@ -8,20 +8,24 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
+@Entity
+@Table(name = "EventRoom")
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Builder
-@Table(name = "EventRoom")
 public class EventRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer roomId;
+    private Long roomId;
 
-    private Integer memberId;
+    @ManyToOne
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     @Column(nullable = false, length = 255)
     private String title;
@@ -52,4 +56,8 @@ public class EventRoom {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    public void increaseUnlockCount() {
+        this.unlockCount = this.unlockCount + 1;
+    }
 }
