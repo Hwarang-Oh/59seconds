@@ -20,6 +20,8 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          time_zone: Asia/Seoul
   sql:
     init:
       mode: always
@@ -32,3 +34,13 @@ spring:
       client:
         rest:
           uris: "http://localhost:9200" # Elasticsearch 설정
+
+  doc:
+    api-docs:
+      path: /api/v1/docs
+    swagger-ui:
+      path: /api/v1/swagger-ui.html
+
+
+  jackson:
+    time-zone: Asia/Seoul
