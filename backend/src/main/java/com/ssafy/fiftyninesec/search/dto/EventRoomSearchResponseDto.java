@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class EventRoomSearchResponseDto {
-    private Integer roomId;
+    private Long roomId;
     private String title;
     private String description;
     private String status;

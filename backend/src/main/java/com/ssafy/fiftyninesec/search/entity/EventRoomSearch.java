@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 public class EventRoomSearch {
 
     @Id
-    private Integer roomId;
+    private Long roomId;
 
-    private Integer memberId;
+    private Long memberId;
 
     @Field(type = FieldType.Text)
     private String title;

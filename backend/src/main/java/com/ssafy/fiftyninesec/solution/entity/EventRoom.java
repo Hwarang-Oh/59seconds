@@ -19,9 +19,9 @@ public class EventRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer roomId;
+    private Long roomId;
 
-    private Integer memberId;
+    private Long memberId;
 
     @Column(nullable = false, length = 255)
     private String title;
@@ -52,4 +52,8 @@ public class EventRoom {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    public void increaseUnlockCount() {
+        this.unlockCount = this.unlockCount + 1;
+    }
 }
