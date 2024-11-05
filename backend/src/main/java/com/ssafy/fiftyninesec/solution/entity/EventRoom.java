@@ -8,20 +8,24 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
+@Entity
+@Table(name = "EventRoom")
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Builder
-@Table(name = "EventRoom")
 public class EventRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
 
-    private Long memberId;
+    @ManyToOne
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     @Column(nullable = false, length = 255)
     private String title;
