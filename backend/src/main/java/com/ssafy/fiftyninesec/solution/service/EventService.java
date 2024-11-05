@@ -15,6 +15,8 @@ import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.MinioException;
 import com.ssafy.fiftyninesec.solution.repository.WinnerRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.ssafy.fiftyninesec.global.exception.ErrorCode.EVENT_NOT_FOUND;
+import static com.ssafy.fiftyninesec.global.exception.ErrorCode.INVALID_REQUEST;
 
 @Slf4j
 @Service
@@ -186,5 +189,17 @@ public class EventService {
                 .message("당첨자 목록을 성공적으로 조회했습니다.")
                 .success(true)
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<EventRoom> getPopularEvents(int page, int size) {
+
+        // 페이지네이션 제한
+        long totalEvents = eventRoomRepository.count();
+        if (page > (totalEvents / size) + 1) {
+            throw new CustomException(INVALID_REQUEST);
+        }
+
+        return eventRoomRepository.findAllByOrderByUnlockCountDesc(PageRequest.of(page, size));
     }
 }
