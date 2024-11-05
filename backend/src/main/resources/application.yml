@@ -27,3 +27,9 @@ spring:
       client:
         rest:
           uris: "http://localhost:9200" # Elasticsearch 설정
+
+  doc:
+    api-docs:
+      path: /api/v1/docs
+    swagger-ui:
+      path: /api/v1/swagger-ui.html

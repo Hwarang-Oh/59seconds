@@ -1,5 +1,7 @@
 package com.ssafy.fiftyninesec.solution.service;
 
+import com.ssafy.fiftyninesec.global.exception.CustomException;
+import com.ssafy.fiftyninesec.global.exception.ErrorCode;
 import com.ssafy.fiftyninesec.solution.dto.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.RoomUnlockResponse;
 import com.ssafy.fiftyninesec.solution.dto.WinnerResponseDto;
@@ -7,7 +9,6 @@ import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.entity.EventStatus;
 import com.ssafy.fiftyninesec.solution.entity.Prize;
 import com.ssafy.fiftyninesec.solution.entity.Winner;
-import com.ssafy.fiftyninesec.solution.exception.RoomNotFoundException;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import com.ssafy.fiftyninesec.solution.repository.PrizeRepository;
 import io.minio.MinioClient;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.ssafy.fiftyninesec.global.exception.ErrorCode.EVENT_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -111,7 +113,7 @@ public class EventService {
     public RoomUnlockResponse unlockRoom(Long roomId, String enterCode) {
         try {
             EventRoom room = eventRoomRepository.findById(roomId)
-                    .orElseThrow(() -> new RoomNotFoundException("Room not found with id: " + roomId));
+                    .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
             // null 체크 추가
             String savedEnterCode = room.getEnterCode();

@@ -6,8 +6,6 @@ import com.ssafy.fiftyninesec.solution.dto.RoomUnlockResponse;
 import com.ssafy.fiftyninesec.solution.dto.WinnerResponseDto;
 import com.ssafy.fiftyninesec.solution.service.EventService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,4 +49,5 @@ public class EventController {
         eventService.testMinio(file);
         return ResponseEntity.ok().build();
     }
+
 }
