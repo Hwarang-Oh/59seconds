@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="FiftyninesecApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <envs>
+      <env name="MYSQL_USER" value="solution" />
+      <env name="MYSQL_PASSWORD" value="onesecondbefore" />
+    </envs>
+    <module name="fiftyninesec.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.ssafy.fiftyninesec.FiftyninesecApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
