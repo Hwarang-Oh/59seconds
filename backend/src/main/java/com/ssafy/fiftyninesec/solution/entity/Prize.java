@@ -1,23 +1,30 @@
 package com.ssafy.fiftyninesec.solution.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "Prize")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Prize {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer prizeId;
-    private Integer roomId;
+    private Long prizeId;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id", nullable = false)
+    private EventRoom eventRoom;
+
     private String prizeType;
-    private String prizeName;
+
     private Integer winnerCount;
+
+    private String prizeName;
+
+    private Integer ranking;
 }
