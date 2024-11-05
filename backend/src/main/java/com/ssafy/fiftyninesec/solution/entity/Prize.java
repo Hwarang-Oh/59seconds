@@ -15,8 +15,8 @@ import lombok.*;
 public class Prize {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer prizeId;
-    private Integer roomId;
+    private Long prizeId;
+    private Long roomId;
     private String prizeType;
     private String prizeName;
     private Integer winnerCount;
