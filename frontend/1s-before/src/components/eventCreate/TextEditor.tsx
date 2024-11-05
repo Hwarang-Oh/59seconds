@@ -12,42 +12,53 @@ export default function RichTextEditor({
   const editorRef = useRef<HTMLDivElement>(null);
   const [fontSize, setFontSize] = useState<number>(16);
   const [fontFamily, setFontFamily] = useState<string>('Arial');
+  const savedSelection = useRef<Range | null>(null);
 
   useEffect(() => {
     if (editorRef.current) {
-      editorRef.current.innerHTML = initialContent; // 초기 내용 설정
+      editorRef.current.innerHTML = initialContent;
     }
   }, [initialContent]);
 
-  const applyStyle = (style: string, value: string) => {
-    if (!editorRef.current) return;
+  // Save selection before applying style
+  const saveSelection = () => {
     const selection = window.getSelection();
-
     if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      const span = document.createElement('span');
-      span.style[style as any] = value;
-      range.surroundContents(span);
-      selection.removeAllRanges();
-      selection.addRange(range);
+      savedSelection.current = selection.getRangeAt(0);
     }
   };
 
+  // Restore selection after applying style
+  const restoreSelection = () => {
+    const selection = window.getSelection();
+    if (savedSelection.current && selection) {
+      selection.removeAllRanges();
+      selection.addRange(savedSelection.current);
+    }
+  };
+
+  const applyExecCommand = (command: string, value: string) => {
+    saveSelection(); // Save caret position
+    restoreSelection(); // Restore caret position after style application
+    document.execCommand(command, false, value);
+    handleInput(); // Trigger input change handler after applying style
+  };
+
   const handleFontSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = Number(e.target.value);
-    setFontSize(value);
-    applyStyle('fontSize', `${value}px`);
+    const value = `${e.target.value}px`;
+    setFontSize(Number(e.target.value));
+    applyExecCommand('fontSize', value);
   };
 
   const handleFontFamilyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setFontFamily(value);
-    applyStyle('fontFamily', value);
+    applyExecCommand('fontName', value);
   };
 
   const handleInput = () => {
     if (editorRef.current) {
-      onContentChange(editorRef.current.innerHTML); // 상위 컴포넌트로 변경 내용 전달
+      onContentChange(editorRef.current.innerHTML);
     }
   };
 
@@ -71,21 +82,21 @@ export default function RichTextEditor({
 
         <button
           type="button"
-          onClick={() => applyStyle('fontWeight', 'bold')}
+          onClick={() => applyExecCommand('bold', '')}
           className="p-1 border rounded"
         >
           <b className="p-1">B</b>
         </button>
         <button
           type="button"
-          onClick={() => applyStyle('fontStyle', 'italic')}
+          onClick={() => applyExecCommand('italic', '')}
           className="p-1 border rounded"
         >
           <i className="p-1 pr-2">I</i>
         </button>
         <button
           type="button"
-          onClick={() => applyStyle('textDecoration', 'underline')}
+          onClick={() => applyExecCommand('underline', '')}
           className="p-1 border rounded"
         >
           <u className="p-1">U</u>
@@ -96,12 +107,12 @@ export default function RichTextEditor({
       <div
         ref={editorRef}
         contentEditable
-        onInput={handleInput} // 사용자가 입력할 때마다 내용 전달
+        onInput={handleInput}
+        onKeyUp={saveSelection} // Save selection on key up
+        onMouseUp={saveSelection} // Save selection on mouse up
         className="w-full p-2 border rounded min-h-[200px]"
         style={{ fontFamily, fontSize: `${fontSize}px` }}
-      >
-        {/* 초기 내용이 이 div에 설정되므로 children을 사용하지 않습니다 */}
-      </div>
+      ></div>
     </div>
   );
 }
