@@ -2,7 +2,7 @@ import { ToggleProps } from '@/types/common/common';
 
 export default function ToggleIcon({ toggle, handleToggle }: Readonly<ToggleProps>) {
   return (
-    <div className='cursor-pointer' onClick={handleToggle}>
+    <button className='cursor-pointer' aria-pressed={toggle} onClick={handleToggle}>
       <svg
         xmlns='http://www.w3.org/2000/svg'
         width='56'
@@ -10,9 +10,24 @@ export default function ToggleIcon({ toggle, handleToggle }: Readonly<ToggleProp
         viewBox='0 0 56 22'
         fill='none'>
         <g filter='url(#Base)'>
-          <rect y='0.5' width='53' height='20' rx='10' fill={toggle ? '#FFE4D5' : '#474972'} />
+          <rect
+            y='0.5'
+            width='53'
+            height='20'
+            rx='10'
+            fill={toggle ? '#FFE4D5' : '#474972'}
+            className='transition-colors duration-300'
+          />
           <g filter='url(#Circle)'>
-            <rect x={toggle ? '1' : '38'} y='3.5' width='14' height='14' rx='7' fill='white' />
+            <rect
+              x={toggle ? '1' : '38'}
+              y='3.5'
+              width='14'
+              height='14'
+              rx='7'
+              fill='white'
+              className='transition-transform duration-1000'
+            />
           </g>
         </g>
         <defs>
@@ -83,6 +98,6 @@ export default function ToggleIcon({ toggle, handleToggle }: Readonly<ToggleProp
           </filter>
         </defs>
       </svg>
-    </div>
+    </button>
   );
 }

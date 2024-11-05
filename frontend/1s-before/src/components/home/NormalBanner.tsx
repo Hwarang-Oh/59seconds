@@ -1,10 +1,10 @@
 import Image from 'next/image';
-import ParticipantButton from '@/components/home/ParticipantButton';
+import DeadlineButton from '@/components/home/member/DeadlineButton';
+import ParticipantButton from '@/components/home/member/ParticipantButton';
 import { NormalBannerProps } from '@/types/home';
-import DeadlineButton from './DeadlineButton';
 export default function NormalBanner({
   id,
-  image,
+  rectImage,
   title,
   details,
   date,
@@ -12,21 +12,28 @@ export default function NormalBanner({
   isDeadline,
 }: Readonly<NormalBannerProps>) {
   return (
-    <div className='flex-row w-[240px]'>
+    <div className='flex flex-col w-[240px]'>
       <div className='relative w-[240px] h-[320px] overflow-hidden rounded-lg'>
-        <Image src={image} alt={title} layout='fill' className='w-full h-[150px] object-cover' />
-        <div className='absolute bottom-2 left-2 text-white text-3xl font-bold'>1</div>
+        <Image src={rectImage} alt={title} fill className='object-cover' quality={100} />
+        <div
+          className='absolute bottom-3 left-4 text-white text-[60px] font-bold'
+          style={{
+            textShadow: '0px 4px 4px rgba(0, 0, 0, 0.20)',
+            fontFamily: '"Segoe UI", sans-serif',
+          }}>
+          1
+        </div>
       </div>
 
       {/* 내용 */}
-      <div className='p-4'>
-        <h3 className='text-lg font-semibold'>{title}</h3>
-        <p className='text-sm text-gray-500'>{details}</p>
-        <p className='text-xs text-gray-400 mt-1'>{date}</p>
+      <div className='py-[5px]'>
+        <p className='text-lg font-bold whitespace-pre-line'>{title}</p>
+        <p className='text-base'>{details}</p>
+        <p className='text-bse text-gray-400'>{date}</p>
       </div>
 
       {/* 참가자 수와 마감 임박 배지 */}
-      <div className='flex justify-between items-center px-4 pb-4'>
+      <div className='flex justify-start gap-5 items-center'>
         <ParticipantButton participants={participants} />
         {isDeadline && <DeadlineButton />}
       </div>

@@ -1,10 +1,11 @@
 import Header from '@/components/common/Header';
-import BannerDummy from '@/mocks/BannerDummy.json';
-import NormalBanner from '@/components/home/NormalBanner';
-import CardBanner from '@/components/home/CardBanner';
-import LargeBannerCarousel from '@/components/home/LargeBannerCarousel';
-import NormalBannerList from '@/components/home/NormalBannerList';
 import Footer from '@/components/common/Footer';
+import BannerDummy from '@/mocks/BannerDummy.json';
+import CardDummy from '@/mocks/CardDummy.json';
+import CardBannerGrid from '@/components/home/CardBannerGrid';
+import NormalBannerList from '@/components/home/NormalBannerList';
+import LargeBannerCarousel from '@/components/home/member/LargeBannerCarousel';
+import FancyCard from '@/components/home/FancyCard';
 
 export default function Home() {
   return (
@@ -12,13 +13,15 @@ export default function Home() {
       <Header />
       {/* 첫 번째 배너 데이터를 LargeBanner에 전달 */}
       <LargeBannerCarousel Banners={BannerDummy.Banner} />
-      <NormalBannerList Banners={BannerDummy.Banner} />
-      <CardBanner
-        image={BannerDummy.cardBanner[0].image}
-        title={BannerDummy.cardBanner[0].title}
-        leftTime={BannerDummy.cardBanner[0].leftTime}
-        details={BannerDummy.cardBanner[0].details}
-      />
+      <div className='flex flex-col gap-20 px-7 py-20'>
+        <NormalBannerList Banners={BannerDummy.Banner} />
+        <CardBannerGrid Banners={BannerDummy.cardBanner} />
+        <div className='flex max-w-screen-xl mx-auto gap-6'>
+          {CardDummy.FancyCards.map((card) => (
+            <FancyCard key={card.id} id={card.id} title={card.title} content={card.content} />
+          ))}
+        </div>
+      </div>
       <Footer />
     </div>
   );
