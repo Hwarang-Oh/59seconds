@@ -20,6 +20,10 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
 
   data:
     mongodb:

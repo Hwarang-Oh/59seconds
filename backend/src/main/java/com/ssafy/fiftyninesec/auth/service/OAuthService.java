@@ -3,6 +3,7 @@ package com.ssafy.fiftyninesec.auth.service;
 import com.ssafy.fiftyninesec.global.util.JwtUtil;
 import com.ssafy.fiftyninesec.solution.entity.Member;
 import com.ssafy.fiftyninesec.solution.repository.MemberRepository;
+import com.ssafy.fiftyninesec.solution.service.MemberService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +22,7 @@ public class OAuthService {
     private final RestTemplate restTemplate;
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
+    private final MemberService memberService;
 
     @Value("${kakao.client.id}")
     private String clientId;
@@ -106,9 +108,6 @@ public class OAuthService {
         멤버가 null 이 아니면 회원가입을 진행해야 한다. 유저는 이 과정을 느낄 수 없게 처리한다.
          유저의 기본 정보만을 가지고 회원가입 진행
          */
-        return ;
+        memberService.registerMember(kakaoSub);
     }
-
-
-
 }
