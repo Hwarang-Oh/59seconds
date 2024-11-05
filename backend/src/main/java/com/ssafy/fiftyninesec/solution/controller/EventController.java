@@ -3,6 +3,7 @@ package com.ssafy.fiftyninesec.solution.controller;
 import com.ssafy.fiftyninesec.solution.dto.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.RoomUnlockRequest;
 import com.ssafy.fiftyninesec.solution.dto.RoomUnlockResponse;
+import com.ssafy.fiftyninesec.solution.dto.WinnerResponseDto;
 import com.ssafy.fiftyninesec.solution.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,10 @@ public class EventController {
             @Valid @RequestBody RoomUnlockRequest request
     ) {
         return ResponseEntity.ok(eventService.unlockRoom(roomId, request.getEnterCode()));
+    }
+
+    @GetMapping("/{roomId}/winners")
+    public ResponseEntity<WinnerResponseDto> getWinners(@PathVariable Long roomId) {
+        return ResponseEntity.ok(eventService.getWinners(roomId));
     }
 }

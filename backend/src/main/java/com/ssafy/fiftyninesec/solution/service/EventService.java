@@ -2,19 +2,25 @@ package com.ssafy.fiftyninesec.solution.service;
 
 import com.ssafy.fiftyninesec.solution.dto.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.RoomUnlockResponse;
+import com.ssafy.fiftyninesec.solution.dto.WinnerResponseDto;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.entity.EventStatus;
 import com.ssafy.fiftyninesec.solution.entity.Prize;
+import com.ssafy.fiftyninesec.solution.entity.Winner;
 import com.ssafy.fiftyninesec.solution.exception.RoomNotFoundException;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import com.ssafy.fiftyninesec.solution.repository.PrizeRepository;
-import jakarta.transaction.Transactional;
+import com.ssafy.fiftyninesec.solution.repository.WinnerRepository;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +29,7 @@ public class EventService {
 
     private final EventRoomRepository eventRoomRepository;
     private final PrizeRepository prizeRepository;
+    private final WinnerRepository winnerRepository;
 
     @Transactional
     public void createEventRoom(EventRoomRequestDto request) {
@@ -81,5 +88,33 @@ public class EventService {
                     .message("서버 오류가 발생했습니다.")
                     .build();
         }
+    }
+
+    @Transactional(readOnly = true)
+    public WinnerResponseDto getWinners(Long roomId) {
+        List<Winner> winners = winnerRepository.findByRoom_RoomIdOrderByRanking(roomId);
+
+        if (winners.isEmpty()) {
+            return WinnerResponseDto.builder()
+                    .winners(Collections.emptyList())
+                    .message("해당 방의 당첨자가 없습니다.")
+                    .success(true)
+                    .build();
+        }
+
+        List<WinnerResponseDto.WinnerInfo> winnerInfos = winners.stream()
+                .map(winner -> WinnerResponseDto.WinnerInfo.builder()
+                        .winnerName(winner.getWinnerName())
+                        .address(winner.getAddress())
+                        .phone(winner.getPhone())
+                        .ranking(winner.getRanking())
+                        .build())
+                .collect(Collectors.toList());
+
+        return WinnerResponseDto.builder()
+                .winners(winnerInfos)
+                .message("당첨자 목록을 성공적으로 조회했습니다.")
+                .success(true)
+                .build();
     }
 }
