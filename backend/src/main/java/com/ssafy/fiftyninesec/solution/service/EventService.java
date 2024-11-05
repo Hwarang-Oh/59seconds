@@ -1,5 +1,7 @@
 package com.ssafy.fiftyninesec.solution.service;
 
+import com.ssafy.fiftyninesec.global.exception.CustomException;
+import com.ssafy.fiftyninesec.global.exception.ErrorCode;
 import com.ssafy.fiftyninesec.solution.dto.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.RoomUnlockResponse;
 import com.ssafy.fiftyninesec.solution.dto.WinnerResponseDto;
@@ -7,18 +9,18 @@ import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.entity.EventStatus;
 import com.ssafy.fiftyninesec.solution.entity.Prize;
 import com.ssafy.fiftyninesec.solution.entity.Winner;
-import com.ssafy.fiftyninesec.solution.exception.RoomNotFoundException;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import com.ssafy.fiftyninesec.solution.repository.PrizeRepository;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.MinioException;
 import com.ssafy.fiftyninesec.solution.repository.WinnerRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
@@ -27,6 +29,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.ssafy.fiftyninesec.global.exception.ErrorCode.EVENT_NOT_FOUND;
+import static com.ssafy.fiftyninesec.global.exception.ErrorCode.INVALID_REQUEST;
 
 @Slf4j
 @Service
@@ -111,7 +116,7 @@ public class EventService {
     public RoomUnlockResponse unlockRoom(Long roomId, String enterCode) {
         try {
             EventRoom room = eventRoomRepository.findById(roomId)
-                    .orElseThrow(() -> new RoomNotFoundException("Room not found with id: " + roomId));
+                    .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
             // null 체크 추가
             String savedEnterCode = room.getEnterCode();
@@ -184,5 +189,17 @@ public class EventService {
                 .message("당첨자 목록을 성공적으로 조회했습니다.")
                 .success(true)
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<EventRoom> getPopularEvents(int page, int size) {
+
+        // 페이지네이션 제한
+        long totalEvents = eventRoomRepository.count();
+        if (page > (totalEvents / size) + 1) {
+            throw new CustomException(INVALID_REQUEST);
+        }
+
+        return eventRoomRepository.findAllByOrderByUnlockCountDesc(PageRequest.of(page, size));
     }
 }
