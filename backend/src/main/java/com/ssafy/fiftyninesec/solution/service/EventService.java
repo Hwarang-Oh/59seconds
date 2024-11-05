@@ -22,12 +22,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Pageable;
 
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.time.ZoneId;
 import java.util.stream.Collectors;
 
 import static com.ssafy.fiftyninesec.global.exception.ErrorCode.EVENT_NOT_FOUND;
@@ -201,5 +203,15 @@ public class EventService {
         }
 
         return eventRoomRepository.findAllByOrderByUnlockCountDesc(PageRequest.of(page, size));
+    }
+
+    @Transactional(readOnly = true)
+    public List<EventRoom> getDeadlineEvents(int size) {
+
+        // 한국 시간(KST)으로 현재 시간으로부터 24시간 후의 시간 계산
+        ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
+        LocalDateTime endDateTime = LocalDateTime.now(koreaZoneId).plusHours(24);
+
+        return eventRoomRepository.findDeadlineEventsByUpcoming(endDateTime, PageRequest.of(0, size));
     }
 }
