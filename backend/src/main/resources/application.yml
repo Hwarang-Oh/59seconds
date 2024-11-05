@@ -6,11 +6,12 @@ server:
 spring:
   profiles:
     active: local # 기본 프로파일 설정
-
+  config:
+    import: application-secret.yml
   datasource:
-    url: jdbc:mysql://localhost:3306/dreamsolution?serverTimezone=UTC
-    username: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
+    url: jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}?useUnicode=true&serverTimezone=Asia/Seoul
+    username: ${mysql.username}
+    password: ${mysql.password}
   jpa:
     hibernate:
       ddl-auto: update
