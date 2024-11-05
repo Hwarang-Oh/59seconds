@@ -1,6 +1,6 @@
 'use client';
-import { useState } from 'react';
 import ToggleIcon from '@/components/icon/ToggleIcon';
+import { useState } from 'react';
 
 export default function HeaderInfo() {
   const [toggle, setToggle] = useState(false);

@@ -33,21 +33,12 @@ export default function CountdownTimer({ eventTime }: Readonly<CountdownTimerPro
     <div className='flex flex-col items-center justify-center'>
       <CountdownCircleTimer
         isPlaying
-        duration={remainingTimeInSeconds > 86400 ? remainingTimeInSeconds : 86400} // 전체 남은 시간 또는 24시간
-        initialRemainingTime={remainingTimeInSeconds} // 남은 시간에 따라 진행
-        size={240} // 타이머의 크기를 픽셀 단위로 설정
-        strokeWidth={10} // 타이머 원의 두께 설정
-        colors={[
-          '#474972', // 기본 색상 (회색)
-          '#4CAF50', // 10분 이하 (초록색)
-          '#FFBB28', // 5분 이하 (주황색)
-          '#FF0000', // 1분 이하 (빨간색)
-        ]}
-        colorsTime={[
-          600, // 남은 시간 10분 이하일 때 초록색
-          300, // 남은 시간 5분 이하일 때 주황색
-          60, // 남은 시간 1분 이하일 때 빨간색
-        ]}
+        duration={remainingTimeInSeconds > 86400 ? remainingTimeInSeconds : 86400}
+        initialRemainingTime={remainingTimeInSeconds}
+        size={240}
+        strokeWidth={10}
+        colors={['#474972', '#4CAF50', '#FFBB28', '#FF0000']}
+        colorsTime={[600, 300, 60]}
         trailColor='#e0e0e0'
         onComplete={() => {
           return { shouldRepeat: false };

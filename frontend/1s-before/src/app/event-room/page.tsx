@@ -1,7 +1,7 @@
 'use client';
 import EventDummy from '@/mocks/EventDummy.json';
 import BannerHeader from '@/components/eventRoom/BannerHeader';
-import EventStatus from '@/components/eventRoom/EventStatus';
+import EventStatusArea from '@/components/eventRoom/EventStatusArea';
 import { useEffect, useState } from 'react';
 import { EventRoomInfo } from '@/types/eventRoom';
 import { useSearchParams } from 'next/navigation';
@@ -40,7 +40,7 @@ export default function EventRoom() {
           <div className='text-xl font-normal' style={{ color: '#1C1C1E', lineHeight: '33px' }}>
             [Event : {eventInfo.id}] <span className='font-bold'>{eventInfo.title}</span>
           </div>
-          <EventStatus participants={0} competitionRate={0} eventTime={eventInfo?.eventTime} />
+          <EventStatusArea participants={0} competitionRate={0} eventTime={eventInfo?.eventTime} />
         </div>
       )}
     </div>
