@@ -37,8 +37,12 @@ public class EventRoom {
     @Column(nullable = false)
     private EventStatus status;
 
+    @Column(name = "start_time", columnDefinition = "DATETIME")
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime startTime;
 
+    @Column(name = "end_time", columnDefinition = "DATETIME")
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime endTime;
 
     @Column(nullable = false)
