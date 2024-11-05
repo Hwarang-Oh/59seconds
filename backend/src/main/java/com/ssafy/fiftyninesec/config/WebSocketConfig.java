@@ -19,8 +19,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         // 클라이언트에게 메시지를 전달할 때 사용하는 경로 설정
-        config.enableSimpleBroker("/result/sub");
+        config.enableSimpleBroker("/result/sub", "/chat/sub");
         // 클라이언트가 메시지를 보낼 때 사용하는 경로의 접두사 설정
-        config.setApplicationDestinationPrefixes("/result/pub");
+        config.setApplicationDestinationPrefixes("/result/pub", "/chat");
     }
 }
