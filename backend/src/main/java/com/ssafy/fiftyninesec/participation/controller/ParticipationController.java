@@ -20,10 +20,10 @@ public class ParticipationController {
 
     // 참여자 목록 조회 API
     @GetMapping("/{roomId}/result")
-    public List<ParticipationResponseDto> getParticipationsByRoomId(@PathVariable Long roomId) {
-        return participationService.getParticipationsByRoomId(roomId);
+    public ResponseEntity<List<ParticipationResponseDto>> getParticipationsByRoomId(@PathVariable Long roomId) {
+        List<ParticipationResponseDto> participations = participationService.getParticipationsByRoomId(roomId);
+        return ResponseEntity.ok(participations);
     }
-
     // 새로운 참여자 생성 API
     @PostMapping
     public ResponseEntity<ParticipationResponseDto> createParticipation(@Valid @RequestBody ParticipationRequestDto request) {

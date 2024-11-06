@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoomDto {
-    private Long roomId;
+    private Long eventId;
     private Long userCount;
 }
