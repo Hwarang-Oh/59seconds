@@ -27,6 +27,7 @@ public class ParticipationController {
     // 새로운 참여자 생성 API
     @PostMapping
     public ResponseEntity<ParticipationResponseDto> createParticipation(@Valid @RequestBody ParticipationRequestDto request) {
-        return ResponseEntity.ok(participationService.saveParticipation(request.getRoomId(), request.getMemberId()));
+        ParticipationResponseDto responseDto = participationService.saveParticipation(request.getRoomId(), request.getMemberId());
+        return ResponseEntity.ok(responseDto);
     }
 }
