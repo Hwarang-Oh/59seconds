@@ -1,12 +1,16 @@
 package com.ssafy.fiftyninesec.chat.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChatMessageDto {
     private Long roomId;         // 채팅방 ID
     private String sender;         // 메시지 전송자
