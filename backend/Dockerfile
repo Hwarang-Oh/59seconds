@@ -16,6 +16,9 @@ RUN mkdir -p /app/config
 # Copy the jar file
 COPY build/libs/dreamsolution-0.0.1-SNAPSHOT.jar contents.jar
 
+# Copy the application-secret.yml file
+COPY build/config/application-secret.yml /app/config/application-secret.yml
+
 # Set timezone
 ENV TZ Asia/Seoul
 

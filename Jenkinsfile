@@ -107,8 +107,8 @@ pipeline {
                                 dir('backend') {
                                     withCredentials([file(credentialsId: 'application-secret', variable: 'SECRET_FILE')]) {
                                         sh '''
-                                            mkdir -p src/main/resources
-                                            cp $SECRET_FILE src/main/resources/application-secret.yml
+                                            mkdir -p build/config
+                                            cp $SECRET_FILE build/config/application-secret.yml
                                         '''
                                     }
                                     sh 'chmod +x ./gradlew'
