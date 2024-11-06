@@ -213,7 +213,7 @@ public class EventService {
                 .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         Member member = memberRepository.findById(requestDto.getMemberId())
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
         Winner winner = Winner.builder()
                 .room(room)

@@ -1,4 +1,4 @@
-package com.ssafy.fiftyninesec.config;
+package com.ssafy.fiftyninesec.global.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
