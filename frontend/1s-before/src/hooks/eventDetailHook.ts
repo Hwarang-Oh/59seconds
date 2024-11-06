@@ -9,11 +9,7 @@ export function useEventDetail(id: number, participationCode: string) {
   const setIsCodeValid = useEventStore((state) => state.setCodeValid);
 
   const openWindow = () => {
-    window.open(
-      `/event-room?eventId=${id}`,
-      '_blank',
-      'width=1280,height=700,noopener,noreferrer'
-    );
+    window.open(`/event-room/${id}`, '_blank', 'width=1280,height=700,noopener,noreferrer');
   };
 
   const handleCodeSubmit = () => {
