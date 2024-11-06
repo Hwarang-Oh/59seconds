@@ -8,6 +8,7 @@ import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
 
@@ -55,19 +57,19 @@ public class ParticipationService {
     public ParticipationResponseDto saveParticipation(Long roomId, Long memberId) {
         // 1. 이벤트룸 조회
         EventRoom room = eventRoomRepository.findById(roomId)
-                .orElseThrow(() -> new IllegalArgumentException("Room not found with id: " + roomId));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found with id: " + roomId));
 
         // 2. 이벤트 시작 시간 체크
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = room.getStartTime();
 
         if (now.isBefore(startTime)) {
-            throw new IllegalStateException("이벤트가 아직 시작되지 않았습니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이벤트가 아직 시작되지 않았습니다.");
         }
 
         // 3. 이미 참여했는지 체크
         if (participationRepository.existsByRoomIdAndMemberId(roomId, memberId)) {
-            throw new IllegalStateException("이미 참여한 이벤트입니다.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 참여한 이벤트입니다.");
         }
 
         // 4. 현재 참여자 수 확인
