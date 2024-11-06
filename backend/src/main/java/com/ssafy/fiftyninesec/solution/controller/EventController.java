@@ -1,6 +1,8 @@
 package com.ssafy.fiftyninesec.solution.controller;
 
 import com.ssafy.fiftyninesec.solution.dto.*;
+import com.ssafy.fiftyninesec.solution.dto.request.EventRoomRequestDto;
+import com.ssafy.fiftyninesec.solution.dto.response.EventRoomResponseDto;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.service.EventService;
 import jakarta.validation.Valid;
@@ -63,6 +65,12 @@ public class EventController {
             @PathVariable Long roomId, @Valid @RequestBody WinnerRequestDto requestDto){
         eventService.saveWinner(roomId, requestDto);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping ("/{roomId}")
+    public ResponseEntity<EventRoomResponseDto> getEventRoomInfo(@PathVariable Long roomId) {
+        EventRoomResponseDto eventRoomResponseDto = eventService.getEventRoomInfo(roomId);
+        return ResponseEntity.ok(eventRoomResponseDto);
     }
 
     // TEST -----------------------------------------------------------------------------------------
