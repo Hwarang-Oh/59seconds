@@ -9,6 +9,11 @@ import com.ssafy.fiftyninesec.solution.entity.Member;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.Criteria;
+import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +26,7 @@ public class SearchService {
 
     private final EventRoomSearchRepository eventRoomSearchRepository; // Elasticsearch 레포지토리
     private final EventRoomRepository eventRoomRepository; // JPA 레포지토리
+    private final ElasticsearchOperations elasticsearchOperations;
 
     // 애플리케이션 시작 시 데이터 동기화
     @PostConstruct
@@ -32,8 +38,9 @@ public class SearchService {
         List<EventRoomSearch> esRooms = mysqlRooms.stream()
                 .map(this::convertToES)
                 .collect(Collectors.toList());
-        eventRoomSearchRepository.saveAll(esRooms);
 
+        esRooms.forEach(room -> room.setTitleCompletion(room.getTitle())); // titleCompletion 설정
+        eventRoomSearchRepository.saveAll(esRooms);
     }
 
     private EventRoomSearch convertToES(EventRoom mysqlRoom) {
@@ -80,5 +87,16 @@ public class SearchService {
         dto.setSquareImage(eventRoomSearch.getSquareImage());
         dto.setRectangleImage(eventRoomSearch.getRectangleImage());
         return dto;
+    }
+
+    public List<String> autocomplete(String keyword) {
+        Criteria criteria = Criteria.where("title").contains(keyword);
+        CriteriaQuery searchQuery = new CriteriaQuery(criteria, PageRequest.of(0, 10));
+
+        SearchHits<EventRoomSearch> searchHits = elasticsearchOperations.search(searchQuery, EventRoomSearch.class);
+
+        return searchHits.stream()
+                .map(hit -> hit.getContent().getTitle())  // title 필드만 반환
+                .collect(Collectors.toList());
     }
 }

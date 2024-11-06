@@ -10,8 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class ParticipationResponseDto {
-    private Long participationId;
-    private Long roomId;
+    private Long eventId;
     private Long memberId;
     private LocalDateTime joinedAt;
     private Integer ranking;

@@ -7,23 +7,23 @@ import lombok.Builder;
 @Getter
 @Builder
 public class MemberResponseDto {
-    private Long id;
     private String participateName;
     private String creatorName;
     private String address;
     private String phone;
     private String profileImage;
     private String creatorIntroduce;
+    private String snsLink;
 
     public static MemberResponseDto of(Member member) {
         return MemberResponseDto.builder()
-                .id(member.getId())
                 .participateName(member.getParticipateName())
                 .creatorName(member.getCreatorName())
                 .address(member.getAddress())
                 .phone(member.getPhone())
                 .profileImage(member.getProfileImage())
                 .creatorIntroduce(member.getCreatorIntroduce())
+                .snsLink(member.getSnsLink())
                 .build();
     }
 }
