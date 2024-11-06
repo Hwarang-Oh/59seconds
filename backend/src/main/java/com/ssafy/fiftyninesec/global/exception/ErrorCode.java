@@ -21,7 +21,9 @@ public enum ErrorCode {
     REDIS_CANNOT_SAVE(HttpStatus.INTERNAL_SERVER_ERROR, "레디스에 저장할 수 없습니다."),
 
     KAKAOSUB_NOT_FOUND(HttpStatus.NOT_FOUND, "kakaoSub가 없습니다."),
-    TOKEN_CANNOT_CREATE(HttpStatus.BAD_REQUEST, "토큰을 만들 수 없습니다.")
+    TOKEN_CANNOT_CREATE(HttpStatus.BAD_REQUEST, "토큰을 만들 수 없습니다."),
+
+    PARTICIPATIONS_NOT_FOUND(HttpStatus.NOT_FOUND, "Participations가 없습니다.")
     ;
 
     private final HttpStatus httpStatus;
