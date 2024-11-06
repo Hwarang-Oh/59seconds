@@ -121,7 +121,17 @@ pipeline {
                                         sh """
                                             ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
                                             sudo mkdir -p /home/ubuntu/config && \
-                                            sudo chown -R ubuntu:ubuntu /home/ubuntu/config'
+                                            sudo chown -R ubuntu:ubuntu /home/ubuntu/config && \
+                                            docker network inspect my-network >/dev/null 2>&1 || docker network create my-network && \
+                                            docker inspect mysql_container >/dev/null 2>&1 || (
+                                                docker run -d --name mysql_container \
+                                                -e MYSQL_ROOT_PASSWORD=root \
+                                                -e MYSQL_DATABASE=dreamsolution \
+                                                -e MYSQL_USER=solution \
+                                                -e MYSQL_PASSWORD=onesecondbefore \
+                                                --network my-network \
+                                                mysql:8.0
+                                            )'
                                             
                                             scp -o StrictHostKeyChecking=no \$SECRET_FILE ubuntu@${USER_SERVER_IP}:/home/ubuntu/config/application-secret.yml
                                             
