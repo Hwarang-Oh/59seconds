@@ -119,13 +119,27 @@ pipeline {
                                         file(credentialsId: 'application-secret', variable: 'SECRET_FILE')
                                     ]) {
                                         sh """
+                                            ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
+                                            sudo mkdir -p /home/ubuntu/config && \
+                                            sudo chown -R ubuntu:ubuntu /home/ubuntu/config && \
+                                            docker network inspect my-network >/dev/null 2>&1 || docker network create my-network && \
+                                            docker inspect mysql_container >/dev/null 2>&1 || (
+                                                docker run -d --name mysql_container \
+                                                -e MYSQL_ROOT_PASSWORD=root \
+                                                -e MYSQL_DATABASE=dreamsolution \
+                                                -e MYSQL_USER=solution \
+                                                -e MYSQL_PASSWORD=onesecondbefore \
+                                                --network my-network \
+                                                mysql:8.0
+                                            )'
+                                            
                                             scp -o StrictHostKeyChecking=no \$SECRET_FILE ubuntu@${USER_SERVER_IP}:/home/ubuntu/config/application-secret.yml
+                                            
                                             ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
                                             docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
                                             docker pull ${BACKEND_DOCKERHUB_REPO}:latest && \
                                             docker stop backend || true && \
                                             docker rm backend || true && \
-                                            mkdir -p /home/ubuntu/config && \
                                             docker run -d --name backend \
                                                 -p 9090:9090 \
                                                 -v /home/ubuntu/config/application-secret.yml:/app/config/application-secret.yml \
