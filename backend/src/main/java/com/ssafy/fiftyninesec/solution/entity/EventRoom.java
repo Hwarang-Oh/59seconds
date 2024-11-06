@@ -34,7 +34,7 @@ public class EventRoom {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column
     private EventStatus status;
 
     @Column(name = "start_time", columnDefinition = "DATETIME")
@@ -50,7 +50,8 @@ public class EventRoom {
 
     private String enterCode;
 
-    private Integer unlockCount;
+    @Column(nullable = false)
+    private Integer unlockCount = 0;
 
     private String bannerImage;
 

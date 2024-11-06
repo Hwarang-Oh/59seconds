@@ -1,5 +1,6 @@
 package com.ssafy.fiftyninesec.solution.dto;
 
+import com.ssafy.fiftyninesec.solution.entity.Prize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,4 +17,14 @@ public class PrizeDto {
     private Integer winnerCount;
     private String prizeName;
     private Integer ranking;
+
+    public PrizeDto PrizeDto(Prize prize) {
+        return PrizeDto.builder()
+                .prizeId(prize.getPrizeId())
+                .prizeType(prize.getPrizeType())
+                .winnerCount(prize.getWinnerCount() == null ? 0 : prize.getWinnerCount())
+                .prizeName(prize.getPrizeName())
+                .ranking(prize.getRanking())
+                .build();
+    }
 }

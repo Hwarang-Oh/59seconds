@@ -14,6 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventRoomRequestDto {
+
+    private Long roomId; // NOTE: update에만 사용됨
+    private Long memberId; // TODO: 임시 변수 
     private EventDetails eventInfo;
     private List<ProductOrCoupon> productsOrCoupons;
     private EventPeriod eventPeriod;
