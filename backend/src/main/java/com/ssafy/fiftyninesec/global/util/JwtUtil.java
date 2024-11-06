@@ -88,7 +88,7 @@ public class JwtUtil {
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setSecure(true);
         accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(10 * 60); // 쿠키 만료 시간 10분 (액세스 토큰 만료 시간과 동일)
+        accessTokenCookie.setMaxAge(60 * 60); // 쿠키 만료 시간 60분 (액세스 토큰 만료 시간과 동일)
         response.addCookie(accessTokenCookie);
     }
 

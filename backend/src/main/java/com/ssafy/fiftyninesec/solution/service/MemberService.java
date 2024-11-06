@@ -1,5 +1,7 @@
 package com.ssafy.fiftyninesec.solution.service;
 
+import com.ssafy.fiftyninesec.global.exception.CustomException;
+import com.ssafy.fiftyninesec.global.exception.ErrorCode;
 import com.ssafy.fiftyninesec.solution.dto.MemberResponseDto;
 import com.ssafy.fiftyninesec.solution.entity.Member;
 import com.ssafy.fiftyninesec.solution.repository.MemberRepository;
@@ -54,6 +56,7 @@ public class MemberService {
         int randomId = random.nextInt(randomNicknameSize);
 
         return randomNicknameRepository.findById((long) randomId)
-                .orElseThrow().getNickname();
+                .orElseThrow(() -> new CustomException(ErrorCode.CANNOT_MAKE_RANDOM_NICKNAME))
+                .getNickname();
     }
 }
