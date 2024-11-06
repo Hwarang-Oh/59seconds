@@ -27,7 +27,7 @@ public class OAuthController {
 
         String kakaoSub = jwtUtil.getSubFromIdToken(idToken);
 
-        Member member = memberRepository.findByKakaoSub(kakaoSub).orElseThrow();
+        Member member = memberRepository.findByKakaoSub(kakaoSub);
         oAuthService.loginOrRegister(member, kakaoSub, response);
         return ResponseEntity.ok().build();
     }

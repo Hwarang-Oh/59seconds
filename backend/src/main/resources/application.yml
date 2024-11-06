@@ -26,7 +26,6 @@ spring:
     init:
       mode: always
       encoding: UTF-8
-
   data:
     mongodb:
       uri: "mongodb://localhost:27017/search" # MongoDB 설정
@@ -34,6 +33,9 @@ spring:
       client:
         rest:
           uris: "http://localhost:9200" # Elasticsearch 설정
+  redis:
+    host: ${redis.host}
+    port: ${redis.port}
 
   doc:
     api-docs:
