@@ -1,20 +1,17 @@
 package com.ssafy.fiftyninesec.participation.service;
 
 import com.ssafy.fiftyninesec.global.exception.CustomException;
-import com.ssafy.fiftyninesec.global.exception.ErrorCode;
 import com.ssafy.fiftyninesec.participation.dto.ParticipationResponseDto;
 import com.ssafy.fiftyninesec.participation.entity.Participation;
 import com.ssafy.fiftyninesec.participation.repository.ParticipationRepository;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
-import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,8 +42,7 @@ public class ParticipationService {
     // 엔티티를 DTO로 변환하는 메서드
     private ParticipationResponseDto convertToDto(Participation participation) {
         return ParticipationResponseDto.builder()
-                .participationId(participation.getParticipationId())
-                .roomId(participation.getRoomId())
+                .eventId(participation.getRoomId())
                 .memberId(participation.getMemberId())
                 .joinedAt(participation.getJoinedAt())
                 .ranking(participation.getRanking())
