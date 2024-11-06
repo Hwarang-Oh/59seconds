@@ -32,4 +32,9 @@ public class SearchController {
         return ResponseEntity.ok(responseDtos); // 검색 결과 반환
     }
 
+    @GetMapping("/autocomplete")
+    public ResponseEntity<List<String>> autocomplete(@RequestParam String keyword) {
+        List<String> suggestions = searchService.autocomplete(keyword);
+        return suggestions.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(suggestions);
+    }
 }
