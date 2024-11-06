@@ -30,14 +30,16 @@ public class ChatController {
     }
 
     // 채팅방 입장
-    @SubscribeMapping("/room/{roomId}")
+    @MessageMapping("/room/{roomId}/enter")
     public void enterChatRoom(@DestinationVariable Long roomId) {
+        System.out.println("Controller: Entering room with ID " + roomId);
         chatService.enterChatRoom(roomId);
     }
 
     // 채팅방 퇴장
     @MessageMapping("/room/{roomId}/leave")
     public void leaveChatRoom(@DestinationVariable Long roomId) {
+        System.out.println("Controller: Leaving room with ID " + roomId);
         chatService.leaveChatRoom(roomId);
     }
 }
