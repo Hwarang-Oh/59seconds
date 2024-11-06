@@ -1,9 +1,6 @@
 package com.ssafy.fiftyninesec.solution.controller;
 
-import com.ssafy.fiftyninesec.solution.dto.EventRoomRequestDto;
-import com.ssafy.fiftyninesec.solution.dto.RoomUnlockRequest;
-import com.ssafy.fiftyninesec.solution.dto.RoomUnlockResponse;
-import com.ssafy.fiftyninesec.solution.dto.WinnerResponseDto;
+import com.ssafy.fiftyninesec.solution.dto.*;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.service.EventService;
 import jakarta.validation.Valid;
@@ -59,6 +56,13 @@ public class EventController {
     public ResponseEntity<List<EventRoom>> getDeadlineRooms(@RequestParam(defaultValue = "6") int size) {
         List<EventRoom> popularRooms = eventService.getDeadlineEvents(size);
         return ResponseEntity.ok(popularRooms);
+    }
+
+    @PostMapping("/{roomId}/userinfo")
+    public ResponseEntity<Void> saveWinner(
+            @PathVariable Long roomId, @Valid @RequestBody WinnerRequestDto requestDto){
+        eventService.saveWinner(roomId, requestDto);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/my-latest-banner")

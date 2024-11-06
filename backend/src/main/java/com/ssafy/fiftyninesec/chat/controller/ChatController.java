@@ -5,7 +5,6 @@ import com.ssafy.fiftyninesec.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
@@ -17,27 +16,27 @@ public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatService chatService;
 
-    @MessageMapping("/sendMessage/{roomId}")
-    public void sendMessage(@Payload ChatMessageDto chatMessage, @DestinationVariable String roomId) {
+    @MessageMapping("/sendMessage/{eventId}")
+    public void sendMessage(@Payload ChatMessageDto chatMessage, @DestinationVariable Long eventId) {
         ChatMessageDto updatedMessage = ChatMessageDto.builder()
-                .roomId(chatMessage.getRoomId())
+                .eventId(chatMessage.getEventId())
                 .sender(chatMessage.getSender())
                 .content(chatMessage.getContent())
                 .sentAt(LocalDateTime.now())
                 .build();
 
-        messagingTemplate.convertAndSend("/chat/sub/room/" + roomId, updatedMessage);
+        messagingTemplate.convertAndSend("/chat/sub/room/" + eventId, updatedMessage);
     }
 
     // 채팅방 입장
-    @SubscribeMapping("/room/{roomId}")
-    public void enterChatRoom(@DestinationVariable String roomId) {
-        chatService.enterChatRoom(roomId);
+    @MessageMapping("/room/{eventId}/enter")
+    public void enterChatRoom(@DestinationVariable Long eventId) {
+        chatService.enterChatRoom(eventId);
     }
 
     // 채팅방 퇴장
     @MessageMapping("/room/{roomId}/leave")
-    public void leaveChatRoom(@DestinationVariable String roomId) {
+    public void leaveChatRoom(@DestinationVariable Long roomId) {
         chatService.leaveChatRoom(roomId);
     }
 }

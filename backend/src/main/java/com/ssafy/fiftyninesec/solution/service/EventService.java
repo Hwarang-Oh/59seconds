@@ -4,12 +4,11 @@ import com.ssafy.fiftyninesec.global.exception.CustomException;
 import com.ssafy.fiftyninesec.global.util.MinioUtil;
 import com.ssafy.fiftyninesec.solution.dto.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.RoomUnlockResponse;
+import com.ssafy.fiftyninesec.solution.dto.WinnerRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.WinnerResponseDto;
-import com.ssafy.fiftyninesec.solution.entity.EventRoom;
-import com.ssafy.fiftyninesec.solution.entity.EventStatus;
-import com.ssafy.fiftyninesec.solution.entity.Prize;
-import com.ssafy.fiftyninesec.solution.entity.Winner;
+import com.ssafy.fiftyninesec.solution.entity.*;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
+import com.ssafy.fiftyninesec.solution.repository.MemberRepository;
 import com.ssafy.fiftyninesec.solution.repository.PrizeRepository;
 import com.ssafy.fiftyninesec.solution.repository.WinnerRepository;
 import org.springframework.data.domain.Page;
@@ -36,6 +35,7 @@ public class EventService {
     private final EventRoomRepository eventRoomRepository;
     private final PrizeRepository prizeRepository;
     private final WinnerRepository winnerRepository;
+    private final MemberRepository memberRepository;
 
     private final MinioUtil minioUtil;
 
@@ -159,24 +159,68 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public Page<EventRoom> getPopularEvents(int page, int size) {
+        try {
+            log.info("Getting popular events for page: {}, size: {}", page, size);
+            // 페이지네이션 제한
+            long totalEvents = eventRoomRepository.count();
+            if (page > (totalEvents / size) + 1) {
+                log.warn("Invalid page number requested: page {}, total events {}", page, totalEvents);
+                throw new CustomException(INVALID_REQUEST);
+            }
 
-        // 페이지네이션 제한
-        long totalEvents = eventRoomRepository.count();
-        if (page > (totalEvents / size) + 1) {
-            throw new CustomException(INVALID_REQUEST);
+            return eventRoomRepository.findAllByOrderByUnlockCountDesc(PageRequest.of(page, size));
+
+        } catch (Exception e) {
+            log.error("Exception while getting popular events: {}", e.getMessage());
+            throw e;
         }
-
-        return eventRoomRepository.findAllByOrderByUnlockCountDesc(PageRequest.of(page, size));
     }
 
     @Transactional(readOnly = true)
     public List<EventRoom> getDeadlineEvents(int size) {
+        try {
+            log.info("Getting deadline events with size: {}", size);
 
-        // 한국 시간(KST)으로 현재 시간으로부터 24시간 후의 시간 계산
-        ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
-        LocalDateTime endDateTime = LocalDateTime.now(koreaZoneId).plusHours(24);
+            // 한국 시간(KST)으로 현재 시간으로부터 24시간 후의 시간 계산
+            ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
+            LocalDateTime endDateTime = LocalDateTime.now(koreaZoneId).plusHours(24);
 
-        return eventRoomRepository.findDeadlineEventsByUpcoming(endDateTime, PageRequest.of(0, size));
+            List<EventRoom> events = eventRoomRepository.findDeadlineEventsByUpcoming(
+                    endDateTime,
+                    PageRequest.of(0, size)
+            );
+
+            if (events.isEmpty()) {
+                throw new CustomException(NO_DEADLINE_EVENTS_FOUND);
+            }
+
+            log.info("Found {} deadline events", events.size());
+            return events;
+
+        } catch (Exception e) {
+            log.error("Unexpected error while getting deadline events: ", e);
+            throw new CustomException(EVENT_NOT_FOUND);
+        }
+    }
+
+    @Transactional
+    public void saveWinner(Long roomId, WinnerRequestDto requestDto) {
+        EventRoom room = eventRoomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
+        Member member = memberRepository.findById(requestDto.getMemberId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        Winner winner = Winner.builder()
+                .room(room)
+                .member(member)
+                .winnerName(requestDto.getWinnerName())
+                .address(requestDto.getAddress())
+                .phone(requestDto.getPhone())
+                .ranking(requestDto.getRanking())
+                .build();
+
+        winnerRepository.save(winner);
     }
 
     public String getLatestBanner(Long memberId) {

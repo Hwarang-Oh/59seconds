@@ -6,22 +6,25 @@ server:
 spring:
   profiles:
     active: local # 기본 프로파일 설정
-
+  config:
+    import: application-secret.yml
   datasource:
-    url: jdbc:mysql://localhost:3306/dreamsolution?serverTimezone=UTC
-    username: ${MYSQL_USER}
-    password: ${MYSQL_PASSWORD}
+    url: jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}?useUnicode=true&serverTimezone=Asia/Seoul
+    username: ${mysql.username}
+    password: ${mysql.password}
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    defer-datasource-initialization: true  # DDL 이후 data.sql 실행
     properties:
       hibernate:
-        format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
         jdbc:
           time_zone: Asia/Seoul
-
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
   data:
     mongodb:
       uri: "mongodb://localhost:27017/search" # MongoDB 설정
@@ -29,6 +32,9 @@ spring:
       client:
         rest:
           uris: "http://localhost:9200" # Elasticsearch 설정
+  redis:
+    host: ${redis.host}
+    port: ${redis.port}
 
   doc:
     api-docs:

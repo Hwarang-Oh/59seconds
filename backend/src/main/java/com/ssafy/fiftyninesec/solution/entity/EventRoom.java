@@ -23,7 +23,7 @@ public class EventRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
