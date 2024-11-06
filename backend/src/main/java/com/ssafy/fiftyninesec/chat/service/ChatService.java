@@ -11,27 +11,27 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class ChatService {
     private final SimpMessagingTemplate messagingTemplate;
-    private final ConcurrentHashMap<String, Integer> roomUserCount = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, Long> roomUserCount = new ConcurrentHashMap<>();
 
-    public void enterChatRoom(String roomId) {
-        int userCount = roomUserCount.computeIfPresent(roomId, (key, value) -> value + 1);
+    public void enterChatRoom(Long roomId) {
+        Long userCount = roomUserCount.computeIfPresent(roomId, (key, value) -> value + 1);
         if (userCount == 0) {
-            roomUserCount.put(roomId, 1);
-            userCount = 1;
+            roomUserCount.put(roomId, 1L);
+            userCount = 1L;
         }
         sendUserCountUpdate(roomId, userCount);
     }
 
-    public void leaveChatRoom(String roomId) {
-        int userCount = roomUserCount.computeIfPresent(roomId, (key, value) -> value - 1);
+    public void leaveChatRoom(Long roomId) {
+        Long userCount = roomUserCount.computeIfPresent(roomId, (key, value) -> value - 1);
         if (userCount <= 0) {
             roomUserCount.remove(roomId);
-            userCount = 0;
+            userCount = 0L;
         }
         sendUserCountUpdate(roomId, userCount);
     }
 
-    private void sendUserCountUpdate(String roomId, int userCount) {
+    private void sendUserCountUpdate(Long roomId, Long userCount) {
         ChatRoomDto roomInfo = ChatRoomDto.builder()
                 .roomId(roomId)
                 .userCount(userCount)

@@ -18,7 +18,7 @@ public class ChatController {
     private final ChatService chatService;
 
     @MessageMapping("/sendMessage/{roomId}")
-    public void sendMessage(@Payload ChatMessageDto chatMessage, @DestinationVariable String roomId) {
+    public void sendMessage(@Payload ChatMessageDto chatMessage, @DestinationVariable Long roomId) {
         ChatMessageDto updatedMessage = ChatMessageDto.builder()
                 .roomId(chatMessage.getRoomId())
                 .sender(chatMessage.getSender())
@@ -31,13 +31,13 @@ public class ChatController {
 
     // 채팅방 입장
     @SubscribeMapping("/room/{roomId}")
-    public void enterChatRoom(@DestinationVariable String roomId) {
+    public void enterChatRoom(@DestinationVariable Long roomId) {
         chatService.enterChatRoom(roomId);
     }
 
     // 채팅방 퇴장
     @MessageMapping("/room/{roomId}/leave")
-    public void leaveChatRoom(@DestinationVariable String roomId) {
+    public void leaveChatRoom(@DestinationVariable Long roomId) {
         chatService.leaveChatRoom(roomId);
     }
 }
