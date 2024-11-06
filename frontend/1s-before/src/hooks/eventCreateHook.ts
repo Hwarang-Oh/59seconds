@@ -99,7 +99,7 @@ export function useEventCreate() {
     }));
   };
 
-  const handleRemoveProductOrCoupon = (id) => {
+  const handleRemoveProductOrCoupon = (id: string) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       productsOrCoupons: prevFormData.productsOrCoupons.filter(
