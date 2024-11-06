@@ -57,15 +57,15 @@ pipeline {
                                             def localDigest = sh(
                                                 script: """
                                                 docker build -t ${FRONTEND_DOCKERHUB_REPO}:latest -f Dockerfile .
-                                                docker inspect --format='{{index .RepoDigests 0}}' ${FRONTEND_DOCKERHUB_REPO}:latest
+                                                docker inspect --format='{{index .RepoDigests 0}}' ${FRONTEND_DOCKERHUB_REPO}:latest || echo 'no_local_digest'
                                                 """,
                                                 returnStdout: true
                                             ).trim()
-                                            
-                                            if (remoteDigest != localDigest) {
+
+                                            if (remoteDigest != localDigest && localDigest != 'no_local_digest') {
                                                 sh "docker push ${FRONTEND_DOCKERHUB_REPO}:latest"
                                             } else {
-                                                echo "Frontend image is up to date. Skipping push."
+                                                echo "Frontend image is up to date or local digest not found. Skipping push."
                                             }
                                         }
                                     }
@@ -129,15 +129,15 @@ pipeline {
                                             def localDigest = sh(
                                                 script: """
                                                 docker build -t ${BACKEND_DOCKERHUB_REPO}:latest -f Dockerfile .
-                                                docker inspect --format='{{index .RepoDigests 0}}' ${BACKEND_DOCKERHUB_REPO}:latest
+                                                docker inspect --format='{{index .RepoDigests 0}}' ${BACKEND_DOCKERHUB_REPO}:latest || echo 'no_local_digest'
                                                 """,
                                                 returnStdout: true
                                             ).trim()
 
-                                            if (remoteDigest != localDigest) {
+                                            if (remoteDigest != localDigest && localDigest != 'no_local_digest') {
                                                 sh "docker push ${BACKEND_DOCKERHUB_REPO}:latest"
                                             } else {
-                                                echo "Backend image is up to date. Skipping push."
+                                                echo "Backend image is up to date or local digest not found. Skipping push."
                                             }
                                         }
                                     }
