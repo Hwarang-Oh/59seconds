@@ -8,6 +8,7 @@ import EventRoomPart from '@/components/eventDetail/EventRoomPart';
 import Header from '@/components/common/Header';
 import eventData from '@/mocks/event.json';
 import CreatorData from '@/mocks/creatorData.json';
+import { FaRegSadTear } from 'react-icons/fa';
 
 export default function EventDetail() {
   const params = useParams();
@@ -16,7 +17,12 @@ export default function EventDetail() {
 
   const event = eventData.event.find((e) => e.id === Number(id));
   if (!event) {
-    return <p>이벤트를 찾을 수 없습니다.</p>;
+    return (
+      <p className="flex flex-col justify-center items-center h-screen text-mainColor1">
+        <FaRegSadTear className="mb-3" size={30} />
+        이벤트를 찾을 수 없습니다.
+      </p>
+    );
   }
 
   const creator = CreatorData.user.find((u) => u.id === Number(id));
@@ -46,7 +52,7 @@ export default function EventDetail() {
   return (
     <>
       <Header />
-      <div className="max-w-screen-xl my-10 ml-10">
+      <div className="m-10">
         <div className="grid grid-cols-4 gap-8">
           {/* 입력 폼: 2/3 */}
           <div className="col-span-3 border border-inherit p-10 rounded-lg shadow-lg">

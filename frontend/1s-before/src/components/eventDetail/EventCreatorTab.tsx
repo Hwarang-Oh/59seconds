@@ -1,5 +1,5 @@
 import { CreatorData } from '@/types/eventDetail';
-import { FaInstagram, FaYoutube, FaTrophy, FaStar } from 'react-icons/fa';
+import { FaTrophy, FaStar, FaLink } from 'react-icons/fa';
 
 interface EventCreatorTabProps {
   creator: CreatorData;
@@ -55,7 +55,7 @@ export default function EventCreatorTab({
         {/* SNS 섹션 */}
         <div>
           <h4 className="flex items-center text-md font-semibold mb-1">
-            <FaInstagram className="text-pink-500 mr-2" />
+            <FaLink className="text-yellow-500 mr-2" />
             SNS
           </h4>
           <p className="ml-6">
