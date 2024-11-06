@@ -55,7 +55,10 @@ pipeline {
                                                 returnStdout: true
                                             ).trim()
                                             def localDigest = sh(
-                                                script: "docker build -t ${FRONTEND_DOCKERHUB_REPO}:latest . && docker inspect --format='{{index .RepoDigests 0}}' ${FRONTEND_DOCKERHUB_REPO}:latest",
+                                                script: """
+                                                docker build -t ${FRONTEND_DOCKERHUB_REPO}:latest -f frontend/1s-before/Dockerfile frontend/1s-before
+                                                docker inspect --format='{{index .RepoDigests 0}}' ${FRONTEND_DOCKERHUB_REPO}:latest
+                                                """,
                                                 returnStdout: true
                                             ).trim()
                                             
@@ -125,18 +128,9 @@ pipeline {
                                             ).trim()
                                             def localDigest = sh(
                                                 script: """
-    docker build -t ${BACKEND_DOCKERHUB_REPO}:latest -f- . <<EOF
-    FROM openjdk:17-jdk-slim
-    WORKDIR /app
-    COPY build/libs/dreamsolution-0.0.1-SNAPSHOT.jar contents.jar
-    COPY src/main/resources/application-secret.yml /app/config/application-secret.yml
-    ENV TZ=Asia/Seoul
-    EXPOSE 9090
-    ENTRYPOINT ["java", "-jar", "/app/contents.jar", \
-                "--spring.config.location=classpath:/application.yml,file:/app/config/application-secret.yml", \
-                "--spring.profiles.active=prod"]
-    EOF
-""",
+                                                docker build -t ${BACKEND_DOCKERHUB_REPO}:latest -f backend/Dockerfile backend
+                                                docker inspect --format='{{index .RepoDigests 0}}' ${BACKEND_DOCKERHUB_REPO}:latest
+                                                """,
                                                 returnStdout: true
                                             ).trim()
 
