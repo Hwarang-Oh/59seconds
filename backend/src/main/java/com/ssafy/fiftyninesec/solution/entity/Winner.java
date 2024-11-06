@@ -1,12 +1,13 @@
 package com.ssafy.fiftyninesec.solution.entity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "winner")
 @Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Winner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
