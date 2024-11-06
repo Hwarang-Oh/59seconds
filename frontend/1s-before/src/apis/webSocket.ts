@@ -76,7 +76,7 @@ const addEventRoomMessageSubscription = ({
   const eventRoomMessageKey = `eventRoomMessage-${eventId}`;
   if (!subscriptionMap.has(eventRoomMessageKey) && stompClient?.connected) {
     const eventRoomMessageSubscription = stompClient.subscribe(
-      `/chat/sub/${eventId}`,
+      `/chat/sub/room/${eventId}`,
       (message) => {
         console.log('Received Message : ', message.body);
         onMessageReceived(JSON.parse(message.body));
@@ -89,7 +89,7 @@ const addEventRoomMessageSubscription = ({
 const sendEventRoomMessage = (eventId: number, message: EventRoomMessageInfo) => {
   if (stompClient?.connected) {
     stompClient.publish({
-      destination: `/chat/pub/${eventId}`,
+      destination: `/chat/pub/sendMessage/${eventId}`,
       body: JSON.stringify(message),
     });
     console.log('Sent Messsage : ', message);
