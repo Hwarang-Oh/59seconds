@@ -66,9 +66,6 @@ public class MemberService {
 
     @Transactional
     public void updateField(Long memberId, String fieldName, String fieldValue) {
-        log.info("321");
-        System.out.println(memberId);
-        log.info(Long.toString(memberId));
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
