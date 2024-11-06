@@ -24,3 +24,9 @@ export interface CreatorData {
   profileImage: string;
   creatorIntroduce: string;
 }
+
+export interface EventIntroTabProps {
+  event: EventData;
+  creator: CreatorData;
+  id: number;
+}

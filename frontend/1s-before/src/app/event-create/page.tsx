@@ -8,7 +8,7 @@ export default function EventCreate() {
   return (
     <>
       <Header />
-      <div className="max-w-screen-xl my-10 ml-10">
+      <div className="m-10">
         <h1 className="text-mainColor1 text-3xl font-bold text-center mb-10">
           이벤트 생성하기
         </h1>

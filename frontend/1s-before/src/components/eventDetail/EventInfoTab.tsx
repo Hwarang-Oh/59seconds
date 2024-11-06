@@ -15,12 +15,10 @@ export default function EventInfoTab() {
       <h2 className="text-xl font-bold mb-4">이벤트 이용 정보</h2>
       <div className="flex items-start mb-10">
         <TbAlertTriangleFilled
-          className="text-red-500 mr-4 mt-[1px]"
+          className="text-red-500 mr-2 mt-[1px]"
           size={20}
         />
-        <p className="text-gray-600 flex-row">
-          이벤트 참여 전 꼭 확인해주세요!
-        </p>
+        <p className="text-red-500 flex-row">이벤트 참여 전 꼭 확인해주세요!</p>
       </div>
 
       <div className="space-y-4">
