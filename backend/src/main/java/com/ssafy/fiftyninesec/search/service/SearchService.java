@@ -90,7 +90,7 @@ public class SearchService {
     }
 
     public List<String> autocomplete(String keyword) {
-        Criteria criteria = Criteria.where("titleCompletion").matches(keyword);
+        Criteria criteria = Criteria.where("title").contains(keyword);
         CriteriaQuery searchQuery = new CriteriaQuery(criteria, PageRequest.of(0, 10));
 
         SearchHits<EventRoomSearch> searchHits = elasticsearchOperations.search(searchQuery, EventRoomSearch.class);
