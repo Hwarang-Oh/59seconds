@@ -1,5 +1,5 @@
 minio:
   endpoint: "http://localhost:9000"
-  access-key: ${FILE_MANAGER_USER}
-  secret-key: ${FILE_MANAGER_PASSWORD}
+  access-key: ${minio.file-manager-user}
+  secret-key: ${minio.file-manager-password}
   bucket-name: "test-bucket"
