@@ -1,4 +1,4 @@
-package com.ssafy.fiftyninesec.solution.dto;
+package com.ssafy.fiftyninesec.solution.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -2,8 +2,8 @@ package com.ssafy.fiftyninesec.solution.service;
 
 import com.ssafy.fiftyninesec.global.exception.CustomException;
 import com.ssafy.fiftyninesec.global.exception.ErrorCode;
-import com.ssafy.fiftyninesec.solution.dto.MemberResponseDto;
-import com.ssafy.fiftyninesec.solution.dto.MemberUpdateRequestDto;
+import com.ssafy.fiftyninesec.solution.dto.response.MemberResponseDto;
+import com.ssafy.fiftyninesec.solution.dto.request.MemberUpdateRequestDto;
 import com.ssafy.fiftyninesec.solution.entity.Member;
 import com.ssafy.fiftyninesec.solution.repository.MemberRepository;
 import com.ssafy.fiftyninesec.solution.repository.RandomNicknameRepository;
