@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EventRoomRepository extends JpaRepository<EventRoom, Long> {
@@ -23,4 +24,14 @@ public interface EventRoomRepository extends JpaRepository<EventRoom, Long> {
             AND (e.status = 'NOT_STARTED' OR e.status = 'COMPLETED') \
             ORDER BY e.endTime ASC""")
     List<EventRoom> findDeadlineEventsByUpcoming(@Param("endDateTime") LocalDateTime endDateTime, Pageable pageable);
+
+    @Query(value = """
+            SELECT e 
+            FROM EventRoom e 
+            WHERE e.member.id = :memberId 
+            ORDER BY e.createdAt DESC
+            LIMIT 1
+            """)
+    Optional<EventRoom> findLatestEventByMemberId(@Param("memberId") Long  memberId);
+
 }

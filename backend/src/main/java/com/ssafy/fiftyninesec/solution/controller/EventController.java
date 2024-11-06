@@ -1,6 +1,8 @@
 package com.ssafy.fiftyninesec.solution.controller;
 
 import com.ssafy.fiftyninesec.solution.dto.*;
+import com.ssafy.fiftyninesec.solution.dto.request.EventRoomRequestDto;
+import com.ssafy.fiftyninesec.solution.dto.response.EventRoomResponseDto;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.service.EventService;
 import jakarta.validation.Valid;
@@ -19,7 +21,7 @@ import java.util.List;
 @RequestMapping("/rooms")
 public class EventController {
 
-    EventService eventService;
+    private final EventService eventService;
 
     public EventController(EventService eventService) {
         this.eventService = eventService;  // null이 아님을 보장
@@ -65,10 +67,22 @@ public class EventController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping ("/{roomId}")
+    public ResponseEntity<EventRoomResponseDto> getEventRoomInfo(@PathVariable Long roomId) {
+        EventRoomResponseDto eventRoomResponseDto = eventService.getEventRoomInfo(roomId);
+        return ResponseEntity.ok(eventRoomResponseDto);
+    }
+
+    @GetMapping("/my-latest-banner")
+    public ResponseEntity<String> getLatestBanner(@RequestParam Long  memberId) {
+        String bannerUrl = eventService.getLatestBanner(memberId);
+        return ResponseEntity.ok(bannerUrl);
+    }
+
     // TEST -----------------------------------------------------------------------------------------
     @PostMapping("/test/upload")
-    public ResponseEntity<?> testMinio(@RequestParam("file") MultipartFile file) {
-        eventService.testMinio(file);
+    public ResponseEntity<?> testMinio(@RequestParam Integer eventId, @RequestParam("file") MultipartFile file) {
+        eventService.testMinio(eventId, file);
         return ResponseEntity.ok().build();
     }
 

@@ -47,7 +47,7 @@ pipeline {
                         }
                         stage('Build & Push Frontend Docker Image') {
                             steps {
-                                dir('frontend/1s-before') {  // Dockerfile 위치로 변경
+                                dir('frontend/1s-before') {
                                     withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS_ID}", url: "https://index.docker.io/v1/"]) {
                                         sh "docker build -t ${FRONTEND_DOCKERHUB_REPO}:latest ."
                                         sh "docker push ${FRONTEND_DOCKERHUB_REPO}:latest"
@@ -87,6 +87,12 @@ pipeline {
                         stage('Build Backend') {
                             steps {
                                 dir('backend') {
+                                    withCredentials([file(credentialsId: 'application-secret', variable: 'SECRET_FILE')]) {
+                                        sh '''
+                                            mkdir -p src/main/resources
+                                            cp $SECRET_FILE src/main/resources/application-secret.yml
+                                        '''
+                                    }
                                     sh 'chmod +x ./gradlew'
                                     sh './gradlew clean build -Pprofile=prod -x test'
                                     sh 'ls -l build/libs/'
@@ -106,16 +112,40 @@ pipeline {
                         stage('Deploy Backend') {
                             steps {
                                 sshagent(['ssafy-ec2-ssh']) {
-                                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}",
-                                        usernameVariable: 'DOCKER_USERNAME',
-                                        passwordVariable: 'DOCKER_PASSWORD')]) {
+                                    withCredentials([
+                                        usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}",
+                                            usernameVariable: 'DOCKER_USERNAME',
+                                            passwordVariable: 'DOCKER_PASSWORD'),
+                                        file(credentialsId: 'application-secret', variable: 'SECRET_FILE')
+                                    ]) {
                                         sh """
+                                            ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
+                                            sudo mkdir -p /home/ubuntu/config && \
+                                            sudo chown -R ubuntu:ubuntu /home/ubuntu/config && \
+                                            docker network inspect my-network >/dev/null 2>&1 || docker network create my-network && \
+                                            docker inspect mysql_container >/dev/null 2>&1 || (
+                                                docker run -d --name mysql_container \
+                                                -e MYSQL_ROOT_PASSWORD=root \
+                                                -e MYSQL_DATABASE=dreamsolution \
+                                                -e MYSQL_USER=solution \
+                                                -e MYSQL_PASSWORD=onesecondbefore \
+                                                --network my-network \
+                                                mysql:8.0
+                                            )'
+                                            
+                                            scp -o StrictHostKeyChecking=no \$SECRET_FILE ubuntu@${USER_SERVER_IP}:/home/ubuntu/config/application-secret.yml
+                                            
                                             ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
                                             docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
                                             docker pull ${BACKEND_DOCKERHUB_REPO}:latest && \
                                             docker stop backend || true && \
                                             docker rm backend || true && \
-                                            docker run -d --name backend -p 9090:9090 ${BACKEND_DOCKERHUB_REPO}:latest --spring.profiles.active=${SPRING_PROFILE} && \
+                                            docker run -d --name backend \
+                                                -p 9090:9090 \
+                                                -v /home/ubuntu/config/application-secret.yml:/app/config/application-secret.yml \
+                                                --network my-network \
+                                                -e SPRING_PROFILES_ACTIVE=prod \
+                                                ${BACKEND_DOCKERHUB_REPO}:latest && \
                                             docker logout'
                                         """
                                     }

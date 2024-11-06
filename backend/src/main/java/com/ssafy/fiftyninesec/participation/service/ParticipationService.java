@@ -1,10 +1,13 @@
 package com.ssafy.fiftyninesec.participation.service;
 
+import com.ssafy.fiftyninesec.global.exception.CustomException;
+import com.ssafy.fiftyninesec.global.exception.ErrorCode;
 import com.ssafy.fiftyninesec.participation.dto.ParticipationResponseDto;
 import com.ssafy.fiftyninesec.participation.entity.Participation;
 import com.ssafy.fiftyninesec.participation.repository.ParticipationRepository;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
+import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -16,6 +19,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,7 +34,9 @@ public class ParticipationService {
     // 기존 참여자들을 조회
     @Transactional(readOnly = true)
     public List<ParticipationResponseDto> getParticipationsByRoomId(Long roomId) {
-        List<Participation> participations = participationRepository.findByRoomIdOrderByRankingAsc(roomId);
+        List<Participation> participations = participationRepository.findByRoomIdOrderByRankingAsc(roomId)
+                .orElseThrow(()-> new CustomException(PARTICIPATIONS_NOT_FOUND));
+
         return participations.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());

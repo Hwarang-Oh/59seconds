@@ -12,9 +12,9 @@ public class SearchLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer searchId;
+    private Long searchId;
 
-    private Integer memberId;
+    private Long memberId;
 
     @ManyToOne
     @JoinColumn(name = "keyword_id")
