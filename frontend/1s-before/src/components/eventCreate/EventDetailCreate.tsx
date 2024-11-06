@@ -1,15 +1,19 @@
 import React from 'react';
 import { useEventCreate } from '@/hooks/eventCreateHook';
 import Cropper from 'react-easy-crop';
-import RichTextEditor from './TextEditor';
-
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { ko } from 'date-fns/locale';
+// import RichTextEditor from './TextEditor';
 export default function EventDetailCreate() {
   const {
     formData,
-    setFormData,
     handleInputChange,
+    handleParticipationCodeChange,
+    handleDateChange,
     handleFileChange,
     handleAddProductOrCoupon,
+    handleRemoveProductOrCoupon,
     handleProductOrCouponChange,
     bannerCrop,
     bannerZoom,
@@ -24,12 +28,58 @@ export default function EventDetailCreate() {
     handleCrop,
   } = useEventCreate();
 
-  const handleDescriptionChange = (content: string) => {
-    setFormData({ ...formData, description: content });
+  // IMP: formData를 JSON 형식에 맞게 변환 후 서버로 POST 요청하는 함수
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+
+    const eventPayload = {
+      id: Date.now(),
+      eventInfo: {
+        title: formData.eventInfo.title,
+        description: formData.eventInfo.description,
+        bannerImage: formData.eventInfo.bannerImage,
+        rectImage: formData.eventInfo.rectImage,
+      },
+      productsOrCoupons: formData.productsOrCoupons.map((item, index) => ({
+        order: index + 1,
+        type: item.type,
+        name: item.name,
+        recommendedPeople: item.recommendedPeople,
+      })),
+      eventPeriod: {
+        start: formData.eventPeriod.start,
+        end: formData.eventPeriod.end,
+      },
+      participationCode: formData.participationCode,
+    };
+
+    try {
+      const response = await fetch('http://localhost:9999/event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(eventPayload),
+      });
+
+      if (response.ok) {
+        alert('이벤트가 성공적으로 추가되었습니다.');
+      } else {
+        const errorMessage = await response.text();
+        console.error('Error response:', errorMessage);
+        alert('이벤트 추가에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Error adding event:', error);
+      alert('오류가 발생했습니다.');
+    }
   };
 
   return (
-    <form className="p-6 max-w-screen-xl mx-auto space-y-4">
+    <form
+      className="p-6 max-w-screen-xl mx-auto space-y-4"
+      onSubmit={handleSubmit}
+    >
       <div className="flex flex-row space-x-4">
         <span className="bg-mainColor1 px-[14px] py-[5px] rounded-full text-white">
           1
@@ -44,27 +94,27 @@ export default function EventDetailCreate() {
         >
           이미지 업로드
         </label>
-        <div className="border rounded p-4">
-          <div className="flex flex-row justify-between items-center">
+        <div className="border rounded p-4 w-full">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4">
             <input
               type="file"
-              id="backgroundImage"
+              name="Image" // 배너 이미지
               onChange={handleFileChange}
-              className="border-none"
+              className="w-full sm:w-auto"
             />
             <button
               type="button"
               onClick={handleCrop}
-              className="py-1 px-2 bg-mainColor1 text-white rounded"
+              className="min-w-[8vh] py-1 px-2 bg-mainColor1 text-white rounded"
             >
               결정
             </button>
           </div>
-          {formData.backgroundImage && (
+          {formData.eventInfo.bannerImage && (
             <div className="flex flex-row gap-4 p-4">
               <div className="relative w-1/2 h-40 bg-mainColor2 rounded-md overflow-hidden">
                 <Cropper
-                  image={URL.createObjectURL(formData.backgroundImage)}
+                  image={URL.createObjectURL(formData.eventInfo.bannerImage)}
                   crop={bannerCrop}
                   zoom={bannerZoom}
                   aspect={1920 / 460}
@@ -79,7 +129,7 @@ export default function EventDetailCreate() {
 
               <div className="relative w-1/2 h-40 bg-mainColor2 rounded-md overflow-hidden">
                 <Cropper
-                  image={URL.createObjectURL(formData.backgroundImage)}
+                  image={URL.createObjectURL(formData.eventInfo.bannerImage)}
                   crop={rectangleCrop}
                   zoom={rectangleZoom}
                   aspect={240 / 320}
@@ -107,7 +157,7 @@ export default function EventDetailCreate() {
           type="text"
           id="title"
           name="title"
-          value={formData.title}
+          value={formData.eventInfo.title}
           onChange={handleInputChange}
           placeholder="이벤트의 제목을 입력해주세요"
           className="w-full p-2 border rounded"
@@ -121,9 +171,13 @@ export default function EventDetailCreate() {
         >
           이벤트 설명
         </label>
-        <RichTextEditor
-          initialContent={formData.description}
-          onContentChange={handleDescriptionChange} // 구현된 핸들러 전달
+        <input
+          type="text"
+          name="description"
+          value={formData.eventInfo.description}
+          onChange={handleInputChange}
+          placeholder="이벤트 설명을 입력해주세요"
+          className="w-full p-2 border rounded"
         />
       </div>
 
@@ -171,41 +225,62 @@ export default function EventDetailCreate() {
                   handleProductOrCouponChange(
                     item.id,
                     'recommendedPeople',
-                    Number(e.target.value)
+                    Math.max(0, Number(e.target.value))
                   )
                 }
-                className="p-2 border rounded w-12 text-center"
+                className="p-2 border rounded w-16 text-start"
               />
+              <button
+                type="button"
+                onClick={() => handleRemoveProductOrCoupon(item.id)}
+                className="text-red-500 pl-2 text-sm"
+              >
+                삭제
+              </button>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-2 w-full">
         <label
           htmlFor="eventPeriod"
           className="block text-sm font-medium text-gray-700"
         >
           이벤트 기간
         </label>
-        <div className="flex space-x-2">
-          <input
-            type="datetime-local"
-            id="start"
-            name="start"
-            value={formData.eventPeriod.start}
-            onChange={handleInputChange}
-            className="p-2 border rounded flex-1"
-          />
+        <div className="flex space-x-2 justify-between items-center w-full">
+          <div className="w-[46%]">
+            <DatePicker
+              locale={ko}
+              selected={
+                formData.eventPeriod.start
+                  ? new Date(formData.eventPeriod.start)
+                  : null
+              }
+              placeholderText="시작 날짜를 지정해주세요"
+              onChange={(date) => handleDateChange('start', date)}
+              showTimeSelect
+              dateFormat="Pp"
+              className="p-2 border rounded w-full"
+            />
+          </div>
           <span>~</span>
-          <input
-            type="datetime-local"
-            id="end"
-            name="end"
-            value={formData.eventPeriod.end}
-            onChange={handleInputChange}
-            className="p-2 border rounded flex-1"
-          />
+          <div className="w-[46%]">
+            <DatePicker
+              locale={ko}
+              selected={
+                formData.eventPeriod.end
+                  ? new Date(formData.eventPeriod.end)
+                  : null
+              }
+              placeholderText="종료 날짜를 지정해주세요"
+              onChange={(date) => handleDateChange('end', date)}
+              showTimeSelect
+              dateFormat="Pp"
+              className="p-2 border rounded w-full"
+            />
+          </div>
         </div>
       </div>
 
@@ -221,11 +296,18 @@ export default function EventDetailCreate() {
           id="participationCode"
           name="participationCode"
           value={formData.participationCode}
-          onChange={handleInputChange}
+          onChange={handleParticipationCodeChange}
           placeholder="이벤트 참여 코드를 입력해주세요"
           className="w-full p-2 border rounded"
         />
       </div>
+
+      <button
+        type="submit"
+        className="py-2 px-4 bg-blue-500 text-white rounded"
+      >
+        이벤트 생성하기
+      </button>
     </form>
   );
 }

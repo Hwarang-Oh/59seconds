@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-
-interface EventOwnerData {
-  name: string;
-  snsLink: string;
-  bio: string;
-  profileImage: File | null;
-}
+import { EventOwnerData } from '@/types/eventCreate';
 
 export default function EventOwnerCreate() {
   const [ownerData, setOwnerData] = useState<EventOwnerData>({

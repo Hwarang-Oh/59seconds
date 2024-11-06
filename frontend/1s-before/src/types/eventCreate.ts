@@ -7,13 +7,22 @@ export interface ProductOrCoupon {
 }
 
 export interface EventFormData {
-  title: string;
-  description: string;
-  backgroundImage: File | null;
+  eventInfo: {
+    title: string;
+    description: string;
+    bannerImage: File | Blob | null;
+    rectImage: File | Blob | null;
+  };
   productsOrCoupons: ProductOrCoupon[];
   eventPeriod: {
     start: string;
     end: string;
   };
   participationCode: string;
+}
+export interface EventOwnerData {
+  name: string;
+  snsLink: string;
+  bio: string;
+  profileImage: File | null;
 }
