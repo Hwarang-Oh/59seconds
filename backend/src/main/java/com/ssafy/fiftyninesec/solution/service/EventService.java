@@ -1,15 +1,19 @@
 package com.ssafy.fiftyninesec.solution.service;
 
 import com.ssafy.fiftyninesec.global.exception.CustomException;
+import com.ssafy.fiftyninesec.solution.dto.PrizeDto;
+import com.ssafy.fiftyninesec.solution.dto.request.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.global.util.MinioUtil;
-import com.ssafy.fiftyninesec.solution.dto.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.RoomUnlockResponse;
 import com.ssafy.fiftyninesec.solution.dto.WinnerRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.WinnerResponseDto;
+import com.ssafy.fiftyninesec.solution.dto.response.EventRoomResponseDto;
 import com.ssafy.fiftyninesec.solution.entity.*;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import com.ssafy.fiftyninesec.solution.repository.MemberRepository;
 import com.ssafy.fiftyninesec.solution.repository.PrizeRepository;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
 import com.ssafy.fiftyninesec.solution.repository.WinnerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -181,9 +185,9 @@ public class EventService {
         try {
             log.info("Getting deadline events with size: {}", size);
 
-            // 한국 시간(KST)으로 현재 시간으로부터 24시간 후의 시간 계산
-            ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
-            LocalDateTime endDateTime = LocalDateTime.now(koreaZoneId).plusHours(24);
+        // 한국 시간(KST)으로 현재 시간으로부터 24시간 후의 시간 계산
+        ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
+        LocalDateTime endDateTime = LocalDateTime.now(koreaZoneId).plusHours(24);
 
             List<EventRoom> events = eventRoomRepository.findDeadlineEventsByUpcoming(
                     endDateTime,
@@ -221,6 +225,41 @@ public class EventService {
                 .build();
 
         winnerRepository.save(winner);
+    }
+
+    public EventRoomResponseDto getEventRoomInfo(Long roomId) {
+        EventRoom event = eventRoomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
+        List<Prize> prizes = prizeRepository.findByEventRoom_RoomId(roomId);
+        List<PrizeDto> prizeDtos = prizes.stream()
+                .map(prize -> PrizeDto.builder()
+                        .prizeId(prize.getPrizeId())
+                        .prizeType(prize.getPrizeType())
+                        .winnerCount(prize.getWinnerCount())
+                        .prizeName(prize.getPrizeName())
+                        .ranking(prize.getRanking())
+                        .build()
+                )
+                .collect(Collectors.toList());
+
+        EventRoomResponseDto responseDto = EventRoomResponseDto.builder()
+                .title(event.getTitle())
+                .description(event.getDescription())
+                .status(String.valueOf(event.getStatus()))
+                .startTime(event.getStartTime())
+                .endTime(event.getEndTime())
+                .winnerNum(event.getWinnerNum())
+                .enterCode(event.getEnterCode())
+                .unlockCount(event.getUnlockCount())
+                .bannerImage(event.getBannerImage())
+                .squareImage(event.getSquareImage())
+                .rectangleImage(event.getRectangleImage())
+                .createdAt(event.getCreatedAt())
+                .prizes(prizeDtos)
+                .build();
+
+        return responseDto;
     }
 
     public String getLatestBanner(Long memberId) {
