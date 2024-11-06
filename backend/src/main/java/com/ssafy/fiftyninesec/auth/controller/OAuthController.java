@@ -24,7 +24,7 @@ public class OAuthController {
     public ResponseEntity<?> kakaoCallback(@RequestParam("code") String code, HttpServletResponse response) {
         ArrayList<String> tokens = oAuthService.getKakaoTokens(code);
         String idToken = tokens.get(2);
-            
+        
         String kakaoSub = jwtUtil.getSubFromIdToken(idToken);
     
         Member member = memberRepository.findByKakaoSub(kakaoSub);
