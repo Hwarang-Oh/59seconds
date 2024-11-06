@@ -4,12 +4,11 @@ import com.ssafy.fiftyninesec.global.exception.CustomException;
 import com.ssafy.fiftyninesec.global.exception.ErrorCode;
 import com.ssafy.fiftyninesec.solution.dto.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.RoomUnlockResponse;
+import com.ssafy.fiftyninesec.solution.dto.WinnerRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.WinnerResponseDto;
-import com.ssafy.fiftyninesec.solution.entity.EventRoom;
-import com.ssafy.fiftyninesec.solution.entity.EventStatus;
-import com.ssafy.fiftyninesec.solution.entity.Prize;
-import com.ssafy.fiftyninesec.solution.entity.Winner;
+import com.ssafy.fiftyninesec.solution.entity.*;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
+import com.ssafy.fiftyninesec.solution.repository.MemberRepository;
 import com.ssafy.fiftyninesec.solution.repository.PrizeRepository;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -32,8 +31,7 @@ import java.util.Optional;
 import java.time.ZoneId;
 import java.util.stream.Collectors;
 
-import static com.ssafy.fiftyninesec.global.exception.ErrorCode.EVENT_NOT_FOUND;
-import static com.ssafy.fiftyninesec.global.exception.ErrorCode.INVALID_REQUEST;
+import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
 
 @Slf4j
 @Service
@@ -44,6 +42,7 @@ public class EventService {
     private final PrizeRepository prizeRepository;
     private final MinioClient minioClient;
     private final WinnerRepository winnerRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public void createEvent(EventRoomRequestDto eventRoomRequestDto) {
@@ -213,5 +212,25 @@ public class EventService {
         LocalDateTime endDateTime = LocalDateTime.now(koreaZoneId).plusHours(24);
 
         return eventRoomRepository.findDeadlineEventsByUpcoming(endDateTime, PageRequest.of(0, size));
+    }
+
+    @Transactional
+    public void saveWinner(Long roomId, WinnerRequestDto requestDto) {
+        EventRoom room = eventRoomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
+        Member member = memberRepository.findById(requestDto.getMemberId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        Winner winner = Winner.builder()
+                .room(room)
+                .member(member)
+                .winnerName(requestDto.getWinnerName())
+                .address(requestDto.getAddress())
+                .phone(requestDto.getPhone())
+                .ranking(requestDto.getRanking())
+                .build();
+
+        winnerRepository.save(winner);
     }
 }
