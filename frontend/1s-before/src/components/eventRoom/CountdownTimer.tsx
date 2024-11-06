@@ -1,34 +1,10 @@
-import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import renderTime from '@/components/icon/renderTime';
 import { CountdownTimerProps } from '@/types/eventRoom';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import { getRemainingTimeInSeconds } from '@/utils/timeUtils';
 
-export default function CountdownTimer({ eventTime }: Readonly<CountdownTimerProps>) {
-  const endTime = new Date(eventTime).getTime();
-  const currentTime = Date.now();
-  const remainingTimeInSeconds = Math.max(0, (endTime - currentTime) / 1000); // 초 단위로 계산
-
-  const renderTime = (remainingTime: number) => {
-    const days = Math.floor(remainingTime / (3600 * 24));
-    const hours = Math.floor((remainingTime / 3600) % 24);
-    const minutes = Math.floor((remainingTime / 60) % 60);
-    const seconds = Math.floor(remainingTime % 60);
-
-    return (
-      <div className='text-center'>
-        <div className='text-4xl font-bold'>
-          {days > 0
-            ? `${days * 24 + hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(
-                2,
-                '0'
-              )}`
-            : `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(
-                seconds
-              ).padStart(2, '0')}`}
-        </div>
-        <p className='text-gray-600'>남은 시간</p>
-      </div>
-    );
-  };
-
+export default function CountdownTimer({ eventTime, onComplete }: Readonly<CountdownTimerProps>) {
+  const remainingTimeInSeconds = getRemainingTimeInSeconds(eventTime);
   return (
     <div className='flex flex-col items-center justify-center'>
       <CountdownCircleTimer
@@ -41,6 +17,7 @@ export default function CountdownTimer({ eventTime }: Readonly<CountdownTimerPro
         colorsTime={[600, 300, 60]}
         trailColor='#e0e0e0'
         onComplete={() => {
+          onComplete();
           return { shouldRepeat: false };
         }}>
         {({ remainingTime }) => renderTime(remainingTime)}

@@ -1,11 +1,11 @@
-import Header from '@/components/common/Header';
-import Footer from '@/components/common/Footer';
-import BannerDummy from '@/mocks/BannerDummy.json';
 import CardDummy from '@/mocks/CardDummy.json';
+import BannerDummy from '@/mocks/BannerDummy.json';
+import Footer from '@/components/common/Footer';
+import Header from '@/components/common/Header';
+import FancyCard from '@/components/home/FancyCard';
 import CardBannerGrid from '@/components/home/CardBannerGrid';
 import NormalBannerList from '@/components/home/NormalBannerList';
 import LargeBannerCarousel from '@/components/home/member/LargeBannerCarousel';
-import FancyCard from '@/components/home/FancyCard';
 
 export default function Home() {
   return (

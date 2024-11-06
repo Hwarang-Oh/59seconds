@@ -1,8 +1,9 @@
 import { Client } from '@stomp/stompjs';
 import {
   eventSocketProps,
-  EventRoomCurrentInfoSubscription,
+  EventRoomMessageInfo,
   EventRoomMessageSubscription,
+  EventRoomCurrentInfoSubscription,
 } from '@/types/eventRoom';
 
 let stompClient: Client | null = null;
@@ -14,12 +15,12 @@ const connect = ({
   onMessageReceived,
   subscriptions,
 }: Readonly<eventSocketProps>) => {
-  if (stompClient && stompClient.connected) {
+  if (stompClient?.connected) {
     console.log('Already Connected, Adding New subscription');
     addSubscription({ eventId, onEventRoomInfoReceived, onMessageReceived, subscriptions });
   } else {
     stompClient = new Client({
-      brokerURL: 'ws://localhost:8080/api/vi/ws',
+      brokerURL: 'ws://localhost:8080/api/v1/ws',
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
@@ -57,7 +58,7 @@ const addEventRoomInfoSubscription = ({
   onEventRoomInfoReceived,
 }: Readonly<EventRoomCurrentInfoSubscription>) => {
   const eventRoomKey = `eventRoomInfo-${eventId}`;
-  if (!subscriptionMap.has(eventRoomKey)) {
+  if (!subscriptionMap.has(eventRoomKey) && stompClient?.connected) {
     const eventRoomInfoSubscription = stompClient.subscribe(
       `/chat/sub/room/${eventId}/count`,
       (message) => {
@@ -73,10 +74,11 @@ const addEventRoomMessageSubscription = ({
   onMessageReceived,
 }: Readonly<EventRoomMessageSubscription>) => {
   const eventRoomMessageKey = `eventRoomMessage-${eventId}`;
-  if (!subscriptionMap.has(eventRoomMessageKey)) {
+  if (!subscriptionMap.has(eventRoomMessageKey) && stompClient?.connected) {
     const eventRoomMessageSubscription = stompClient.subscribe(
       `/chat/sub/${eventId}`,
       (message) => {
+        console.log('Received Message : ', message.body);
         onMessageReceived(JSON.parse(message.body));
       }
     );
@@ -84,9 +86,17 @@ const addEventRoomMessageSubscription = ({
   }
 };
 
-const sendEventRoomMessage = (eventId: number, message: string) => {
-  stompClient.publish({
-    destination: `/chat/pub/${eventId}`,
-    body: JSON.stringify({ content: message }),
-  });
+const sendEventRoomMessage = (eventId: number, message: EventRoomMessageInfo) => {
+  if (stompClient?.connected) {
+    stompClient.publish({
+      destination: `/chat/pub/${eventId}`,
+      body: JSON.stringify(message),
+    });
+    console.log('Sent Messsage : ', message);
+  }
+};
+
+export default {
+  connect,
+  sendEventRoomMessage,
 };

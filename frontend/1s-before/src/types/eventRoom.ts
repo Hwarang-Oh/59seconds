@@ -1,5 +1,5 @@
 export interface EventRoomInfo {
-  id: number;
+  eventId: number;
   title: string;
   bannerImage: string;
   eventTime: string;
@@ -9,7 +9,7 @@ export interface BannerHeaderProps {
   bannerImage: string;
 }
 
-export interface EventStatusProps {
+export interface EventStatusAreaProps {
   participants: number;
   competitionRate: number;
   eventTime: string;
@@ -17,6 +17,27 @@ export interface EventStatusProps {
 
 export interface CountdownTimerProps {
   eventTime: string;
+  onComplete: () => void;
+}
+
+export interface ActiveButtonProps {
+  text: string;
+  isDisabled: boolean;
+  onClick: () => void;
+}
+
+export interface EventChatRoomAreaProps {
+  eventId: number;
+  participants: number;
+  messages: EventRoomMessageInfo[];
+}
+
+export interface EventChatRoomHeaderProps {
+  participants: number;
+}
+
+export interface EventChatRoomProps {
+  messages: EventRoomMessageInfo[];
 }
 
 /**
