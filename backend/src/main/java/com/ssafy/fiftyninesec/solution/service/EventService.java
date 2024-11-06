@@ -12,8 +12,6 @@ import com.ssafy.fiftyninesec.solution.entity.*;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import com.ssafy.fiftyninesec.solution.repository.MemberRepository;
 import com.ssafy.fiftyninesec.solution.repository.PrizeRepository;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
 import com.ssafy.fiftyninesec.solution.repository.WinnerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,30 +38,51 @@ public class EventService {
     private final PrizeRepository prizeRepository;
     private final WinnerRepository winnerRepository;
     private final MemberRepository memberRepository;
-
     private final MinioUtil minioUtil;
 
     @Transactional
     public void createEvent(EventRoomRequestDto eventRoomRequestDto) {
-        EventRoom eventRoom = saveEventRoomInfo(eventRoomRequestDto);
+        EventRoom eventRoom = saveEventRoom(eventRoomRequestDto);
         savePrizes(eventRoomRequestDto.getProductsOrCoupons(), eventRoom);
         uploadImages(eventRoomRequestDto.getAttachments());
     }
 
-    private EventRoom saveEventRoomInfo(EventRoomRequestDto eventRoomRequestDto) {
-        EventRoomRequestDto.EventDetails eventInfo = eventRoomRequestDto.getEventInfo();
-        EventRoomRequestDto.EventPeriod eventPeriod = eventRoomRequestDto.getEventPeriod();
+    @Transactional
+    public void updateEventRoom(EventRoomRequestDto eventRoomRequestDto) {
+
+        EventRoom eventRoom = eventRoomRepository.findById(eventRoomRequestDto.getRoomId())
+                .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+        eventRoom.setTitle(eventRoomRequestDto.getEventInfo().getTitle());
+        eventRoom.setDescription(eventRoomRequestDto.getEventInfo().getDescription());
+        eventRoom.setBannerImage(eventRoomRequestDto.getEventInfo().getBannerImage());
+        eventRoom.setRectangleImage(eventRoomRequestDto.getEventInfo().getRectImage());
+        eventRoom.setEnterCode(eventRoomRequestDto.getParticipationCode());
+        eventRoom.setStartTime(eventRoomRequestDto.getEventPeriod().getStart());
+        eventRoom.setEndTime(eventRoomRequestDto.getEventPeriod().getEnd());
+
+        savePrizes(eventRoomRequestDto.getProductsOrCoupons(), eventRoom);
+        uploadImages(eventRoomRequestDto.getAttachments());
+
+        eventRoomRepository.save(eventRoom);
+        log.info("Updated event room: {}", eventRoom);
+    }
+
+    private EventRoom saveEventRoom(EventRoomRequestDto eventRoomRequestDto) {
+        Member member = memberRepository.findById(eventRoomRequestDto.getMemberId())
+                .orElseThrow(()-> new CustomException(MEMBER_NOT_FOUND));
 
         EventRoom eventRoom = EventRoom.builder()
-                .title(eventInfo.getTitle())
-                .description(eventInfo.getDescription())
-                .startTime(eventPeriod.getStart())
-                .endTime(eventPeriod.getEnd())
+                .member(member)
+                .title(eventRoomRequestDto.getEventInfo().getTitle())
+                .description(eventRoomRequestDto.getEventInfo().getDescription())
+                .status(EventStatus.NOT_STARTED)
+                .startTime(eventRoomRequestDto.getEventPeriod().getStart())
+                .endTime(eventRoomRequestDto.getEventPeriod().getEnd())
                 .enterCode(eventRoomRequestDto.getParticipationCode())
-                .bannerImage(eventInfo.getBannerImage())
-                .rectangleImage(eventInfo.getRectImage())
-                .status(EventStatus.NOT_STARTED)  // NOTE: 이벤트 시작 상태
+                .bannerImage(eventRoomRequestDto.getEventInfo().getBannerImage())
+                .rectangleImage(eventRoomRequestDto.getEventInfo().getRectImage())
                 .createdAt(LocalDateTime.now())
+                .winnerNum(0)
                 .build();
 
         return eventRoomRepository.save(eventRoom);
@@ -78,7 +97,6 @@ public class EventService {
                     .ranking(productOrCoupon.getOrder())
                     .winnerCount(productOrCoupon.getRecommendedPeople())
                     .build();
-
             prizeRepository.save(prize);
             log.info("Saved prize: {}", prize);
         });
@@ -185,9 +203,9 @@ public class EventService {
         try {
             log.info("Getting deadline events with size: {}", size);
 
-        // 한국 시간(KST)으로 현재 시간으로부터 24시간 후의 시간 계산
-        ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
-        LocalDateTime endDateTime = LocalDateTime.now(koreaZoneId).plusHours(24);
+            // 한국 시간(KST)으로 현재 시간으로부터 24시간 후의 시간 계산
+            ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
+            LocalDateTime endDateTime = LocalDateTime.now(koreaZoneId).plusHours(24);
 
             List<EventRoom> events = eventRoomRepository.findDeadlineEventsByUpcoming(
                     endDateTime,
@@ -213,7 +231,7 @@ public class EventService {
                 .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         Member member = memberRepository.findById(requestDto.getMemberId())
-                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
         Winner winner = Winner.builder()
                 .room(room)
@@ -274,25 +292,15 @@ public class EventService {
     }
 
     // TEST ------------------------------------------
+    public void testMinio(Integer eventId, MultipartFile file) {
+        String originalFilename = file.getOriginalFilename(); // 원본 파일 이름
+        String extension = originalFilename != null && originalFilename.contains(".")
+                ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                : ""; // 확장자 추출
 
-    public String testMinio(Integer eventId, MultipartFile file) {
-        try {
-            String originalFilename = file.getOriginalFilename(); // 원본 파일 이름
-            String extension = originalFilename != null && originalFilename.contains(".")
-                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                    : ""; // 확장자 추출
-
-            // 파일 경로와 객체 이름 설정
-            String fullPath = String.format("%d/banner%s", eventId, extension); // 파일 이름 변경
-
-            // MinIO에 파일 업로드
-            minioUtil.uploadImage("event-image", fullPath, file);
-            log.info("File name: {}", fullPath);
-
-            return "File uploaded successfully: " + fullPath;
-        } catch (Exception e) {
-            return "Failed to upload file: " + e.getMessage();
-        }
+        String fullPath = String.format("%d/banner%s", eventId, extension); // 파일 이름 변경
+        minioUtil.uploadImage("event-image", fullPath, file);
+        log.info("File name: {}", fullPath);
     }
 
 }
