@@ -124,17 +124,19 @@ pipeline {
                                                 returnStdout: true
                                             ).trim()
                                             def localDigest = sh(
-                                                script: '''
-                                                    docker build -t ${BACKEND_DOCKERHUB_REPO}:latest -f- . <<EOF
-                                                    FROM openjdk:17-jdk-slim
-                                                    WORKDIR /app
-                                                    COPY build/libs/dreamsolution-0.0.1-SNAPSHOT.jar contents.jar
-                                                    COPY src/main/resources/application-secret.yml src/main/resources/application-secret.yml
-                                                    ENV TZ Asia/Seoul
-                                                    EXPOSE 9090
-                                                    ENTRYPOINT ["java", "-jar", "/app/contents.jar", "--spring.config.location=classpath:/application.yml", "--spring.profiles.active=prod"]
-                                                    EOF
-                                                ''',
+                                                script: """
+    docker build -t ${BACKEND_DOCKERHUB_REPO}:latest -f- . <<'EOF'
+    FROM openjdk:17-jdk-slim
+    WORKDIR /app
+    COPY build/libs/dreamsolution-0.0.1-SNAPSHOT.jar contents.jar
+    COPY src/main/resources/application-secret.yml /app/config/application-secret.yml
+    ENV TZ=Asia/Seoul
+    EXPOSE 9090
+    ENTRYPOINT ["java", "-jar", "/app/contents.jar", \
+                "--spring.config.location=classpath:/application.yml,file:/app/config/application-secret.yml", \
+                "--spring.profiles.active=prod"]
+    EOF
+""",
                                                 returnStdout: true
                                             ).trim()
 
