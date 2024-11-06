@@ -49,8 +49,22 @@ pipeline {
                             steps {
                                 dir('frontend/1s-before') {
                                     withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS_ID}", url: "https://index.docker.io/v1/"]) {
-                                        sh "docker build -t ${FRONTEND_DOCKERHUB_REPO}:latest ."
-                                        sh "docker push ${FRONTEND_DOCKERHUB_REPO}:latest"
+                                        script {
+                                            def remoteDigest = sh(
+                                                script: "docker pull ${FRONTEND_DOCKERHUB_REPO}:latest && docker inspect --format='{{index .RepoDigests 0}}' ${FRONTEND_DOCKERHUB_REPO}:latest || echo 'no_remote_digest'",
+                                                returnStdout: true
+                                            ).trim()
+                                            def localDigest = sh(
+                                                script: "docker build -t ${FRONTEND_DOCKERHUB_REPO}:latest . && docker inspect --format='{{index .RepoDigests 0}}' ${FRONTEND_DOCKERHUB_REPO}:latest",
+                                                returnStdout: true
+                                            ).trim()
+                                            
+                                            if (remoteDigest != localDigest) {
+                                                sh "docker push ${FRONTEND_DOCKERHUB_REPO}:latest"
+                                            } else {
+                                                echo "Frontend image is up to date. Skipping push."
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -64,10 +78,11 @@ pipeline {
                                         sh """
                                             ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
                                             docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
+                                            docker network inspect 404_dream_solutions_network >/dev/null 2>&1 || docker network create 404_dream_solutions_network && \
                                             docker pull ${FRONTEND_DOCKERHUB_REPO}:latest && \
                                             docker stop frontend || true && \
                                             docker rm frontend || true && \
-                                            docker run -d --name frontend -p 3000:3000 ${FRONTEND_DOCKERHUB_REPO}:latest && \
+                                            docker run -d --name frontend -p 3000:3000 --network 404_dream_solutions_network ${FRONTEND_DOCKERHUB_REPO}:latest && \
                                             docker logout'
                                         """
                                     }
@@ -87,7 +102,6 @@ pipeline {
                         stage('Build Backend') {
                             steps {
                                 dir('backend') {
-                                    // Include application-secret.yml in the Docker image
                                     withCredentials([file(credentialsId: 'application-secret', variable: 'SECRET_FILE')]) {
                                         sh '''
                                             mkdir -p src/main/resources
@@ -104,18 +118,32 @@ pipeline {
                             steps {
                                 dir('backend') {
                                     withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS_ID}", url: "https://index.docker.io/v1/"]) {
-                                        sh '''
-                                            docker build -t ${BACKEND_DOCKERHUB_REPO}:latest -f- . <<EOF
-                                            FROM openjdk:17-jdk-slim
-                                            WORKDIR /app
-                                            COPY build/libs/dreamsolution-0.0.1-SNAPSHOT.jar contents.jar
-                                            COPY src/main/resources/application-secret.yml src/main/resources/application-secret.yml
-                                            ENV TZ Asia/Seoul
-                                            EXPOSE 9090
-                                            ENTRYPOINT ["java", "-jar", "/app/contents.jar", "--spring.config.location=classpath:/application.yml", "--spring.profiles.active=prod"]
-                                            EOF
-                                        '''
-                                        sh "docker push ${BACKEND_DOCKERHUB_REPO}:latest"
+                                        script {
+                                            def remoteDigest = sh(
+                                                script: "docker pull ${BACKEND_DOCKERHUB_REPO}:latest && docker inspect --format='{{index .RepoDigests 0}}' ${BACKEND_DOCKERHUB_REPO}:latest || echo 'no_remote_digest'",
+                                                returnStdout: true
+                                            ).trim()
+                                            def localDigest = sh(
+                                                script: '''
+                                                    docker build -t ${BACKEND_DOCKERHUB_REPO}:latest -f- . <<EOF
+                                                    FROM openjdk:17-jdk-slim
+                                                    WORKDIR /app
+                                                    COPY build/libs/dreamsolution-0.0.1-SNAPSHOT.jar contents.jar
+                                                    COPY src/main/resources/application-secret.yml src/main/resources/application-secret.yml
+                                                    ENV TZ Asia/Seoul
+                                                    EXPOSE 9090
+                                                    ENTRYPOINT ["java", "-jar", "/app/contents.jar", "--spring.config.location=classpath:/application.yml", "--spring.profiles.active=prod"]
+                                                    EOF
+                                                ''',
+                                                returnStdout: true
+                                            ).trim()
+
+                                            if (remoteDigest != localDigest) {
+                                                sh "docker push ${BACKEND_DOCKERHUB_REPO}:latest"
+                                            } else {
+                                                echo "Backend image is up to date. Skipping push."
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -129,12 +157,13 @@ pipeline {
                                         sh """
                                             ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
                                             docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
+                                            docker network inspect 404_dream_solutions_network >/dev/null 2>&1 || docker network create 404_dream_solutions_network && \
                                             docker pull ${BACKEND_DOCKERHUB_REPO}:latest && \
                                             docker stop backend || true && \
                                             docker rm backend || true && \
                                             docker run -d --name backend \
                                                 -p 9090:9090 \
-                                                --network my-network \
+                                                --network 404_dream_solutions_network \
                                                 -e SPRING_PROFILES_ACTIVE=prod \
                                                 ${BACKEND_DOCKERHUB_REPO}:latest && \
                                             docker logout'
