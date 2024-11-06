@@ -16,22 +16,22 @@ public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatService chatService;
 
-    @MessageMapping("/sendMessage/{roomId}")
-    public void sendMessage(@Payload ChatMessageDto chatMessage, @DestinationVariable Long roomId) {
+    @MessageMapping("/sendMessage/{eventId}")
+    public void sendMessage(@Payload ChatMessageDto chatMessage, @DestinationVariable Long eventId) {
         ChatMessageDto updatedMessage = ChatMessageDto.builder()
-                .roomId(chatMessage.getRoomId())
+                .eventId(chatMessage.getEventId())
                 .sender(chatMessage.getSender())
                 .content(chatMessage.getContent())
                 .sentAt(LocalDateTime.now())
                 .build();
 
-        messagingTemplate.convertAndSend("/chat/sub/room/" + roomId, updatedMessage);
+        messagingTemplate.convertAndSend("/chat/sub/room/" + eventId, updatedMessage);
     }
 
     // 채팅방 입장
-    @MessageMapping("/room/{roomId}/enter")
-    public void enterChatRoom(@DestinationVariable Long roomId) {
-        chatService.enterChatRoom(roomId);
+    @MessageMapping("/room/{eventId}/enter")
+    public void enterChatRoom(@DestinationVariable Long eventId) {
+        chatService.enterChatRoom(eventId);
     }
 
     // 채팅방 퇴장
