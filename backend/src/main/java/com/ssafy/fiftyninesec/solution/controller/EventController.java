@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/rooms")
 public class EventController {
@@ -50,6 +52,12 @@ public class EventController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
         Page<EventRoom> popularRooms = eventService.getPopularEvents(page, size);
+        return ResponseEntity.ok(popularRooms);
+    }
+
+    @GetMapping("/deadline")
+    public ResponseEntity<List<EventRoom>> getDeadlineRooms(@RequestParam(defaultValue = "6") int size) {
+        List<EventRoom> popularRooms = eventService.getDeadlineEvents(size);
         return ResponseEntity.ok(popularRooms);
     }
 
