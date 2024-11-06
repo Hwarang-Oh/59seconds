@@ -5,7 +5,6 @@ import com.ssafy.fiftyninesec.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 
 import java.time.LocalDateTime;
@@ -32,14 +31,12 @@ public class ChatController {
     // 채팅방 입장
     @MessageMapping("/room/{roomId}/enter")
     public void enterChatRoom(@DestinationVariable Long roomId) {
-        System.out.println("Controller: Entering room with ID " + roomId);
         chatService.enterChatRoom(roomId);
     }
 
     // 채팅방 퇴장
     @MessageMapping("/room/{roomId}/leave")
     public void leaveChatRoom(@DestinationVariable Long roomId) {
-        System.out.println("Controller: Leaving room with ID " + roomId);
         chatService.leaveChatRoom(roomId);
     }
 }
