@@ -125,7 +125,7 @@ pipeline {
                                             ).trim()
                                             def localDigest = sh(
                                                 script: """
-    docker build -t ${BACKEND_DOCKERHUB_REPO}:latest -f- . <<'EOF'
+    docker build -t ${BACKEND_DOCKERHUB_REPO}:latest -f- . <<-'EOF'
     FROM openjdk:17-jdk-slim
     WORKDIR /app
     COPY build/libs/dreamsolution-0.0.1-SNAPSHOT.jar contents.jar
