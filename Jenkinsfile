@@ -87,6 +87,7 @@ pipeline {
                         stage('Build Backend') {
                             steps {
                                 dir('backend') {
+                                    // Include application-secret.yml in the Docker image
                                     withCredentials([file(credentialsId: 'application-secret', variable: 'SECRET_FILE')]) {
                                         sh '''
                                             mkdir -p src/main/resources
@@ -103,7 +104,17 @@ pipeline {
                             steps {
                                 dir('backend') {
                                     withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS_ID}", url: "https://index.docker.io/v1/"]) {
-                                        sh "docker build -t ${BACKEND_DOCKERHUB_REPO}:latest ."
+                                        sh '''
+                                            docker build -t ${BACKEND_DOCKERHUB_REPO}:latest -f- . <<EOF
+                                            FROM openjdk:17-jdk-slim
+                                            WORKDIR /app
+                                            COPY build/libs/dreamsolution-0.0.1-SNAPSHOT.jar contents.jar
+                                            COPY src/main/resources/application-secret.yml src/main/resources/application-secret.yml
+                                            ENV TZ Asia/Seoul
+                                            EXPOSE 9090
+                                            ENTRYPOINT ["java", "-jar", "/app/contents.jar", "--spring.config.location=classpath:/application.yml", "--spring.profiles.active=prod"]
+                                            EOF
+                                        '''
                                         sh "docker push ${BACKEND_DOCKERHUB_REPO}:latest"
                                     }
                                 }
@@ -112,29 +123,10 @@ pipeline {
                         stage('Deploy Backend') {
                             steps {
                                 sshagent(['ssafy-ec2-ssh']) {
-                                    withCredentials([
-                                        usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}",
-                                            usernameVariable: 'DOCKER_USERNAME',
-                                            passwordVariable: 'DOCKER_PASSWORD'),
-                                        file(credentialsId: 'application-secret', variable: 'SECRET_FILE')
-                                    ]) {
+                                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}",
+                                        usernameVariable: 'DOCKER_USERNAME',
+                                        passwordVariable: 'DOCKER_PASSWORD')]) {
                                         sh """
-                                            ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
-                                            sudo mkdir -p /home/ubuntu/config && \
-                                            sudo chown -R ubuntu:ubuntu /home/ubuntu/config && \
-                                            docker network inspect my-network >/dev/null 2>&1 || docker network create my-network && \
-                                            docker inspect mysql_container >/dev/null 2>&1 || (
-                                                docker run -d --name mysql_container \
-                                                -e MYSQL_ROOT_PASSWORD=root \
-                                                -e MYSQL_DATABASE=dreamsolution \
-                                                -e MYSQL_USER=solution \
-                                                -e MYSQL_PASSWORD=onesecondbefore \
-                                                --network my-network \
-                                                mysql:8.0
-                                            )'
-                                            
-                                            scp -o StrictHostKeyChecking=no \$SECRET_FILE ubuntu@${USER_SERVER_IP}:/home/ubuntu/config/application-secret.yml
-                                            
                                             ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
                                             docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
                                             docker pull ${BACKEND_DOCKERHUB_REPO}:latest && \
@@ -142,7 +134,6 @@ pipeline {
                                             docker rm backend || true && \
                                             docker run -d --name backend \
                                                 -p 9090:9090 \
-                                                -v /home/ubuntu/config/application-secret.yml:/app/config/application-secret.yml \
                                                 --network my-network \
                                                 -e SPRING_PROFILES_ACTIVE=prod \
                                                 ${BACKEND_DOCKERHUB_REPO}:latest && \
