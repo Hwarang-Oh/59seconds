@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/rooms")
 public class EventController {
 
-    EventService eventService;
+    private final EventService eventService;
 
     public EventController(EventService eventService) {
         this.eventService = eventService;  // null이 아님을 보장
@@ -61,10 +61,16 @@ public class EventController {
         return ResponseEntity.ok(popularRooms);
     }
 
+    @GetMapping("/my-latest-banner")
+    public ResponseEntity<String> getLatestBanner(@RequestParam Long  memberId) {
+        String bannerUrl = eventService.getLatestBanner(memberId);
+        return ResponseEntity.ok(bannerUrl);
+    }
+
     // TEST -----------------------------------------------------------------------------------------
     @PostMapping("/test/upload")
-    public ResponseEntity<?> testMinio(@RequestParam("file") MultipartFile file) {
-        eventService.testMinio(file);
+    public ResponseEntity<?> testMinio(@RequestParam Integer eventId, @RequestParam("file") MultipartFile file) {
+        eventService.testMinio(eventId, file);
         return ResponseEntity.ok().build();
     }
 
