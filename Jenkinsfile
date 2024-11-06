@@ -125,10 +125,12 @@ pipeline {
                                             docker pull ${BACKEND_DOCKERHUB_REPO}:latest && \
                                             docker stop backend || true && \
                                             docker rm backend || true && \
+                                            mkdir -p /home/ubuntu/config && \
                                             docker run -d --name backend \
                                                 -p 9090:9090 \
-                                                -v /home/ubuntu/config/application-secret.yml:/app/application-secret.yml \
+                                                -v /home/ubuntu/config/application-secret.yml:/app/config/application-secret.yml \
                                                 --network my-network \
+                                                -e SPRING_PROFILES_ACTIVE=prod \
                                                 ${BACKEND_DOCKERHUB_REPO}:latest && \
                                             docker logout'
                                         """
