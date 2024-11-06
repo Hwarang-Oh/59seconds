@@ -32,14 +32,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
     }
 
-    @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ErrorResponse> handleException(Exception e, HttpServletRequest req) {
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse(
-                        HttpStatus.INTERNAL_SERVER_ERROR.toString(),
-                        "Unsupported Error"));
-    }
+//    @ExceptionHandler(Exception.class)
+//    protected ResponseEntity<ErrorResponse> handleException(Exception e, HttpServletRequest req) {
+//        return ResponseEntity
+//                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                .body(new ErrorResponse(
+//                        HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+//                        "Unsupported Error"));
+//    }
 
     private String getParams(HttpServletRequest req) {
         StringBuilder params = new StringBuilder();
