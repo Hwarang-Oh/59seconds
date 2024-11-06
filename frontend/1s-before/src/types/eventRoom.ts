@@ -30,6 +30,7 @@ export interface EventChatRoomAreaProps {
   eventId: number;
   participants: number;
   messages: EventRoomMessageInfo[];
+  onClick: () => void;
 }
 
 export interface EventChatRoomHeaderProps {
@@ -59,6 +60,14 @@ export interface EventRoomMessageInfo extends EventRoomSubscription {
   sentAt: string;
 }
 
+export interface EventRoomResult extends EventRoomSubscription {
+  participationId: number;
+  memberId: number;
+  joinedAt: string;
+  ranking: number;
+  isWinner: boolean;
+}
+
 // Type : Subscription Type 정의
 export interface EventRoomCurrentInfoSubscription extends EventRoomSubscription {
   onEventRoomInfoReceived: (eventRoomCurrentInfo: EventRoomCurrentInfo) => void;
@@ -68,8 +77,13 @@ export interface EventRoomMessageSubscription extends EventRoomSubscription {
   onMessageReceived: (messageInfo: EventRoomMessageInfo) => void;
 }
 
+export interface EventRoomResultSubscription extends EventRoomSubscription {
+  onEventRoomResultReceived: (eventRoomResult: EventRoomResult) => void;
+}
+
 export interface eventSocketProps extends EventRoomSubscription {
   onEventRoomInfoReceived: (eventRoomCurrentInfo: EventRoomCurrentInfo) => void;
+  onEventRoomResultReceived: (eventRoomResult: EventRoomResult) => void;
   onMessageReceived: (messageInfo: EventRoomMessageInfo) => void;
   subscriptions: string[];
 }

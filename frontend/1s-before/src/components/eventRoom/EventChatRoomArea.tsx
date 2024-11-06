@@ -7,9 +7,12 @@ export default function EventChatRoomArea({
   eventId,
   participants,
   messages,
+  onClick,
 }: Readonly<EventChatRoomAreaProps>) {
   return (
-    <div className='w-full px-7 rounded-md shadow-md border border-gray-300'>
+    <div
+      className='h-full px-7 rounded-md shadow-md border border-gray-300 shrink-0'
+      onClick={onClick}>
       <EventChatRoomHeader participants={participants} />
       <EventChatRoom messages={messages} />
       <EventChatInput eventId={eventId} />

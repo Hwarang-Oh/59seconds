@@ -2,6 +2,7 @@ import { Client } from '@stomp/stompjs';
 import {
   eventSocketProps,
   EventRoomMessageInfo,
+  EventRoomResultSubscription,
   EventRoomMessageSubscription,
   EventRoomCurrentInfoSubscription,
 } from '@/types/eventRoom';
@@ -11,13 +12,20 @@ let subscriptionMap = new Map();
 
 const connect = ({
   eventId,
+  onEventRoomResultReceived,
   onEventRoomInfoReceived,
   onMessageReceived,
   subscriptions,
 }: Readonly<eventSocketProps>) => {
   if (stompClient?.connected) {
     console.log('Already Connected, Adding New subscription');
-    addSubscription({ eventId, onEventRoomInfoReceived, onMessageReceived, subscriptions });
+    addSubscription({
+      eventId,
+      onEventRoomResultReceived,
+      onEventRoomInfoReceived,
+      onMessageReceived,
+      subscriptions,
+    });
   } else {
     stompClient = new Client({
       brokerURL: 'ws://localhost:8080/api/v1/ws',
@@ -25,8 +33,14 @@ const connect = ({
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
       onConnect: () => {
-        console.log('Connected : ' + frames);
-        addSubscription({ eventId, onEventRoomInfoReceived, onMessageReceived, subscriptions });
+        console.log('Connected : ');
+        addSubscription({
+          eventId,
+          onEventRoomResultReceived,
+          onEventRoomInfoReceived,
+          onMessageReceived,
+          subscriptions,
+        });
       },
     });
     stompClient.activate();
@@ -35,6 +49,7 @@ const connect = ({
 
 const addSubscription = ({
   eventId,
+  onEventRoomResultReceived,
   onEventRoomInfoReceived,
   onMessageReceived,
   subscriptions,
@@ -47,10 +62,29 @@ const addSubscription = ({
       case 'eventRoomMessage':
         addEventRoomMessageSubscription({ eventId, onMessageReceived });
         break;
+      case 'eventRoomResult':
+        addEventRoomResultSubscription({ eventId, onEventRoomResultReceived });
+        break;
       default:
         console.warn('Invalid Subscription Type');
     }
   });
+};
+
+const addEventRoomResultSubscription = ({
+  eventId,
+  onEventRoomResultReceived,
+}: Readonly<EventRoomResultSubscription>) => {
+  const eventRoomResultKey = `eventRoomResult-${eventId}`;
+  if (!subscriptionMap.has(eventRoomResultKey) && stompClient?.connected) {
+    const eventRoomResultSubscription = stompClient.subscribe(
+      `/result/sub/participations/${eventId}`,
+      (message) => {
+        onEventRoomResultReceived(JSON.parse(message.body));
+      }
+    );
+    subscriptionMap.set(eventRoomResultKey, eventRoomResultSubscription);
+  }
 };
 
 const addEventRoomInfoSubscription = ({

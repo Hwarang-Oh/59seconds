@@ -11,9 +11,13 @@ import { EventRoomInfo, EventRoomCurrentInfo, EventRoomMessageInfo } from '@/typ
 export default function EventRoom() {
   const params = useParams();
   const { id: eventId } = params as { id: string };
+  const [isChatExpanded, setIsChatExpanded] = useState(false);
+  const [messages, setMessages] = useState<EventRoomMessageInfo[]>([]);
   const [eventInfo, setEventInfo] = useState<EventRoomInfo | null>(null);
   const [eventStatus, setEventStatus] = useState<EventRoomCurrentInfo | null>(null);
-  const [messages, setMessages] = useState<EventRoomMessageInfo[]>([]);
+  const toggleChatSize = () => {
+    setIsChatExpanded(!isChatExpanded);
+  };
 
   useEffect(() => {
     if (eventId) {
@@ -25,17 +29,19 @@ export default function EventRoom() {
       });
       WebsocketAPI.connect({
         eventId: Number(eventId),
-        onEventRoomInfoReceived: (eventRoomInfo) => setEventStatus(eventRoomInfo),
-        onMessageReceived: (messageInfo) => setMessages([...messages, messageInfo]),
-        subscriptions: ['eventRoomInfo', 'eventRoomMessage'],
+        onEventRoomInfoReceived: (eventRoomInfo) => {
+          setEventStatus(eventRoomInfo);
+        },
+        onMessageReceived: (messageInfo) => {
+          setMessages((prevMessages) => [...prevMessages, messageInfo]);
+        },
+        onEventRoomResultReceived: (eventRoomResult) => {
+          console.log('Event Room Result Received : ', eventRoomResult);
+        },
+        subscriptions: ['eventRoomInfo', 'eventRoomMessage', 'eventRoomResult'],
       });
     }
   }, [eventId]);
-
-  useEffect(() => {
-    console.log('Hello World!');
-    console.log('messages', messages);
-  }, [messages]);
 
   return (
     <div className='flex flex-col max-w-screen-xl mx-auto px-7'>
@@ -45,17 +51,25 @@ export default function EventRoom() {
           <div className='text-xl font-normal' style={{ color: '#1C1C1E', lineHeight: '33px' }}>
             [Event : {eventInfo.eventId}] <span className='font-bold'>{eventInfo.title}</span>
           </div>
-          <div className='flex h-[800px] gap-5'>
-            <EventStatusArea
-              participants={eventStatus?.userCount ?? 0}
-              competitionRate={eventStatus?.userCount ?? 0}
-              eventTime={eventInfo.eventTime}
-            />
-            <EventChatRoomArea
-              eventId={eventInfo.eventId}
-              participants={eventStatus?.userCount ?? 0}
-              messages={messages}
-            />
+          <div className='flex gap-5'>
+            <div className={`transition-all duration-300 ${isChatExpanded ? 'w-1/2' : 'w-2/3'}`}>
+              <EventStatusArea
+                participants={eventStatus?.userCount ?? 0}
+                competitionRate={eventStatus?.userCount ?? 0}
+                eventTime={eventInfo.eventTime}
+              />
+            </div>
+            <div
+              className={`transition-all duration-300 cursor-pointer ${
+                isChatExpanded ? 'w-1/2' : 'w-1/3'
+              }`}>
+              <EventChatRoomArea
+                onClick={toggleChatSize}
+                eventId={eventInfo.eventId}
+                participants={eventStatus?.userCount ?? 0}
+                messages={messages}
+              />
+            </div>
           </div>
         </div>
       )}
