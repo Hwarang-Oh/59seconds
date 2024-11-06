@@ -1,0 +1,30 @@
+{
+  "event": {
+    "eventId": 1,
+    "eventInfo": {
+      "title": "도경수가 뿌린다 이벤트",
+      "description": "구독자 500만명 달성을 기념하여 감사한 마음을 담아 상품을 준비했습니다.",
+      "bannerImage": "/image/Yena.png",
+      "rectImage": "/image/YenaYena.png"
+    },
+    "productsOrCoupons": [
+      {
+        "order": 1,
+        "type": "상품",
+        "name": "맥북 에어",
+        "recommendedPeople": 2
+      },
+      {
+        "order": 2,
+        "type": "쿠폰",
+        "name": "스타벅스",
+        "recommendedPeople": 1
+      }
+    ],
+    "eventPeriod": {
+      "start": "2024-11-05T02:30:00.070Z",
+      "end": "2024-11-06T11:20:00.000Z"
+    },
+    "participationCode": "됴"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "event": [
+    {
+      "id": 1,
+      "eventInfo": {
+        "title": "도경수가 뿌린다 이벤트",
+        "description": "구독자 500만명 달성을 기념하여 감사한 마음을 담아 상품을 준비했습니다.",
+        "bannerImage": "/image/KyungSoo.jpg",
+        "rectImage": "/image/KyungSoo.jpg"
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "맥북 에어",
+          "recommendedPeople": 2
+        },
+        {
+          "order": 2,
+          "type": "쿠폰",
+          "name": "스타벅스",
+          "recommendedPeople": 1
+        }
+      ],
+      "eventPeriod": {
+        "start": "2024-11-05T02:30:00.070Z",
+        "end": "2024-11-06T02:30:00.000Z"
+      },
+      "participationCode": "됴"
+    },
+    {
+      "id": 1730778917877,
+      "eventInfo": {
+        "title": "test",
+        "description": "test",
+        "bannerImage": {},
+        "rectImage": {}
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "test",
+          "recommendedPeople": 1
+        }
+      ],
+      "eventPeriod": {
+        "start": "2024-11-05T02:30:00.070Z",
+        "end": "2024-11-06T02:30:00.000Z"
+      },
+      "participationCode": "test"
+    },
+    {
+      "id": 1730781186150,
+      "eventInfo": {
+        "title": "test",
+        "description": "test",
+        "bannerImage": {},
+        "rectImage": {}
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "test",
+          "recommendedPeople": 1
+        }
+      ],
+      "eventPeriod": {
+        "start": "2024-11-07T04:30:00.000Z",
+        "end": "2024-11-16T04:30:00.000Z"
+      },
+      "participationCode": "test"
+    },
+    {
+      "id": 1730782315723,
+      "eventInfo": {
+        "title": "test2",
+        "description": "test2",
+        "bannerImage": {},
+        "rectImage": {}
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "쿠폰",
+          "name": "test2",
+          "recommendedPeople": 2
+        }
+      ],
+      "eventPeriod": {
+        "start": "2024-11-05T04:00:00.787Z",
+        "end": "2024-11-06T04:00:00.000Z"
+      },
+      "participationCode": "test2"
+    }
+  ]
+}
