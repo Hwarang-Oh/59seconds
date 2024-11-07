@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { FaRegSadTear } from 'react-icons/fa';
+import { EventData } from '@/types/eventDetail';
 import eventData from '@/mocks/event.json';
 import Header from '@/components/common/Header';
 import CreatorData from '@/mocks/creatorData.json';
@@ -31,19 +32,26 @@ export default function EventDetail() {
     return <p>사용자를 찾을 수 없습니다.</p>;
   }
 
-  const safeEvent = {
+  const safeEvent: EventData = {
     ...event,
     eventInfo: {
-      ...event.eventInfo,
+      title: event.eventInfo?.title ?? '',
+      description: event.eventInfo?.description ?? '',
       bannerImage:
-        typeof event.eventInfo.bannerImage === 'string'
+        typeof event.eventInfo?.bannerImage === 'string'
           ? event.eventInfo.bannerImage
           : '',
       rectImage:
-        typeof event.eventInfo.rectImage === 'string'
+        typeof event.eventInfo?.rectImage === 'string'
           ? event.eventInfo.rectImage
           : '',
     },
+    productsOrCoupons: event.productsOrCoupons || [],
+    eventPeriod: {
+      start: event.eventPeriod?.start ?? '',
+      end: event.eventPeriod?.end ?? '',
+    },
+    participationCode: event.participationCode ?? '',
   };
 
   const handleTabClick = (tab: string) => {
@@ -58,7 +66,7 @@ export default function EventDetail() {
           {/* 입력 폼: 2/3 */}
           <div className="col-span-3 border border-inherit p-10 rounded-lg shadow-lg">
             <div>
-              {typeof event.eventInfo.bannerImage === 'string' && (
+              {typeof event.eventInfo?.bannerImage === 'string' && (
                 <div
                   className="w-full h-auto mb-16 rounded-lg overflow-hidden"
                   style={{ aspectRatio: '1920 / 460' }}
