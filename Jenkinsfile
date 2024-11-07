@@ -107,11 +107,14 @@ pipeline {
                             steps {
                                 dir('backend') {
                                     withCredentials([file(credentialsId: 'application-secret', variable: 'SECRET_FILE')]) {
+                                        // Secret 파일을 src/main/resources에 복사하여 빌드 시 classpath에 포함되도록 설정
                                         sh '''
-                                            mkdir -p build/config
-                                            cp $SECRET_FILE build/config/application-secret.yml
+                                            mkdir -p src/main/resources
+                                            cp $SECRET_FILE src/main/resources/application-secret.yml
+                                            ls -l src/main/resources/application-secret.yml
                                         '''
                                     }
+                                    // Gradle을 사용하여 JAR 파일 빌드
                                     sh 'chmod +x ./gradlew'
                                     sh './gradlew clean build -Pprofile=prod -x test'
                                     sh 'ls -l build/libs/'
