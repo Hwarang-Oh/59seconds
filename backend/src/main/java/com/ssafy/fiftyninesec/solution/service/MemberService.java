@@ -198,7 +198,7 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
         // 생성일 내림차순
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        Sort sort = Sort.by(Sort.Direction.DESC, "startTime");
         List<EventRoom> events = eventRoomRepository.findByMember(member, sort);
         List<CreatedEventResponseDto> responseDto = events.stream()
                 .map(CreatedEventResponseDto::new)
