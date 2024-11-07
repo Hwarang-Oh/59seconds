@@ -4,9 +4,9 @@ import com.ssafy.fiftyninesec.global.exception.CustomException;
 import com.ssafy.fiftyninesec.solution.dto.PrizeDto;
 import com.ssafy.fiftyninesec.solution.dto.request.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.global.util.MinioUtil;
-import com.ssafy.fiftyninesec.solution.dto.RoomUnlockResponse;
-import com.ssafy.fiftyninesec.solution.dto.WinnerRequestDto;
-import com.ssafy.fiftyninesec.solution.dto.WinnerResponseDto;
+import com.ssafy.fiftyninesec.solution.dto.response.RoomUnlockResponse;
+import com.ssafy.fiftyninesec.solution.dto.request.WinnerRequestDto;
+import com.ssafy.fiftyninesec.solution.dto.response.WinnerResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.response.EventRoomResponseDto;
 import com.ssafy.fiftyninesec.solution.entity.*;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
@@ -41,7 +41,7 @@ public class EventService {
     private final MinioUtil minioUtil;
 
     @Transactional
-    public void createEvent(EventRoomRequestDto eventRoomRequestDto) {
+    public void createEventRoom(EventRoomRequestDto eventRoomRequestDto) {
         EventRoom eventRoom = saveEventRoom(eventRoomRequestDto);
         savePrizes(eventRoomRequestDto.getProductsOrCoupons(), eventRoom);
         uploadImages(eventRoomRequestDto.getAttachments());

@@ -18,7 +18,7 @@ public class PrizeDto {
     private String prizeName;
     private Integer ranking;
 
-    public PrizeDto PrizeDto(Prize prize) {
+    public PrizeDto of(Prize prize) {
         return PrizeDto.builder()
                 .prizeId(prize.getPrizeId())
                 .prizeType(prize.getPrizeType())

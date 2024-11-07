@@ -1,8 +1,6 @@
-package com.ssafy.fiftyninesec.solution.dto;
+package com.ssafy.fiftyninesec.solution.dto.request;
 
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

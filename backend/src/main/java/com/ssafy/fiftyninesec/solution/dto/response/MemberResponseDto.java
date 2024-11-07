@@ -1,4 +1,4 @@
-package com.ssafy.fiftyninesec.solution.dto;
+package com.ssafy.fiftyninesec.solution.dto.response;
 
 import com.ssafy.fiftyninesec.solution.entity.Member;
 import lombok.Getter;
