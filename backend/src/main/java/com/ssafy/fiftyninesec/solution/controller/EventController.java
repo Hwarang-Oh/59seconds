@@ -28,8 +28,14 @@ public class EventController {
     }
 
     @PostMapping
-    ResponseEntity<Void> createEvent(@RequestBody EventRoomRequestDto eventRoomRequestDto) {
+    ResponseEntity<Void> createEventRoom(@RequestBody EventRoomRequestDto eventRoomRequestDto) {
         eventService.createEvent(eventRoomRequestDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping
+    ResponseEntity<Void> updateEventRoom(@RequestBody EventRoomRequestDto eventRoomRequestDto) {
+        eventService.updateEventRoom(eventRoomRequestDto);
         return ResponseEntity.ok().build();
     }
 

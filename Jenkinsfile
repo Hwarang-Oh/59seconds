@@ -49,8 +49,25 @@ pipeline {
                             steps {
                                 dir('frontend/1s-before') {
                                     withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS_ID}", url: "https://index.docker.io/v1/"]) {
-                                        sh "docker build -t ${FRONTEND_DOCKERHUB_REPO}:latest ."
-                                        sh "docker push ${FRONTEND_DOCKERHUB_REPO}:latest"
+                                        script {
+                                            def remoteDigest = sh(
+                                                script: "docker pull ${FRONTEND_DOCKERHUB_REPO}:latest && docker inspect --format='{{index .RepoDigests 0}}' ${FRONTEND_DOCKERHUB_REPO}:latest || echo 'no_remote_digest'",
+                                                returnStdout: true
+                                            ).trim()
+                                            def localDigest = sh(
+                                                script: """
+                                                docker build -t ${FRONTEND_DOCKERHUB_REPO}:latest -f Dockerfile .
+                                                docker inspect --format='{{index .RepoDigests 0}}' ${FRONTEND_DOCKERHUB_REPO}:latest || echo 'no_local_digest'
+                                                """,
+                                                returnStdout: true
+                                            ).trim()
+
+                                            if (remoteDigest != localDigest && localDigest != 'no_local_digest') {
+                                                sh "docker push ${FRONTEND_DOCKERHUB_REPO}:latest"
+                                            } else {
+                                                echo "Frontend image is up to date or local digest not found. Skipping push."
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -64,10 +81,11 @@ pipeline {
                                         sh """
                                             ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
                                             docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
+                                            docker network inspect 404_dream_solutions_network >/dev/null 2>&1 || docker network create 404_dream_solutions_network && \
                                             docker pull ${FRONTEND_DOCKERHUB_REPO}:latest && \
                                             docker stop frontend || true && \
                                             docker rm frontend || true && \
-                                            docker run -d --name frontend -p 3000:3000 ${FRONTEND_DOCKERHUB_REPO}:latest && \
+                                            docker run -d --name frontend -p 3000:3000 --network 404_dream_solutions_network ${FRONTEND_DOCKERHUB_REPO}:latest && \
                                             docker logout'
                                         """
                                     }
@@ -89,8 +107,8 @@ pipeline {
                                 dir('backend') {
                                     withCredentials([file(credentialsId: 'application-secret', variable: 'SECRET_FILE')]) {
                                         sh '''
-                                            mkdir -p src/main/resources
-                                            cp $SECRET_FILE src/main/resources/application-secret.yml
+                                            mkdir -p build/config
+                                            cp $SECRET_FILE build/config/application-secret.yml
                                         '''
                                     }
                                     sh 'chmod +x ./gradlew'
@@ -103,8 +121,25 @@ pipeline {
                             steps {
                                 dir('backend') {
                                     withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS_ID}", url: "https://index.docker.io/v1/"]) {
-                                        sh "docker build -t ${BACKEND_DOCKERHUB_REPO}:latest ."
-                                        sh "docker push ${BACKEND_DOCKERHUB_REPO}:latest"
+                                        script {
+                                            def remoteDigest = sh(
+                                                script: "docker pull ${BACKEND_DOCKERHUB_REPO}:latest && docker inspect --format='{{index .RepoDigests 0}}' ${BACKEND_DOCKERHUB_REPO}:latest || echo 'no_remote_digest'",
+                                                returnStdout: true
+                                            ).trim()
+                                            def localDigest = sh(
+                                                script: """
+                                                docker build -t ${BACKEND_DOCKERHUB_REPO}:latest -f Dockerfile .
+                                                docker inspect --format='{{index .RepoDigests 0}}' ${BACKEND_DOCKERHUB_REPO}:latest || echo 'no_local_digest'
+                                                """,
+                                                returnStdout: true
+                                            ).trim()
+
+                                            if (remoteDigest != localDigest && localDigest != 'no_local_digest') {
+                                                sh "docker push ${BACKEND_DOCKERHUB_REPO}:latest"
+                                            } else {
+                                                echo "Backend image is up to date or local digest not found. Skipping push."
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -112,38 +147,19 @@ pipeline {
                         stage('Deploy Backend') {
                             steps {
                                 sshagent(['ssafy-ec2-ssh']) {
-                                    withCredentials([
-                                        usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}",
-                                            usernameVariable: 'DOCKER_USERNAME',
-                                            passwordVariable: 'DOCKER_PASSWORD'),
-                                        file(credentialsId: 'application-secret', variable: 'SECRET_FILE')
-                                    ]) {
+                                    withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}",
+                                        usernameVariable: 'DOCKER_USERNAME',
+                                        passwordVariable: 'DOCKER_PASSWORD')]) {
                                         sh """
                                             ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
-                                            sudo mkdir -p /home/ubuntu/config && \
-                                            sudo chown -R ubuntu:ubuntu /home/ubuntu/config && \
-                                            docker network inspect my-network >/dev/null 2>&1 || docker network create my-network && \
-                                            docker inspect mysql_container >/dev/null 2>&1 || (
-                                                docker run -d --name mysql_container \
-                                                -e MYSQL_ROOT_PASSWORD=root \
-                                                -e MYSQL_DATABASE=dreamsolution \
-                                                -e MYSQL_USER=solution \
-                                                -e MYSQL_PASSWORD=onesecondbefore \
-                                                --network my-network \
-                                                mysql:8.0
-                                            )'
-                                            
-                                            scp -o StrictHostKeyChecking=no \$SECRET_FILE ubuntu@${USER_SERVER_IP}:/home/ubuntu/config/application-secret.yml
-                                            
-                                            ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
                                             docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
+                                            docker network inspect 404_dream_solutions_network >/dev/null 2>&1 || docker network create 404_dream_solutions_network && \
                                             docker pull ${BACKEND_DOCKERHUB_REPO}:latest && \
                                             docker stop backend || true && \
                                             docker rm backend || true && \
                                             docker run -d --name backend \
                                                 -p 9090:9090 \
-                                                -v /home/ubuntu/config/application-secret.yml:/app/config/application-secret.yml \
-                                                --network my-network \
+                                                --network 404_dream_solutions_network \
                                                 -e SPRING_PROFILES_ACTIVE=prod \
                                                 ${BACKEND_DOCKERHUB_REPO}:latest && \
                                             docker logout'

@@ -2,7 +2,7 @@ server:
   port: 8080
   servlet:
     context-path: /api/v1
-
+  
 spring:
   profiles:
     active: local # 기본 프로파일 설정
@@ -27,11 +27,13 @@ spring:
       encoding: UTF-8
   data:
     mongodb:
-      uri: "mongodb://localhost:27017/search" # MongoDB 설정
+      uri: mongodb://${mongodb.username}:${mongodb.password}@{mongodb.host}:{mongodb.port}/search # MongoDB 설정
     elasticsearch:
       client:
         rest:
-          uris: "http://localhost:9200" # Elasticsearch 설정
+          uris: ${spring.elasticsearch.uris} # Elasticsearch 설정
+          username: ${spring.elasticsearch.username}
+          password: ${spring.elasticsearch.password}
   redis:
     host: ${redis.host}
     port: ${redis.port}
@@ -42,6 +44,13 @@ spring:
     swagger-ui:
       path: /api/v1/swagger-ui.html
 
-
   jackson:
     time-zone: Asia/Seoul
+
+minio:
+  endpoint: ${minio.endpoint}
+  bucket-name: ${minio.bucket-name}
+  access-key: ${minio.access-key}
+  secret-key: ${minio.secret-key}
+  file-manager-user: ${minio.file-manager-user}
+  file-manager-password: ${minio.file-manager-password}
