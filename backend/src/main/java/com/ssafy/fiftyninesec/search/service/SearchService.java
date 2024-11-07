@@ -14,6 +14,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
+import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,6 +48,7 @@ public class SearchService {
         Long memberId = Optional.ofNullable(mysqlRoom.getMember())
                 .map(Member::getId)
                 .orElseThrow(() -> new RuntimeException("Member is null for EventRoom ID: " + mysqlRoom.getRoomId()));
+
 
         EventRoomSearch esRoom = new EventRoomSearch();
         esRoom.setRoomId(mysqlRoom.getRoomId());
@@ -90,13 +92,17 @@ public class SearchService {
     }
 
     public List<String> autocomplete(String keyword) {
-        Criteria criteria = Criteria.where("title").contains(keyword);
-        CriteriaQuery searchQuery = new CriteriaQuery(criteria, PageRequest.of(0, 10));
+        // 검색 키워드에서 공백 제거
+        String processedKeyword = keyword.replace(" ", "");
 
-        SearchHits<EventRoomSearch> searchHits = elasticsearchOperations.search(searchQuery, EventRoomSearch.class);
+        // CriteriaQuery를 이용해 title 필드에 keyword 포함 여부를 확인
+        Criteria criteria = new Criteria("title").contains(processedKeyword);
+        CriteriaQuery query = new CriteriaQuery(criteria);
+
+        SearchHits<EventRoomSearch> searchHits = elasticsearchOperations.search(query, EventRoomSearch.class);
 
         return searchHits.stream()
-                .map(hit -> hit.getContent().getTitle())  // title 필드만 반환
+                .map(hit -> hit.getContent().getTitle())
                 .collect(Collectors.toList());
     }
 }
