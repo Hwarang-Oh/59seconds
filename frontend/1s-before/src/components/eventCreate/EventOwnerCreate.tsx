@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { EventOwnerData } from '@/types/eventCreate';
-import { creatorInfoPut } from '@/apis/memberAPI';
+import { putCreatorInfo, fetchCreatorInfo } from '@/apis/memberAPI';
 import { FaCirclePlus } from 'react-icons/fa6';
 
 export default function EventOwnerCreate() {
@@ -13,6 +13,27 @@ export default function EventOwnerCreate() {
     creatorIntroduce: '',
     snsLink: '',
   });
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (ownerData.profileImage instanceof File) {
+      const url = URL.createObjectURL(ownerData.profileImage);
+      setImageUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [ownerData.profileImage]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchCreatorInfo();
+        setOwnerData(data);
+      } catch (error) {
+        console.error('기존 정보 가져오기 오류:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -43,7 +64,7 @@ export default function EventOwnerCreate() {
     }
 
     try {
-      const result = await creatorInfoPut(formData);
+      const result = await putCreatorInfo(formData);
       console.log(result);
     } catch (error) {
       console.error('정보 수정 중 오류 발생:', error);
@@ -65,9 +86,9 @@ export default function EventOwnerCreate() {
       <div className="flex items-center space-x-10">
         <div className="relative">
           <label htmlFor="profileImage" className="cursor-pointer">
-            {ownerData.profileImage ? (
+            {imageUrl ? (
               <img
-                src={URL.createObjectURL(ownerData.profileImage)}
+                src={imageUrl}
                 alt="Profile"
                 className="w-40 h-40 rounded-full object-cover"
               />
