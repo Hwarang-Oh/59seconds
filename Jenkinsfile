@@ -110,6 +110,7 @@ pipeline {
                                         sh '''
                                             mkdir -p build/config
                                             cp $SECRET_FILE build/config/application-secret.yml
+                                            ls -l build/config/application-secret.yml
                                         '''
                                     }
                                     sh 'chmod +x ./gradlew'
