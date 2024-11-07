@@ -54,9 +54,10 @@ pipeline {
                                                 script: "docker pull ${FRONTEND_DOCKERHUB_REPO}:latest && docker inspect --format='{{index .RepoDigests 0}}' ${FRONTEND_DOCKERHUB_REPO}:latest || echo 'no_remote_digest'",
                                                 returnStdout: true
                                             ).trim()
+                                            
                                             def localDigest = sh(
                                                 script: """
-                                                docker build -t ${FRONTEND_DOCKERHUB_REPO}:latest -f Dockerfile .
+                                                docker build -t ${FRONTEND_DOCKERHUB_REPO}:latest .
                                                 docker inspect --format='{{index .RepoDigests 0}}' ${FRONTEND_DOCKERHUB_REPO}:latest || echo 'no_local_digest'
                                                 """,
                                                 returnStdout: true
@@ -65,7 +66,7 @@ pipeline {
                                             if (remoteDigest != localDigest && localDigest != 'no_local_digest') {
                                                 sh "docker push ${FRONTEND_DOCKERHUB_REPO}:latest"
                                             } else {
-                                                echo "Frontend image is up to date or local digest not found. Skipping push."
+                                                echo "프론트엔드 이미지가 최신 상태입니다. 푸시를 생략합니다."
                                             }
                                         }
                                     }
@@ -128,7 +129,7 @@ pipeline {
                                             ).trim()
                                             def localDigest = sh(
                                                 script: """
-                                                docker build -t ${BACKEND_DOCKERHUB_REPO}:latest -f Dockerfile .
+                                                docker build -t ${BACKEND_DOCKERHUB_REPO}:latest .
                                                 docker inspect --format='{{index .RepoDigests 0}}' ${BACKEND_DOCKERHUB_REPO}:latest || echo 'no_local_digest'
                                                 """,
                                                 returnStdout: true
@@ -137,7 +138,7 @@ pipeline {
                                             if (remoteDigest != localDigest && localDigest != 'no_local_digest') {
                                                 sh "docker push ${BACKEND_DOCKERHUB_REPO}:latest"
                                             } else {
-                                                echo "Backend image is up to date or local digest not found. Skipping push."
+                                                echo "백엔드 이미지가 최신 상태입니다. 푸시를 생략합니다."
                                             }
                                         }
                                     }

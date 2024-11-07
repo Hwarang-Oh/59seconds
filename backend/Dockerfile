@@ -12,7 +12,7 @@ WORKDIR /app
 
 # Create directory for config files
 RUN mkdir -p /app/config
-
+ 
 # Copy the jar file
 COPY build/libs/dreamsolution-0.0.1-SNAPSHOT.jar contents.jar
 
