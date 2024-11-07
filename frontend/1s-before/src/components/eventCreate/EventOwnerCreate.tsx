@@ -32,10 +32,10 @@ export default function EventOwnerCreate() {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append('participateName', ownerData.participateName ?? '');
+    formData.append('participateName', 'null');
     formData.append('creatorName', ownerData.creatorName);
-    formData.append('address', ownerData.address ?? '');
-    formData.append('phone', ownerData.phone ?? '');
+    formData.append('address', 'null');
+    formData.append('phone', 'null');
     formData.append('creatorIntroduce', ownerData.creatorIntroduce);
     formData.append('snsLink', ownerData.snsLink);
     if (ownerData.profileImage) {
@@ -44,11 +44,9 @@ export default function EventOwnerCreate() {
 
     try {
       const result = await creatorInfoPut(formData);
-      console.log(result); // 성공 여부 출력
-      alert('정보가 성공적으로 수정되었습니다.'); // 사용자에게 성공 메시지 알림
+      console.log(result);
     } catch (error) {
       console.error('정보 수정 중 오류 발생:', error);
-      alert('정보 수정에 실패했습니다. 다시 시도해 주세요.');
     }
   };
 
