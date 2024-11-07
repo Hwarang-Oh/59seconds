@@ -2,6 +2,7 @@ package com.ssafy.fiftyninesec.solution.service;
 
 import com.ssafy.fiftyninesec.global.exception.CustomException;
 import com.ssafy.fiftyninesec.global.exception.ErrorCode;
+import com.ssafy.fiftyninesec.global.util.MinioUtil;
 import com.ssafy.fiftyninesec.participation.entity.Participation;
 import com.ssafy.fiftyninesec.participation.repository.ParticipationRepository;
 import com.ssafy.fiftyninesec.solution.dto.response.CreatedEventResponseDto;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,7 @@ public class MemberService {
     private final EventRoomRepository eventRoomRepository;
     private final ParticipationRepository participationRepository;
     private final PrizeRepository prizeRepository;
+    private final MinioUtil minioUtil;
 
     @Value("${random-nickname.size}")
     private int randomNicknameSize;
@@ -142,9 +145,12 @@ public class MemberService {
             member.setPhone(updateDto.getPhone());
         }
 
-        if (updateDto.getProfileImage() != null) {
-            validateProfileImage(updateDto.getProfileImage());
-            member.setProfileImage(updateDto.getProfileImage());
+        // 프로필 이미지 파일이 있으면 MinIO에 업로드하고 URL 설정
+        if (updateDto.getProfileImage() != null && !updateDto.getProfileImage().isEmpty()) {
+            String bucketName = "profile-image";
+            String fullPath = updateDto.getProfileImage().getOriginalFilename();
+            String profileImageUrl = minioUtil.uploadImage(bucketName, fullPath, updateDto.getProfileImage());
+            member.setProfileImage(profileImageUrl);
         }
 
         if (updateDto.getCreatorIntroduce() != null) {
