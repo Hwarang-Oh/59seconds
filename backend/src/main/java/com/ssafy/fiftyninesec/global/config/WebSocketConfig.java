@@ -12,7 +12,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:3000", "https://k11a404.p.ssafy.io");
+                .setAllowedOrigins("http://localhost:3000", "https://k11a404.p.ssafy.io",
+                        "https://k11a404.p.ssafy.io/api/v1/ws");
     }
 
     // 메시지 브로커를 구성
