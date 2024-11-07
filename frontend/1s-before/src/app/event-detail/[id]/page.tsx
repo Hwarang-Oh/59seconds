@@ -1,14 +1,15 @@
 'use client';
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import EventIntroTab from '@/components/eventDetail/EventIntroTab';
-import EventCreatorTab from '@/components/eventDetail/EventCreatorTab';
-import EventInfoTab from '@/components/eventDetail/EventInfoTab';
-import EventRoomPart from '@/components/eventDetail/EventRoomPart';
-import Header from '@/components/common/Header';
-import eventData from '@/mocks/event.json';
-import CreatorData from '@/mocks/creatorData.json';
 import { FaRegSadTear } from 'react-icons/fa';
+import eventData from '@/mocks/event.json';
+import Header from '@/components/common/Header';
+import CreatorData from '@/mocks/creatorData.json';
+import EventInfoTab from '@/components/eventDetail/EventInfoTab';
+import EventIntroTab from '@/components/eventDetail/EventIntroTab';
+import EventRoomPart from '@/components/eventDetail/EventRoomPart';
+import EventRoomInfo from '@/components/eventDetail/EventRoomInfo';
+import EventCreatorTab from '@/components/eventDetail/EventCreatorTab';
 
 export default function EventDetail() {
   const params = useParams();
@@ -112,13 +113,20 @@ export default function EventDetail() {
             </div>
           </div>
 
-          {/* 미리보기: 1/3 */}
-          <div className="col-span-1">
-            <EventRoomPart
+          {/* 이벤트 참여 미리보기: 1/3 */}
+          <div className="col-span-1 relative max-w-sm">
+            <EventRoomInfo
               event={safeEvent}
               creator={creator}
               id={Number(id)}
             />
+            <div className="sticky top-2 z-10">
+              <EventRoomPart
+                event={safeEvent}
+                creator={creator}
+                id={Number(id)}
+              />
+            </div>
           </div>
         </div>
       </div>
