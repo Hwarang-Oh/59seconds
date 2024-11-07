@@ -153,7 +153,7 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public WinnerResponseDto getWinners(Long roomId) {
-        List<Winner> winners = winnerRepository.findByRoom_RoomIdOrderByRanking(roomId);
+        List<Winner> winners = winnerRepository.findByRoom_IdOrderByRanking(roomId);
 
         if (winners.isEmpty()) {
             return WinnerResponseDto.builder()
@@ -249,10 +249,10 @@ public class EventService {
         EventRoom event = eventRoomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
-        List<Prize> prizes = prizeRepository.findByEventRoom_RoomId(roomId);
+        List<Prize> prizes = prizeRepository.findByEventRoom_Id(roomId);
         List<PrizeDto> prizeDtos = prizes.stream()
                 .map(prize -> PrizeDto.builder()
-                        .prizeId(prize.getPrizeId())
+                        .prizeId(prize.getId())
                         .prizeType(prize.getPrizeType())
                         .winnerCount(prize.getWinnerCount())
                         .prizeName(prize.getPrizeName())
@@ -284,7 +284,7 @@ public class EventService {
         try {
             EventRoom latestEventRoom = eventRoomRepository.findLatestEventByMemberId(memberId)
                     .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
-            return String.format("/%d/banner.jpg", latestEventRoom.getRoomId());
+            return String.format("/%d/banner.jpg", latestEventRoom.getId());
         } catch (Exception e) {
             log.error("Error while getting latest event banner: ", e);
             throw new CustomException(IMAGE_NOT_FOUND);
