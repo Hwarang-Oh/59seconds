@@ -163,7 +163,7 @@ pipeline {
                     docker image prune -f && \
                     docker pull ${BACKEND_DOCKERHUB_REPO}:latest && \
                     docker run -d --name backend \
-                        -p 9090:9090 \
+                        -p 9090:8080 \
                         --network 404_dream_solutions_network \
                         -e SPRING_PROFILES_ACTIVE=prod \
                         ${BACKEND_DOCKERHUB_REPO}:latest && \
