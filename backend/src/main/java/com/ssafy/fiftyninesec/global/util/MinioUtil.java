@@ -22,7 +22,7 @@ public class MinioUtil {
         this.minioConfig = minioConfig;
     }
 
-    public void uploadImage(String bucketName, String fullPath, MultipartFile file) {
+    public String uploadImage(String bucketName, String fullPath, MultipartFile file) {
         try (InputStream fileInputStream = file.getInputStream()) {
             long size = file.getSize();
             minioClient.putObject(
@@ -33,8 +33,10 @@ public class MinioUtil {
                             .build()
             );
             log.info("File uploaded successfully to MinIO.");
+            return minioConfig.getEndpoint() + "/" + bucketName + "/" + fullPath;
         } catch (Exception e) {
             log.error("Error occurred while uploading: ", e);
+            return null;
         }
     }
 
