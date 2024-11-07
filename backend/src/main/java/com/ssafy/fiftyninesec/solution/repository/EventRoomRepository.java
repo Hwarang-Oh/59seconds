@@ -2,8 +2,10 @@ package com.ssafy.fiftyninesec.solution.repository;
 
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 
+import com.ssafy.fiftyninesec.solution.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,5 +35,6 @@ public interface EventRoomRepository extends JpaRepository<EventRoom, Long> {
             LIMIT 1
             """)
     Optional<EventRoom> findLatestEventByMemberId(@Param("memberId") Long  memberId);
+    List<EventRoom> findByMember(Member member, Sort sort);
 
 }
