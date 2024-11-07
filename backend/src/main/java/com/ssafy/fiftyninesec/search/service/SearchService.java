@@ -9,12 +9,10 @@ import com.ssafy.fiftyninesec.solution.entity.Member;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
-import org.springframework.data.elasticsearch.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -77,7 +75,7 @@ public class SearchService {
 
     private EventRoomSearchResponseDto mapToResponseDto(EventRoomSearch eventRoomSearch) {
         EventRoomSearchResponseDto dto = new EventRoomSearchResponseDto();
-        dto.setRoomId(eventRoomSearch.getRoomId());
+        dto.setEventId(eventRoomSearch.getRoomId());
         dto.setTitle(eventRoomSearch.getTitle());
         dto.setDescription(eventRoomSearch.getDescription());
         dto.setStatus(eventRoomSearch.getStatus());
