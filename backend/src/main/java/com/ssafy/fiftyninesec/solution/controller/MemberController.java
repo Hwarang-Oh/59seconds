@@ -3,6 +3,7 @@ package com.ssafy.fiftyninesec.solution.controller;
 import com.ssafy.fiftyninesec.solution.dto.response.CreatedEventResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.response.MemberResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.request.MemberUpdateRequestDto;
+import com.ssafy.fiftyninesec.solution.dto.response.ParticipatedEventResponseDto;
 import com.ssafy.fiftyninesec.solution.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -114,6 +115,12 @@ public class MemberController {
     @GetMapping("/createdroom")
     public ResponseEntity<List<CreatedEventResponseDto>> getCreatedEventRooms(HttpServletRequest request) {
         List<CreatedEventResponseDto> events = memberService.getCreatedEventRooms((Long) request.getAttribute("memberId"));
+        return ResponseEntity.ok(events);
+    }
+
+    @GetMapping("/participatedroom")
+    public ResponseEntity<List<ParticipatedEventResponseDto>> getParticipatedEventRooms(HttpServletRequest request) {
+        List<ParticipatedEventResponseDto> events = memberService.getParticipatedEventRooms((Long) request.getAttribute("memberId"));
         return ResponseEntity.ok(events);
     }
 }

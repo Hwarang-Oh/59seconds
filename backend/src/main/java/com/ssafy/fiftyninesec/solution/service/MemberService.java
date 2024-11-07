@@ -2,13 +2,18 @@ package com.ssafy.fiftyninesec.solution.service;
 
 import com.ssafy.fiftyninesec.global.exception.CustomException;
 import com.ssafy.fiftyninesec.global.exception.ErrorCode;
+import com.ssafy.fiftyninesec.participation.entity.Participation;
+import com.ssafy.fiftyninesec.participation.repository.ParticipationRepository;
 import com.ssafy.fiftyninesec.solution.dto.response.CreatedEventResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.response.MemberResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.request.MemberUpdateRequestDto;
+import com.ssafy.fiftyninesec.solution.dto.response.ParticipatedEventResponseDto;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.entity.Member;
+import com.ssafy.fiftyninesec.solution.entity.Prize;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import com.ssafy.fiftyninesec.solution.repository.MemberRepository;
+import com.ssafy.fiftyninesec.solution.repository.PrizeRepository;
 import com.ssafy.fiftyninesec.solution.repository.RandomNicknameRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +22,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static com.ssafy.fiftyninesec.global.exception.ErrorCode.MEMBER_NOT_FOUND;
+import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
 
 @Slf4j
 @Service
@@ -31,6 +37,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final RandomNicknameRepository randomNicknameRepository;
     private final EventRoomRepository eventRoomRepository;
+    private final ParticipationRepository participationRepository;
+    private final PrizeRepository prizeRepository;
 
     @Value("${random-nickname.size}")
     private int randomNicknameSize;
@@ -205,5 +213,52 @@ public class MemberService {
                 .collect(Collectors.toList());
 
         return responseDto;
+    }
+
+    public List<ParticipatedEventResponseDto> getParticipatedEventRooms(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+        List<Participation> participatedEvents = participationRepository.findByMemberId(memberId);
+        if(participatedEvents.isEmpty()) {
+            log.info("참여한 이벤트가 없습니다.");
+            throw new CustomException(EVENT_NOT_FOUND);
+        }
+        log.info("참여한 이벤트 수 : {}", participatedEvents.size());
+
+        List<ParticipatedEventResponseDto> responseDtos = new ArrayList<>();
+
+        for (Participation participation : participatedEvents) {
+
+            // 이벤트 정보 조회
+            EventRoom eventRoom = eventRoomRepository.findById(participation.getRoom().getId())
+                    .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
+            // 당첨된 경우만
+            Prize prize = null;
+            if(participation.getIsWinner()) {
+                 prize = prizeRepository.findByEventRoomAndRanking(eventRoom, participation.getRanking())
+                         .orElseThrow(() -> new CustomException(PRIZE_NOT_FOUND));
+            }
+
+            // DTO 생성 및 리스트에 추가
+            ParticipatedEventResponseDto dto = ParticipatedEventResponseDto.builder()
+                    .eventId(participation.getRoom().getId())
+                    .ranking(participation.getRanking())
+                    .isWinner(participation.getIsWinner())
+                    .title(eventRoom.getTitle())
+                    .bannerImage(eventRoom.getBannerImage())
+                    .totalParticipants(eventRoom.getUnlockCount())
+                    .prizeType(prize != null ? prize.getPrizeType() : null)
+                    .prizeName(prize != null ? prize.getPrizeName() : null)
+                    .startTime(eventRoom.getStartTime())
+                    .build();
+
+            responseDtos.add(dto);
+        }
+
+
+
+        return responseDtos;
     }
 }

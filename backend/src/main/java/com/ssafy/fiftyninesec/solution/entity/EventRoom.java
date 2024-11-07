@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Entity
@@ -21,7 +20,8 @@ public class EventRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long roomId;
+    @Column(name="room_id")
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)

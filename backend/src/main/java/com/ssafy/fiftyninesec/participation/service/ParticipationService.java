@@ -5,7 +5,9 @@ import com.ssafy.fiftyninesec.participation.dto.ParticipationResponseDto;
 import com.ssafy.fiftyninesec.participation.entity.Participation;
 import com.ssafy.fiftyninesec.participation.repository.ParticipationRepository;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
+import com.ssafy.fiftyninesec.solution.entity.Member;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
+import com.ssafy.fiftyninesec.solution.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,7 @@ public class ParticipationService {
     private final ParticipationRepository participationRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final EventRoomRepository eventRoomRepository;
+    private final MemberRepository memberRepository;
 
     // 기존 참여자들을 조회
     @Transactional(readOnly = true)
@@ -44,8 +47,8 @@ public class ParticipationService {
     // 엔티티를 DTO로 변환하는 메서드
     private ParticipationResponseDto convertToDto(Participation participation) {
         return ParticipationResponseDto.builder()
-                .eventId(participation.getRoomId())
-                .memberId(participation.getMemberId())
+                .eventId(participation.getRoom().getId())
+                .memberId(participation.getMember().getId())
                 .joinedAt(participation.getJoinedAt())
                 .ranking(participation.getRanking())
                 .isWinner(participation.getIsWinner())
@@ -55,9 +58,11 @@ public class ParticipationService {
     // 새로운 참여자를 저장하고 WebSocket으로 알림 전송
     @Transactional
     public ParticipationResponseDto saveParticipation(Long roomId, Long memberId) {
-        // 1. 이벤트룸 조회
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
         EventRoom room = eventRoomRepository.findById(roomId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Room not found with id: " + roomId));
+                .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         // 2. 이벤트 시작 시간 체크
         LocalDateTime now = LocalDateTime.now();
@@ -80,8 +85,8 @@ public class ParticipationService {
 
         // 5. 참여 정보 생성
         Participation participation = Participation.builder()
-                .roomId(roomId)
-                .memberId(memberId)
+                .room(room)
+                .member(member)
                 .joinedAt(now)
                 .ranking(currentParticipants + 1)
                 .isWinner(currentParticipants < room.getWinnerNum())
