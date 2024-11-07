@@ -11,7 +11,7 @@ WORKDIR /app
 
 # Copy the JAR file to the application directory
 COPY build/libs/dreamsolution-0.0.1-SNAPSHOT.jar contents.jar
-
+ 
 # Set timezone
 ENV TZ Asia/Seoul
 
