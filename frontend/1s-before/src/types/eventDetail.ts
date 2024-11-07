@@ -1,4 +1,5 @@
 export interface EventData {
+  id: number;
   eventInfo: {
     title: string;
     description: string;

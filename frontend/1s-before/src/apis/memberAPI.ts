@@ -9,7 +9,11 @@ const api = axios.create({
 
 export const creatorInfoPut = async (formData: FormData): Promise<string> => {
   try {
-    const response = await api.put('/update-from-event', formData);
+    const response = await api.put('/update-from-event', formData, {
+      headers: {
+        memberId: 1,
+      },
+    });
 
     if (response.status === 200) {
       console.log('업데이트 성공');
