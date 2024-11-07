@@ -19,11 +19,10 @@ export function useEventCreate() {
     },
     participationCode: '',
   });
-
-  const [bannerCrop, setBannerCrop] = useState({ x: 0, y: 0 });
   const [bannerZoom, setBannerZoom] = useState(1);
-  const [rectangleCrop, setRectangleCrop] = useState({ x: 0, y: 0 });
   const [rectangleZoom, setRectangleZoom] = useState(1);
+  const [bannerCrop, setBannerCrop] = useState({ x: 0, y: 0 });
+  const [rectangleCrop, setRectangleCrop] = useState({ x: 0, y: 0 });
   const [croppedBannerPixels, setCroppedBannerPixels] = useState<{
     x: number;
     y: number;
@@ -39,6 +38,7 @@ export function useEventCreate() {
   const [croppedBanner, setCroppedBanner] = useState<Blob | null>(null);
   const [croppedRectangle, setCroppedRectangle] = useState<Blob | null>(null);
 
+  // IMP: 제목 및 내용 생성 함수
   const handleInputChange = (e: { target: { name: string; value: any } }) => {
     const { name, value } = e.target;
 
@@ -51,6 +51,15 @@ export function useEventCreate() {
     }));
   };
 
+  // IMP: 내용 생성을 위한 텍스트 에디터로 내용 생성 함수
+
+  const handleDescriptionChange = (content: string) => {
+    handleInputChange({
+      target: { name: 'description', value: content },
+    });
+  };
+
+  // IMP: 참여 코드 입력을 위한 함수
   const handleParticipationCodeChange = (e: { target: { value: any } }) => {
     const { value } = e.target;
 
@@ -60,6 +69,7 @@ export function useEventCreate() {
     }));
   };
 
+  // IMP: 날짜 변경을 위함 함수
   const handleDateChange = (field: any, date: any) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -69,6 +79,8 @@ export function useEventCreate() {
       },
     }));
   };
+
+  // IMP: 파일 변경 함수
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -146,18 +158,22 @@ export function useEventCreate() {
     setCroppedRectanglePixels(croppedAreaPixels);
   };
 
-  // 이미지를 두 가지 크기로 자르기 위한 함수
+  // IMP: 이미지를 두 가지 크기로 자르기 위한 함수
   const getCroppedImg = async (
     imageSrc: string,
     crop: { x: number; y: number; width: number; height: number },
     outputWidth: number,
-    outputHeight: number
-  ): Promise<Blob | null> => {
+    outputHeight: number,
+    fileName: string
+  ): Promise<File | null> => {
     const canvas = document.createElement('canvas');
-    const image = await new Promise<HTMLImageElement>((resolve) => {
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
       const img = new Image();
       img.src = imageSrc;
       img.onload = () => resolve(img);
+      img.onerror = (errorEvent) => {
+        reject(new Error('Failed to load image'));
+      };
     });
 
     canvas.width = outputWidth;
@@ -182,11 +198,12 @@ export function useEventCreate() {
       outputWidth,
       outputHeight
     );
+
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
         if (blob) {
-          // Blob을 File 객체로 변환
-          const file = new File([blob], 'cropped-image.jpg', {
+          // Blob을 File 객체로 변환하면서 고유한 이름을 지정
+          const file = new File([blob], `${fileName}.jpg`, {
             type: 'image/jpeg',
           });
           resolve(file);
@@ -206,52 +223,106 @@ export function useEventCreate() {
     const fileURL = URL.createObjectURL(bannerImage);
 
     try {
+      let bannerBlob: File | null = null;
+      let rectangleBlob: File | null = null;
+
       if (croppedBannerPixels) {
-        const bannerBlob = await getCroppedImg(
+        bannerBlob = await getCroppedImg(
           fileURL,
           croppedBannerPixels,
           1920,
-          460
+          460,
+          'banner-image'
         );
-        setCroppedBanner(bannerBlob); // Cropped 배너 이미지 저장
+      }
 
-        // formData에 반영
+      if (croppedRectanglePixels) {
+        rectangleBlob = await getCroppedImg(
+          fileURL,
+          croppedRectanglePixels,
+          240,
+          320,
+          'rectangle-image'
+        );
+      }
+
+      if (bannerBlob && rectangleBlob) {
+        // 상태 업데이트를 한 번에 처리
         setFormData((prev) => ({
           ...prev,
           eventInfo: {
             ...prev.eventInfo,
             bannerImage: bannerBlob,
-          },
-        }));
-      }
-
-      if (croppedRectanglePixels) {
-        const rectangleBlob = await getCroppedImg(
-          fileURL,
-          croppedRectanglePixels,
-          240,
-          320
-        );
-        setCroppedRectangle(rectangleBlob); // Cropped 직사각형 이미지 저장
-
-        // formData에 반영
-        setFormData((prev) => ({
-          ...prev,
-          eventInfo: {
-            ...prev.eventInfo,
             rectImage: rectangleBlob,
           },
         }));
+
+        setCroppedBanner(bannerBlob);
+        setCroppedRectangle(rectangleBlob);
+
+        window.alert('자르기 성공!');
       }
     } finally {
       URL.revokeObjectURL(fileURL);
-      window.alert('자르기 성공!');
+    }
+  };
+
+  // IMP: formData를 JSON 형식에 맞게 변환 후 서버로 POST 요청하는 함수
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+
+    if (!formData.eventInfo.bannerImage || !formData.eventInfo.rectImage) {
+      alert('이미지를 자르고 다시 시도해 주세요.');
+      return;
+    }
+
+    const eventPayload = {
+      id: Date.now(),
+      eventInfo: {
+        title: formData.eventInfo.title,
+        description: formData.eventInfo.description,
+        bannerImage: formData.eventInfo.bannerImage,
+        rectImage: formData.eventInfo.rectImage,
+      },
+      productsOrCoupons: formData.productsOrCoupons.map((item, index) => ({
+        order: index + 1,
+        type: item.type,
+        name: item.name,
+        recommendedPeople: item.recommendedPeople,
+      })),
+      eventPeriod: {
+        start: formData.eventPeriod.start,
+        end: formData.eventPeriod.end,
+      },
+      participationCode: formData.participationCode,
+    };
+
+    try {
+      const response = await fetch('http://localhost:9999/event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(eventPayload),
+      });
+
+      if (response.ok) {
+        alert('이벤트가 성공적으로 추가되었습니다.');
+      } else {
+        const errorMessage = await response.text();
+        console.error('Error response:', errorMessage);
+        alert('이벤트 추가에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Error adding event:', error);
+      alert('오류가 발생했습니다.');
     }
   };
 
   return {
     formData,
     handleInputChange,
+    handleDescriptionChange,
     handleParticipationCodeChange,
     handleDateChange,
     handleFileChange,
@@ -271,5 +342,6 @@ export function useEventCreate() {
     croppedBanner,
     croppedRectangle,
     handleCrop,
+    handleSubmit,
   };
 }
