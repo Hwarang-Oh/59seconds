@@ -158,6 +158,7 @@ pipeline {
                                             ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
                                             docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
                                             docker network inspect 404_dream_solutions_network >/dev/null 2>&1 || docker network create 404_dream_solutions_network && \
+                                            docker image prune -f && \
                                             docker pull ${BACKEND_DOCKERHUB_REPO}:latest && \
                                             docker stop backend || true && \
                                             docker rm backend || true && \
