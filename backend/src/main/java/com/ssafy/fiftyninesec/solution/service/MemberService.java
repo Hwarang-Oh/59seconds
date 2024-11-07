@@ -2,9 +2,12 @@ package com.ssafy.fiftyninesec.solution.service;
 
 import com.ssafy.fiftyninesec.global.exception.CustomException;
 import com.ssafy.fiftyninesec.global.exception.ErrorCode;
+import com.ssafy.fiftyninesec.solution.dto.response.CreatedEventResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.response.MemberResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.request.MemberUpdateRequestDto;
+import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.entity.Member;
+import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import com.ssafy.fiftyninesec.solution.repository.MemberRepository;
 import com.ssafy.fiftyninesec.solution.repository.RandomNicknameRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +15,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Sort;
 
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+
+import static com.ssafy.fiftyninesec.global.exception.ErrorCode.MEMBER_NOT_FOUND;
 
 @Slf4j
 @Service
@@ -22,6 +30,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final RandomNicknameRepository randomNicknameRepository;
+    private final EventRoomRepository eventRoomRepository;
 
     @Value("${random-nickname.size}")
     private int randomNicknameSize;
@@ -29,10 +38,10 @@ public class MemberService {
     @Transactional(readOnly = true)
     public MemberResponseDto getMemberInfo(Long memberId) {
         if (memberId == null) {
-            throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
+            throw new CustomException(MEMBER_NOT_FOUND);
         }
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
         return MemberResponseDto.of(member);
     }
@@ -67,7 +76,7 @@ public class MemberService {
     @Transactional
     public void updateField(Long memberId, String fieldName, String fieldValue) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
         // 유효성 검사 및 필드 업데이트
         switch (fieldName) {
@@ -107,7 +116,7 @@ public class MemberService {
     public void updatePartialFields(Long memberId, MemberUpdateRequestDto updateDto) {
         // 회원 정보 조회
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
         // 각 필드에 대해 유효성 검사 및 업데이트 수행
         if (updateDto.getCreatorName() != null) {
@@ -184,4 +193,17 @@ public class MemberService {
         }
     }
 
+    public List<CreatedEventResponseDto> getCreatedEventRooms(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+
+        // 생성일 내림차순
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        List<EventRoom> events = eventRoomRepository.findByMember(member, sort);
+        List<CreatedEventResponseDto> responseDto = events.stream()
+                .map(CreatedEventResponseDto::new)
+                .collect(Collectors.toList());
+
+        return responseDto;
+    }
 }

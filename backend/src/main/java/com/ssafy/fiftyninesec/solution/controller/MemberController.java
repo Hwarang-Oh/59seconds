@@ -1,5 +1,6 @@
 package com.ssafy.fiftyninesec.solution.controller;
 
+import com.ssafy.fiftyninesec.solution.dto.response.CreatedEventResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.response.MemberResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.request.MemberUpdateRequestDto;
 import com.ssafy.fiftyninesec.solution.service.MemberService;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -106,5 +109,11 @@ public class MemberController {
     public ResponseEntity<?> updatePartialFields(HttpServletRequest request, @RequestBody MemberUpdateRequestDto updateDto) {
         memberService.updatePartialFields((Long) request.getAttribute("memberId"), updateDto);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/createdroom")
+    public ResponseEntity<List<CreatedEventResponseDto>> getCreatedEventRooms(HttpServletRequest request) {
+        List<CreatedEventResponseDto> events = memberService.getCreatedEventRooms((Long) request.getAttribute("memberId"));
+        return ResponseEntity.ok(events);
     }
 }
