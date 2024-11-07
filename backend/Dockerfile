@@ -20,6 +20,7 @@ COPY build/libs/dreamsolution-0.0.1-SNAPSHOT.jar contents.jar
 COPY build/config/application-secret.yml /app/config/application-secret.yml
 
 RUN chmod 644 /app/config/application-secret.yml
+
 # Set timezone
 ENV TZ Asia/Seoul
  
@@ -28,5 +29,6 @@ EXPOSE 9090
 
 # Change the entrypoint to look for the config file in the correct location
 ENTRYPOINT ["java", "-jar", "/app/contents.jar", \
-            "--spring.config.location=classpath:/application.yml,file:/app/config/application-secret.yml", \
+            "--spring.config.location=classpath:/application.yml", \
+            "--spring.config.additional-location=file:/app/config/", \
             "--spring.profiles.active=prod"]
