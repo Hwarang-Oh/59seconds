@@ -154,21 +154,21 @@ pipeline {
                                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}",
                                         usernameVariable: 'DOCKER_USERNAME',
                                         passwordVariable: 'DOCKER_PASSWORD')]) {
-                                        sh """
-                                            ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
-                                            docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
-                                            docker network inspect 404_dream_solutions_network >/dev/null 2>&1 || docker network create 404_dream_solutions_network && \
-                                            docker image prune -f && \
-                                            docker pull ${BACKEND_DOCKERHUB_REPO}:latest && \
-                                            docker stop backend || true && \
-                                            docker rm backend || true && \
-                                            docker run -d --name backend \
-                                                -p 9090:9090 \
-                                                --network 404_dream_solutions_network \
-                                                -e SPRING_PROFILES_ACTIVE=prod \
-                                                ${BACKEND_DOCKERHUB_REPO}:latest && \
-                                            docker logout'
-                                        """
+                                                       sh """
+                    ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
+                    docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
+                    docker network inspect 404_dream_solutions_network >/dev/null 2>&1 || docker network create 404_dream_solutions_network && \
+                    docker stop backend || true && \
+                    docker rm backend || true && \
+                    docker image prune -f && \
+                    docker pull ${BACKEND_DOCKERHUB_REPO}:latest && \
+                    docker run -d --name backend \
+                        -p 9090:9090 \
+                        --network 404_dream_solutions_network \
+                        -e SPRING_PROFILES_ACTIVE=prod \
+                        ${BACKEND_DOCKERHUB_REPO}:latest && \
+                    docker logout'
+                """
                                     }
                                 }
                             }
