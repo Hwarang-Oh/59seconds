@@ -106,13 +106,6 @@ pipeline {
                         stage('Build Backend') {
                             steps {
                                 dir('backend') {
-                                    withCredentials([file(credentialsId: 'application-secret', variable: 'SECRET_FILE')]) {
-                                        sh '''
-                                            mkdir -p build/config
-                                            cp $SECRET_FILE build/config/application-secret.yml
-                                            ls -l build/config/application-secret.yml
-                                        '''
-                                    }
                                     sh 'chmod +x ./gradlew'
                                     sh './gradlew clean build -Pprofile=prod -x test'
                                     sh 'ls -l build/libs/'
@@ -122,6 +115,14 @@ pipeline {
                         stage('Build & Push Backend Docker Image') {
                             steps {
                                 dir('backend') {
+                                    withCredentials([file(credentialsId: 'application-secret', variable: 'SECRET_FILE')]) {
+                                        sh '''
+                                            mkdir -p build/config
+                                            cp $SECRET_FILE build/config/application-secret.yml
+                                            ls -l build/config/application-secret.yml
+                                        '''
+                                    }
+
                                     withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS_ID}", url: "https://index.docker.io/v1/"]) {
                                         script {
                                             def remoteDigest = sh(

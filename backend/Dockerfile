@@ -21,7 +21,7 @@ COPY build/config/application-secret.yml /app/config/application-secret.yml
 
 # Set timezone
 ENV TZ Asia/Seoul
-
+ 
 # Expose port
 EXPOSE 9090
 
