@@ -19,6 +19,7 @@ COPY build/libs/dreamsolution-0.0.1-SNAPSHOT.jar contents.jar
 # Copy the application-secret.yml file
 COPY build/config/application-secret.yml /app/config/application-secret.yml
 
+RUN chmod 644 /app/config/application-secret.yml
 # Set timezone
 ENV TZ Asia/Seoul
  
