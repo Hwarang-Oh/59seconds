@@ -78,19 +78,19 @@ public class SearchService {
     }
 
     private EventRoomSearchResponseDto mapToResponseDto(EventRoomSearch eventRoomSearch) {
-        EventRoomSearchResponseDto dto = new EventRoomSearchResponseDto();
-        dto.setEventId(eventRoomSearch.getRoomId());
-        dto.setTitle(eventRoomSearch.getTitle());
-        dto.setDescription(eventRoomSearch.getDescription());
-        dto.setStatus(eventRoomSearch.getStatus());
-        dto.setCreatedAt(eventRoomSearch.getCreatedAt());
-        dto.setStartTime(eventRoomSearch.getStartTime());
-        dto.setEndTime(eventRoomSearch.getEndTime());
-        dto.setWinnerNum(eventRoomSearch.getWinnerNum());
-        dto.setBannerImage(eventRoomSearch.getBannerImage());
-        dto.setSquareImage(eventRoomSearch.getSquareImage());
-        dto.setRectangleImage(eventRoomSearch.getRectangleImage());
-        return dto;
+        return EventRoomSearchResponseDto.builder()
+                .eventId(eventRoomSearch.getRoomId())
+                .title(eventRoomSearch.getTitle())
+                .description(eventRoomSearch.getDescription())
+                .status(eventRoomSearch.getStatus())
+                .createdAt(eventRoomSearch.getCreatedAt())
+                .startTime(eventRoomSearch.getStartTime())
+                .endTime(eventRoomSearch.getEndTime())
+                .winnerNum(eventRoomSearch.getWinnerNum())
+                .bannerImage(eventRoomSearch.getBannerImage())
+                .squareImage(eventRoomSearch.getSquareImage())
+                .rectangleImage(eventRoomSearch.getRectangleImage())
+                .build();
     }
 
     public List<String> autocomplete(String keyword) {
