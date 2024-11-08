@@ -20,12 +20,3 @@ export interface EventFormData {
   };
   participationCode: string;
 }
-export interface EventOwnerData {
-  participateName: string | null;
-  creatorName: string;
-  address: string | null;
-  phone: string | null;
-  profileImage: File | null;
-  creatorIntroduce: string;
-  snsLink: string;
-}

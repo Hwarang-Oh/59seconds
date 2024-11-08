@@ -1,6 +1,7 @@
 'use client';
 
 import { useEditor, EditorContent } from '@tiptap/react';
+import { useEffect } from 'react';
 import Toolbar from './ToolBar';
 import '@/styles/editorStyles.css';
 import Text from '@tiptap/extension-text';
@@ -15,9 +16,10 @@ import BulletList from '@tiptap/extension-bullet-list';
 import OrderedList from '@tiptap/extension-ordered-list';
 
 type TiptapProps = {
-  value: string; // string 타입으로 지정
-  onChange: (content: string) => void; // onChange에 대한 타입 지정
+  value: string;
+  onChange: (content: string) => void;
 };
+
 const Tiptap = ({ value, onChange }: TiptapProps) => {
   const editor = useEditor({
     extensions: [
@@ -37,14 +39,20 @@ const Tiptap = ({ value, onChange }: TiptapProps) => {
     immediatelyRender: false,
     onUpdate: ({ editor }) => {
       const htmlContent = editor.getHTML();
-      onChange(htmlContent); // 에디터 내용이 변경될 때 부모로 전달
+      onChange(htmlContent);
     },
     editorProps: {
       attributes: {
-        class: 'ProseMirror', // 에디터에 클래스 지정
+        class: 'ProseMirror',
       },
     },
   });
+
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value, false);
+    }
+  }, [value, editor]);
 
   return (
     <>
