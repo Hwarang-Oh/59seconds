@@ -45,13 +45,39 @@ public class EventService {
     private final SearchService searchService;
 
     @Transactional
-    public void createEventRoom(EventRoomRequestDto eventRoomRequestDto) {
-        EventRoom eventRoom = saveEventRoom(eventRoomRequestDto);
-        savePrizes(eventRoomRequestDto.getProductsOrCoupons(), eventRoom);
-        uploadImages(eventRoomRequestDto.getAttachments());
+    public long createEventRoom(EventRoomRequestDto eventRoomRequestDto,
+                                MultipartFile bannerImage,
+                                MultipartFile rectangleImage
+    ) {
+        log.info("Received EventRoomRequestDto: {}", eventRoomRequestDto);
+        log.info("Banner Image: {}", bannerImage.getOriginalFilename());
+        log.info("Rectangle Image: {}", rectangleImage.getOriginalFilename());
 
-        // Elasticsearch 동기화
+        EventRoom eventRoom = saveEventRoom(eventRoomRequestDto);
+
+        // 이미지 서버에 업로드
+        String bannerUrl = uploadImageAndGetUrl(bannerImage, eventRoom.getId(), "banner");
+        String rectangleUrl = uploadImageAndGetUrl(rectangleImage, eventRoom.getId(), "rectangle");
+        updateEventRoomImages(eventRoom, bannerUrl, rectangleUrl);
+
+        // Prize 추가
+        savePrizes(eventRoomRequestDto.getProductsOrCoupons(), eventRoom);
+        
+        // elasticsearch에 동기화
         eventRoomSearchRepository.save(searchService.convertToES(eventRoom));
+
+        return eventRoom.getId();
+    }
+
+    private String uploadImageAndGetUrl(MultipartFile image, Long eventId, String imageType) {
+        String imagePath = minioUtil.generateFilePath(image.getOriginalFilename(), imageType);
+        return minioUtil.uploadImage("event-image", eventId + "/" + imagePath, image);
+    }
+
+    private void updateEventRoomImages(EventRoom eventRoom, String bannerUrl, String rectangleUrl) {
+        eventRoom.setBannerImage(bannerUrl);
+        eventRoom.setRectangleImage(rectangleUrl);
+        eventRoomRepository.save(eventRoom);
     }
 
     @Transactional
@@ -59,6 +85,7 @@ public class EventService {
 
         EventRoom eventRoom = eventRoomRepository.findById(eventRoomRequestDto.getRoomId())
                 .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
         eventRoom.setTitle(eventRoomRequestDto.getEventInfo().getTitle());
         eventRoom.setDescription(eventRoomRequestDto.getEventInfo().getDescription());
         eventRoom.setBannerImage(eventRoomRequestDto.getEventInfo().getBannerImage());
@@ -109,7 +136,7 @@ public class EventService {
                     .winnerCount(productOrCoupon.getRecommendedPeople())
                     .build();
             prizeRepository.save(prize);
-            log.info("Saved prize: {}", prize);
+            log.info("Saved prize: {}", prize.toString());
         });
     }
 

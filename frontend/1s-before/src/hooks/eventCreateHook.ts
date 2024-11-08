@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { EventFormData, ProductOrCoupon } from '../types/eventCreate';
+import axios from 'axios';
+import { createEvent } from '@/apis/eventAPI';
 
 export function useEventCreate() {
   const [formData, setFormData] = useState<EventFormData>({
@@ -269,54 +271,49 @@ export function useEventCreate() {
 
   // IMP: formData를 JSON 형식에 맞게 변환 후 서버로 POST 요청하는 함수
   const handleSubmit = async (event: { preventDefault: () => void }) => {
-    event.preventDefault();
+      event.preventDefault();
 
-    if (!formData.eventInfo.bannerImage || !formData.eventInfo.rectImage) {
-      alert('이미지를 자르고 다시 시도해 주세요.');
-      return;
-    }
-
-    const eventPayload = {
-      id: Date.now(),
-      eventInfo: {
-        title: formData.eventInfo.title,
-        description: formData.eventInfo.description,
-        bannerImage: formData.eventInfo.bannerImage,
-        rectImage: formData.eventInfo.rectImage,
-      },
-      productsOrCoupons: formData.productsOrCoupons.map((item, index) => ({
-        order: index + 1,
-        type: item.type,
-        name: item.name,
-        recommendedPeople: item.recommendedPeople,
-      })),
-      eventPeriod: {
-        start: formData.eventPeriod.start,
-        end: formData.eventPeriod.end,
-      },
-      participationCode: formData.participationCode,
-    };
-
-    try {
-      const response = await fetch('http://localhost:9999/event', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(eventPayload),
-      });
-
-      if (response.ok) {
-        alert('이벤트가 성공적으로 추가되었습니다.');
-      } else {
-        const errorMessage = await response.text();
-        console.error('Error response:', errorMessage);
-        alert('이벤트 추가에 실패했습니다.');
+      if (!formData.eventInfo.bannerImage || !formData.eventInfo.rectImage) {
+          alert('이미지를 자르고 다시 시도해 주세요.');
+          return;
       }
-    } catch (error) {
-      console.error('Error adding event:', error);
-      alert('오류가 발생했습니다.');
-    }
+
+      const formDataToSend = new FormData();
+      
+      const eventData = {
+          memberId: 1, // TODO
+          eventInfo: {
+              title: formData.eventInfo.title,
+              description: formData.eventInfo.description,
+          },
+          productsOrCoupons: formData.productsOrCoupons.map((item, index) => ({
+              order: index + 1,
+              type: item.type,
+              name: item.name,
+              recommendedPeople: item.recommendedPeople,
+          })),
+          eventPeriod: {
+              start: new Date(formData.eventPeriod.start).toISOString(),
+              end: new Date(formData.eventPeriod.end).toISOString(),
+          },
+          participationCode: formData.participationCode,
+      };
+
+      const eventBlob = new Blob([JSON.stringify(eventData)], {
+        type: 'application/json'
+      });
+      
+      formDataToSend.append('data', eventBlob);
+      formDataToSend.append('bannerImage', formData.eventInfo.bannerImage);
+      formDataToSend.append('rectImage', formData.eventInfo.rectImage);
+
+      try {
+        const response = await createEvent(formDataToSend);
+        console.log('Created room with ID:', response);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('이벤트 룸 생성에 실패했습니다.');
+      }
   };
 
   return {

@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,11 +41,14 @@ public class EventController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "이벤트 룸이 성공적으로 생성되었습니다.")
     })
-    @PostMapping
-    public ResponseEntity<Void> createEventRoom(
-            @Parameter(description = "이벤트 룸 생성에 필요한 정보") @RequestBody EventRoomRequestDto eventRoomRequestDto) {
-        eventService.createEventRoom(eventRoomRequestDto);
-        return ResponseEntity.ok().build();
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Long> createEventRoom(
+            @RequestPart(value = "data") EventRoomRequestDto eventRoomRequestDto,
+            @RequestParam("bannerImage") MultipartFile bannerImage,
+            @RequestParam("rectImage") MultipartFile rectImage
+    ) {
+        long roomId = eventService.createEventRoom(eventRoomRequestDto, bannerImage, rectImage);
+        return ResponseEntity.ok(roomId);
     }
 
     @Operation(summary = "이벤트 룸 수정", description = "기존의 이벤트 룸 정보를 수정합니다.")
