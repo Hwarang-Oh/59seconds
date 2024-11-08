@@ -46,7 +46,7 @@ public class SearchService {
         log.info("------ Elasticsearch Synchronization ------");
     }
 
-    private EventRoomSearch convertToES(EventRoom mysqlRoom) {
+    public EventRoomSearch convertToES(EventRoom mysqlRoom) {
         Long memberId = Optional.ofNullable(mysqlRoom.getMember())
                 .map(Member::getId)
                 .orElseThrow(() -> new RuntimeException("Member is null for EventRoom ID: " + mysqlRoom.getId()));

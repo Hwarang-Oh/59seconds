@@ -1,6 +1,8 @@
 package com.ssafy.fiftyninesec.solution.service;
 
 import com.ssafy.fiftyninesec.global.exception.CustomException;
+import com.ssafy.fiftyninesec.search.repository.EventRoomSearchRepository;
+import com.ssafy.fiftyninesec.search.service.SearchService;
 import com.ssafy.fiftyninesec.solution.dto.PrizeDto;
 import com.ssafy.fiftyninesec.solution.dto.request.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.global.util.MinioUtil;
@@ -39,12 +41,17 @@ public class EventService {
     private final WinnerRepository winnerRepository;
     private final MemberRepository memberRepository;
     private final MinioUtil minioUtil;
+    private final EventRoomSearchRepository eventRoomSearchRepository;
+    private final SearchService searchService;
 
     @Transactional
     public void createEventRoom(EventRoomRequestDto eventRoomRequestDto) {
         EventRoom eventRoom = saveEventRoom(eventRoomRequestDto);
         savePrizes(eventRoomRequestDto.getProductsOrCoupons(), eventRoom);
         uploadImages(eventRoomRequestDto.getAttachments());
+
+        // Elasticsearch 동기화
+        eventRoomSearchRepository.save(searchService.convertToES(eventRoom));
     }
 
     @Transactional
@@ -64,6 +71,10 @@ public class EventService {
         uploadImages(eventRoomRequestDto.getAttachments());
 
         eventRoomRepository.save(eventRoom);
+
+        // Elasticsearch 동기화
+        eventRoomSearchRepository.save(searchService.convertToES(eventRoom));
+
         log.info("Updated event room: {}", eventRoom);
     }
 
