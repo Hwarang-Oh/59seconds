@@ -4,7 +4,6 @@ import CountdownTimer from '@/components/eventRoom/CountdownTimer';
 import EventStatusHeader from '@/components/eventRoom/EventStatusHeader';
 import { useState } from 'react';
 import { EventStatusAreaProps } from '@/types/eventRoom';
-import { postParticipation } from '@/apis/eventAPI';
 
 export default function EventStatusArea({
   isDrawing,
@@ -22,7 +21,7 @@ export default function EventStatusArea({
         <CountdownTimer eventTime={eventTime} onComplete={() => setIsTimerCompleted(true)} />
         <ActiveButton
           isDisabled={!isTimerCompleted}
-          onClick={() => postParticipation(1)}
+          onClick={() => console.log(1)}
           text={isTimerCompleted ? '추첨 시작!' : '추첨 시작 전'}
         />
       </div>
