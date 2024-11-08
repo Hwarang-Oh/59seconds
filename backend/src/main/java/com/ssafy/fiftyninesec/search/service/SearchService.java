@@ -9,6 +9,7 @@ import com.ssafy.fiftyninesec.solution.entity.Member;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.Criteria;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class SearchService {
@@ -40,10 +42,8 @@ public class SearchService {
 
         esRooms.forEach(room -> room.setTitleCompletion(room.getTitle())); // titleCompletion 설정
         eventRoomSearchRepository.saveAll(esRooms);
-    }
 
-    public void forceSynchronizeData() {
-        synchronizeData();
+        log.info("------ Elasticsearch Synchronization ------");
     }
 
     private EventRoomSearch convertToES(EventRoom mysqlRoom) {
