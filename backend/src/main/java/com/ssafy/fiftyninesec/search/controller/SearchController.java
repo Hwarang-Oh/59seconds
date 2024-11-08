@@ -40,7 +40,7 @@ public class SearchController {
 
     @GetMapping("/synchronize")
     public ResponseEntity<Void> synchronize() {
-        searchService.forceSynchronizeData();
+        searchService.synchronizeData();
         return ResponseEntity.ok().build();
     }
 }

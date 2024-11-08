@@ -1,9 +1,11 @@
 package com.ssafy.fiftyninesec.search.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Builder
 @Data
 public class EventRoomSearchResponseDto {
     private Long eventId;
