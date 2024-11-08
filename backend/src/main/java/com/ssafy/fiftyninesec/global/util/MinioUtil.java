@@ -32,12 +32,26 @@ public class MinioUtil {
                             .stream(fileInputStream, size, -1)
                             .build()
             );
-            log.info("File uploaded successfully to MinIO.");
-            return minioConfig.getEndpoint() + "/" + bucketName + "/" + fullPath;
+
+            log.info("파일 '{}'이(가) MinIO의 '{}' 경로에 성공적으로 업로드되었습니다.", fullPath, bucketName);
+
+            String fileUrl = String.format("%s/%s/%s",
+                    minioConfig.getEndpoint(),
+                    bucketName,
+                    fullPath);
+
+            return fileUrl;
         } catch (Exception e) {
-            log.error("Error occurred while uploading: ", e);
+            log.error("업로드 중 오류가 발생했습니다. 파일: '{}', 경로: '{}', 오류: {}", fullPath, bucketName, e.getMessage());
             return null;
         }
+    }
+
+    public String generateFilePath(String originalFilename, String filename) {
+        String extension = originalFilename != null && originalFilename.contains(".")
+                ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                : ""; // 확장자 추출
+        return String.format("%s%s", filename, extension); // 파일 이름 변경
     }
 
     public InputStream getImage(String bucketName, String objectName) {

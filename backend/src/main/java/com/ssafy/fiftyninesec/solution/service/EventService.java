@@ -41,17 +41,41 @@ public class EventService {
     private final MinioUtil minioUtil;
 
     @Transactional
-    public void createEventRoom(EventRoomRequestDto eventRoomRequestDto) {
+    public long createEventRoom(EventRoomRequestDto eventRoomRequestDto,
+                                MultipartFile bannerImage,
+                                MultipartFile rectangleImage
+    ) {
+        log.info("Received EventRoomRequestDto: {}", eventRoomRequestDto);
+        log.info("Banner Image: {}", bannerImage.getOriginalFilename());
+        log.info("Rectangle Image: {}", rectangleImage.getOriginalFilename());
+
         EventRoom eventRoom = saveEventRoom(eventRoomRequestDto);
+
+        String bannerUrl = uploadImageAndGetUrl(bannerImage, eventRoom.getId(), "banner");
+        String rectangleUrl = uploadImageAndGetUrl(rectangleImage, eventRoom.getId(), "rectangle");
+        updateEventRoomImages(eventRoom, bannerUrl, rectangleUrl);
+
         savePrizes(eventRoomRequestDto.getProductsOrCoupons(), eventRoom);
-        uploadImages(eventRoomRequestDto.getAttachments());
+
+        return eventRoom.getId();
+    }
+
+    private String uploadImageAndGetUrl(MultipartFile image, Long eventId, String imageType) {
+        String imagePath = minioUtil.generateFilePath(image.getOriginalFilename(), imageType);
+        return minioUtil.uploadImage("event-image", eventId + "/" + imagePath, image);
+    }
+
+    private void updateEventRoomImages(EventRoom eventRoom, String bannerUrl, String rectangleUrl) {
+        eventRoom.setBannerImage(bannerUrl);
+        eventRoom.setRectangleImage(rectangleUrl);
+        eventRoomRepository.save(eventRoom);
     }
 
     @Transactional
     public void updateEventRoom(EventRoomRequestDto eventRoomRequestDto) {
-
         EventRoom eventRoom = eventRoomRepository.findById(eventRoomRequestDto.getRoomId())
                 .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+
         eventRoom.setTitle(eventRoomRequestDto.getEventInfo().getTitle());
         eventRoom.setDescription(eventRoomRequestDto.getEventInfo().getDescription());
         eventRoom.setBannerImage(eventRoomRequestDto.getEventInfo().getBannerImage());
@@ -98,7 +122,7 @@ public class EventService {
                     .winnerCount(productOrCoupon.getRecommendedPeople())
                     .build();
             prizeRepository.save(prize);
-            log.info("Saved prize: {}", prize);
+            log.info("Saved prize: {}", prize.toString());
         });
     }
 

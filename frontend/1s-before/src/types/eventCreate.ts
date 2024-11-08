@@ -10,8 +10,8 @@ export interface EventFormData {
   eventInfo: {
     title: string;
     description: string;
-    bannerImage: File | Blob | null;
-    rectImage: File | Blob | null;
+    bannerImage: File | null;
+    rectImage: File | null;
   };
   productsOrCoupons: ProductOrCoupon[];
   eventPeriod: {
