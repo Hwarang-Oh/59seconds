@@ -1,6 +1,6 @@
 import { Client } from '@stomp/stompjs';
 import {
-  eventSocketProps,
+  EventSocketProps,
   EventRoomMessageInfo,
   EventRoomResultSubscription,
   EventRoomMessageSubscription,
@@ -16,7 +16,7 @@ const connect = ({
   onEventRoomInfoReceived,
   onMessageReceived,
   subscriptions,
-}: Readonly<eventSocketProps>) => {
+}: Readonly<EventSocketProps>) => {
   if (stompClient?.connected) {
     console.log('Already Connected, Adding New subscription');
     addSubscription({
@@ -28,7 +28,7 @@ const connect = ({
     });
   } else {
     stompClient = new Client({
-      brokerURL: 'ws://localhost:8080/api/v1/ws',
+      brokerURL: process.env.NEXT_PUBLIC_WEBSOCKET_URL,
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
@@ -53,7 +53,7 @@ const addSubscription = ({
   onEventRoomInfoReceived,
   onMessageReceived,
   subscriptions,
-}: Readonly<eventSocketProps>) => {
+}: Readonly<EventSocketProps>) => {
   subscriptions.forEach((subscription) => {
     switch (subscription) {
       case 'eventRoomInfo':

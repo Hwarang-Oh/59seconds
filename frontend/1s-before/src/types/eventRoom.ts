@@ -10,6 +10,7 @@ export interface BannerHeaderProps {
 }
 
 export interface EventStatusAreaProps {
+  isDrawing: boolean;
   participants: number;
   competitionRate: number;
   eventTime: string;
@@ -81,7 +82,7 @@ export interface EventRoomResultSubscription extends EventRoomSubscription {
   onEventRoomResultReceived: (eventRoomResult: EventRoomResult) => void;
 }
 
-export interface eventSocketProps extends EventRoomSubscription {
+export interface EventSocketProps extends EventRoomSubscription {
   onEventRoomInfoReceived: (eventRoomCurrentInfo: EventRoomCurrentInfo) => void;
   onEventRoomResultReceived: (eventRoomResult: EventRoomResult) => void;
   onMessageReceived: (messageInfo: EventRoomMessageInfo) => void;

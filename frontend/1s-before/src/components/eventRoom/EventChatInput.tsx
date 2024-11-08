@@ -21,7 +21,7 @@ export default function EventChatInput({ eventId }: Readonly<{ eventId: number }
 
   return (
     <div
-      className='flex items-center px-4 gap-1 border rounded-2xl border-gray-300 cursor-pointer'
+      className='flex items-center px-4 mb-6 gap-1 border rounded-2xl border-gray-300 cursor-pointer'
       onClick={(e) => e.stopPropagation()}>
       <input
         className='w-full py-4 text-base font-normal leading-6
