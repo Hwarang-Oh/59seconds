@@ -42,6 +42,10 @@ public class SearchService {
         eventRoomSearchRepository.saveAll(esRooms);
     }
 
+    public void forceSynchronizeData() {
+        synchronizeData();
+    }
+
     private EventRoomSearch convertToES(EventRoom mysqlRoom) {
         Long memberId = Optional.ofNullable(mysqlRoom.getMember())
                 .map(Member::getId)
