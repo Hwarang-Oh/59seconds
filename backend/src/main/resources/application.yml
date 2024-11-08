@@ -8,6 +8,10 @@ spring:
     active: local # 기본 프로파일 설정
   config:
     import: application-secret.yml
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
   datasource:
     url: jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}?useUnicode=true&serverTimezone=Asia/Seoul
     username: ${mysql.username}

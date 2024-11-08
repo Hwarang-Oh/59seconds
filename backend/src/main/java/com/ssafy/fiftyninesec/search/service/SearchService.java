@@ -49,11 +49,11 @@ public class SearchService {
     private EventRoomSearch convertToES(EventRoom mysqlRoom) {
         Long memberId = Optional.ofNullable(mysqlRoom.getMember())
                 .map(Member::getId)
-                .orElseThrow(() -> new RuntimeException("Member is null for EventRoom ID: " + mysqlRoom.getRoomId()));
+                .orElseThrow(() -> new RuntimeException("Member is null for EventRoom ID: " + mysqlRoom.getId()));
 
 
         EventRoomSearch esRoom = new EventRoomSearch();
-        esRoom.setRoomId(mysqlRoom.getRoomId());
+        esRoom.setRoomId(mysqlRoom.getId());
         esRoom.setMemberId(memberId);
         esRoom.setTitle(mysqlRoom.getTitle());
         esRoom.setDescription(mysqlRoom.getDescription());

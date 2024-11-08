@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface WinnerRepository extends JpaRepository<Winner, Long> {
-    List<Winner> findByRoom_RoomIdOrderByRanking(Long roomId);
+    List<Winner> findByRoom_IdOrderByRanking(Long roomId);
 }

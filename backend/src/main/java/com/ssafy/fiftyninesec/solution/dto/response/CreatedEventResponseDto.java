@@ -29,7 +29,7 @@ public class CreatedEventResponseDto {
     private LocalDateTime createdAt;
 
     public CreatedEventResponseDto(EventRoom eventRoom) {
-        this.eventId = eventRoom.getRoomId();
+        this.eventId = eventRoom.getId();
         this.title = eventRoom.getTitle();
         this.status = eventRoom.getStatus().name();
         this.startTime = eventRoom.getStartTime();

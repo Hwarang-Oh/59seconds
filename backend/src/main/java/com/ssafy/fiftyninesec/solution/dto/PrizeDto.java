@@ -20,7 +20,7 @@ public class PrizeDto {
 
     public PrizeDto of(Prize prize) {
         return PrizeDto.builder()
-                .prizeId(prize.getPrizeId())
+                .prizeId(prize.getId())
                 .prizeType(prize.getPrizeType())
                 .winnerCount(prize.getWinnerCount() == null ? 0 : prize.getWinnerCount())
                 .prizeName(prize.getPrizeName())

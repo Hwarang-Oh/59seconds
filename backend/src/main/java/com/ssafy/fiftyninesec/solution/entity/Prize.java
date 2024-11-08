@@ -13,10 +13,13 @@ import lombok.*;
 public class Prize {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long prizeId;
+    @Column(name="prize_id")
+    private Long id;
+
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     private EventRoom eventRoom;
+
     private String prizeType;
     private Integer winnerCount;
     private String prizeName;

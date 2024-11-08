@@ -1,8 +1,10 @@
 package com.ssafy.fiftyninesec.solution.controller;
 
+import com.ssafy.fiftyninesec.global.util.MinioUtil;
 import com.ssafy.fiftyninesec.solution.dto.response.CreatedEventResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.response.MemberResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.request.MemberUpdateRequestDto;
+import com.ssafy.fiftyninesec.solution.dto.response.ParticipatedEventResponseDto;
 import com.ssafy.fiftyninesec.solution.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,6 +25,7 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MinioUtil minioUtil;
 
     @GetMapping
     @Operation(summary = "회원 정보 조회", description = "현재 로그인한 회원의 정보를 조회합니다.")
@@ -72,8 +76,15 @@ public class MemberController {
             @ApiResponse(responseCode = "200", description = "프로필 이미지가 성공적으로 수정되었습니다."),
             @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.")
     })
-    public ResponseEntity<?> updateProfileImage(HttpServletRequest request, @RequestParam String profileImage) {
-        memberService.updateField((Long) request.getAttribute("memberId"), "profileImage", profileImage);
+    public ResponseEntity<?> updateProfileImage(HttpServletRequest request, @RequestParam MultipartFile profileImage) {
+        Long memberId = (Long) request.getAttribute("memberId");
+        String bucketName = "profile-image";
+        String fullPath = "profile-images/" + profileImage.getOriginalFilename();
+
+        // MinIO에 파일 업로드 및 URL 설정
+        String profileImageUrl = minioUtil.uploadImage(bucketName, fullPath, profileImage);
+
+        memberService.updateField(memberId, "profileImage", profileImageUrl);
         return ResponseEntity.ok().build();
     }
 
@@ -114,6 +125,12 @@ public class MemberController {
     @GetMapping("/createdroom")
     public ResponseEntity<List<CreatedEventResponseDto>> getCreatedEventRooms(HttpServletRequest request) {
         List<CreatedEventResponseDto> events = memberService.getCreatedEventRooms((Long) request.getAttribute("memberId"));
+        return ResponseEntity.ok(events);
+    }
+
+    @GetMapping("/participatedroom")
+    public ResponseEntity<List<ParticipatedEventResponseDto>> getParticipatedEventRooms(HttpServletRequest request) {
+        List<ParticipatedEventResponseDto> events = memberService.getParticipatedEventRooms((Long) request.getAttribute("memberId"));
         return ResponseEntity.ok(events);
     }
 }
