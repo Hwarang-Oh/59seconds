@@ -16,7 +16,7 @@ public class LogService {
     private final KeywordRepository keywordRepository;
     private final SearchLogRepository searchLogRepository;
 
-    public void logSearch(String keywordStr) {
+    public void logSearch(String keywordStr, Long memberId) {
         Keyword keyword = keywordRepository.findByWord(keywordStr);
         if (keyword == null) {
             keyword = new Keyword();
@@ -29,7 +29,7 @@ public class LogService {
 
         SearchLog searchLog = new SearchLog();
         searchLog.setKeyword(keyword);
-        searchLog.setMemberId(1); // 실제 회원 ID로 변경 필요
+        searchLog.setMemberId(memberId);
         searchLog.setSearchedAt(LocalDateTime.now());
         searchLogRepository.save(searchLog);
     }

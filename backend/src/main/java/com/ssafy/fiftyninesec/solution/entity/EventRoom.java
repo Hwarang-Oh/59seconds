@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Entity
@@ -21,7 +20,8 @@ public class EventRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long roomId;
+    @Column(name="room_id")
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
@@ -34,7 +34,7 @@ public class EventRoom {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column
     private EventStatus status;
 
     @Column(name = "start_time", columnDefinition = "DATETIME")
@@ -50,7 +50,8 @@ public class EventRoom {
 
     private String enterCode;
 
-    private Integer unlockCount;
+    @Column(nullable = false)
+    private Integer unlockCount = 0;
 
     private String bannerImage;
 

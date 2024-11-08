@@ -4,11 +4,12 @@ import Cropper from 'react-easy-crop';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from 'date-fns/locale';
-// import RichTextEditor from './TextEditor';
+import Tiptap from '../common/TextEditor';
 export default function EventDetailCreate() {
   const {
     formData,
     handleInputChange,
+    handleDescriptionChange,
     handleParticipationCodeChange,
     handleDateChange,
     handleFileChange,
@@ -26,54 +27,8 @@ export default function EventDetailCreate() {
     handleBannerCropComplete,
     handleRectangleCropComplete,
     handleCrop,
+    handleSubmit,
   } = useEventCreate();
-
-  // IMP: formData를 JSON 형식에 맞게 변환 후 서버로 POST 요청하는 함수
-  const handleSubmit = async (event: { preventDefault: () => void }) => {
-    event.preventDefault();
-
-    const eventPayload = {
-      id: Date.now(),
-      eventInfo: {
-        title: formData.eventInfo.title,
-        description: formData.eventInfo.description,
-        bannerImage: formData.eventInfo.bannerImage,
-        rectImage: formData.eventInfo.rectImage,
-      },
-      productsOrCoupons: formData.productsOrCoupons.map((item, index) => ({
-        order: index + 1,
-        type: item.type,
-        name: item.name,
-        recommendedPeople: item.recommendedPeople,
-      })),
-      eventPeriod: {
-        start: formData.eventPeriod.start,
-        end: formData.eventPeriod.end,
-      },
-      participationCode: formData.participationCode,
-    };
-
-    try {
-      const response = await fetch('http://localhost:9999/event', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(eventPayload),
-      });
-
-      if (response.ok) {
-        alert('이벤트가 성공적으로 추가되었습니다.');
-      } else {
-        const errorMessage = await response.text();
-        console.error('Error response:', errorMessage);
-        alert('이벤트 추가에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('Error adding event:', error);
-      alert('오류가 발생했습니다.');
-    }
-  };
 
   return (
     <form
@@ -98,7 +53,7 @@ export default function EventDetailCreate() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4">
             <input
               type="file"
-              name="Image" // 배너 이미지
+              name="Image"
               onChange={handleFileChange}
               className="w-full sm:w-auto"
             />
@@ -110,8 +65,8 @@ export default function EventDetailCreate() {
               결정
             </button>
           </div>
-          {formData.eventInfo.bannerImage && (
-            <div className="flex flex-row gap-4 p-4">
+          <div className="flex flex-row gap-4 p-4">
+            {formData.eventInfo.bannerImage && (
               <div className="relative w-1/2 h-40 bg-mainColor2 rounded-md overflow-hidden">
                 <Cropper
                   image={URL.createObjectURL(formData.eventInfo.bannerImage)}
@@ -126,10 +81,11 @@ export default function EventDetailCreate() {
                   배너 크기
                 </p>
               </div>
-
+            )}
+            {formData.eventInfo.rectImage && (
               <div className="relative w-1/2 h-40 bg-mainColor2 rounded-md overflow-hidden">
                 <Cropper
-                  image={URL.createObjectURL(formData.eventInfo.bannerImage)}
+                  image={URL.createObjectURL(formData.eventInfo.rectImage)}
                   crop={rectangleCrop}
                   zoom={rectangleZoom}
                   aspect={240 / 320}
@@ -141,8 +97,8 @@ export default function EventDetailCreate() {
                   카드 크기
                 </p>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
@@ -171,14 +127,12 @@ export default function EventDetailCreate() {
         >
           이벤트 설명
         </label>
-        <input
-          type="text"
-          name="description"
-          value={formData.eventInfo.description}
-          onChange={handleInputChange}
-          placeholder="이벤트 설명을 입력해주세요"
-          className="w-full p-2 border rounded"
-        />
+        <div className="w-full p-2 border rounded">
+          <Tiptap
+            value={formData.eventInfo.description}
+            onChange={handleDescriptionChange}
+          />
+        </div>
       </div>
 
       <div className="space-y-2">

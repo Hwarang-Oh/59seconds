@@ -1,4 +1,4 @@
-package com.ssafy.fiftyninesec.solution.dto;
+package com.ssafy.fiftyninesec.solution.dto.request;
 
 import lombok.Data;
 

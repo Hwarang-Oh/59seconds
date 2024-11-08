@@ -5,6 +5,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ParticipationRequestDto {
-    private Long roomId; 
+    private Long eventId;
     private Long memberId;
 }

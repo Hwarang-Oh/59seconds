@@ -6,10 +6,8 @@ import com.ssafy.fiftyninesec.search.entity.EventRoomSearch;
 import com.ssafy.fiftyninesec.search.service.LogService;
 import com.ssafy.fiftyninesec.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,10 +20,27 @@ public class SearchController {
     private final LogService logService;
 
     @GetMapping("/eventrooms")
-    public List<EventRoomSearchResponseDto> searchEventRooms(@RequestParam String keyword) {
-        logService.logSearch(keyword); // 검색 로그 기록
-        EventRoomSearchRequestDto requestDto = new EventRoomSearchRequestDto();
-        requestDto.setKeyword(keyword);
-        return searchService.searchEventRooms(requestDto);
+    public ResponseEntity<List<EventRoomSearchResponseDto>> searchEventRooms(@ModelAttribute EventRoomSearchRequestDto requestDto) {
+        logService.logSearch(requestDto.getKeyword(), requestDto.getMemberId()); // 검색 로그 기록
+
+        List<EventRoomSearchResponseDto> responseDtos = searchService.searchEventRooms(requestDto);
+
+        if (responseDtos.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 204 No Content 반환
+        }
+
+        return ResponseEntity.ok(responseDtos); // 검색 결과 반환
+    }
+
+    @GetMapping("/autocomplete")
+    public ResponseEntity<List<String>> autocomplete(@RequestParam String keyword) {
+        List<String> suggestions = searchService.autocomplete(keyword);
+        return suggestions.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(suggestions);
+    }
+
+    @GetMapping("/synchronize")
+    public ResponseEntity<Void> synchronize() {
+        searchService.forceSynchronizeData();
+        return ResponseEntity.ok().build();
     }
 }

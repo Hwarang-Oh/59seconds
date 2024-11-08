@@ -47,10 +47,28 @@ pipeline {
                         }
                         stage('Build & Push Frontend Docker Image') {
                             steps {
-                                dir('frontend/1s-before') {  // Dockerfile 위치로 변경
+                                dir('frontend/1s-before') {
                                     withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS_ID}", url: "https://index.docker.io/v1/"]) {
-                                        sh "docker build -t ${FRONTEND_DOCKERHUB_REPO}:latest ."
-                                        sh "docker push ${FRONTEND_DOCKERHUB_REPO}:latest"
+                                        script {
+                                            def remoteDigest = sh(
+                                                script: "docker pull ${FRONTEND_DOCKERHUB_REPO}:latest && docker inspect --format='{{index .RepoDigests 0}}' ${FRONTEND_DOCKERHUB_REPO}:latest || echo 'no_remote_digest'",
+                                                returnStdout: true
+                                            ).trim()
+                                            
+                                            def localDigest = sh(
+                                                script: """
+                                                docker build -t ${FRONTEND_DOCKERHUB_REPO}:latest .
+                                                docker inspect --format='{{index .RepoDigests 0}}' ${FRONTEND_DOCKERHUB_REPO}:latest || echo 'no_local_digest'
+                                                """,
+                                                returnStdout: true
+                                            ).trim()
+
+                                            if (remoteDigest != localDigest && localDigest != 'no_local_digest') {
+                                                sh "docker push ${FRONTEND_DOCKERHUB_REPO}:latest"
+                                            } else {
+                                                echo "프론트엔드 이미지가 최신 상태입니다. 푸시를 생략합니다."
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -64,10 +82,11 @@ pipeline {
                                         sh """
                                             ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
                                             docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
+                                            docker network inspect 404_dream_solutions_network >/dev/null 2>&1 || docker network create 404_dream_solutions_network && \
                                             docker pull ${FRONTEND_DOCKERHUB_REPO}:latest && \
                                             docker stop frontend || true && \
                                             docker rm frontend || true && \
-                                            docker run -d --name frontend -p 3000:3000 ${FRONTEND_DOCKERHUB_REPO}:latest && \
+                                            docker run -d --name frontend -p 3000:3000 --network 404_dream_solutions_network ${FRONTEND_DOCKERHUB_REPO}:latest && \
                                             docker logout'
                                         """
                                     }
@@ -87,6 +106,15 @@ pipeline {
                         stage('Build Backend') {
                             steps {
                                 dir('backend') {
+                                    withCredentials([file(credentialsId: 'application-secret', variable: 'SECRET_FILE')]) {
+                                        // Secret 파일을 src/main/resources에 복사하여 빌드 시 classpath에 포함되도록 설정
+                                        sh '''
+                                            mkdir -p src/main/resources
+                                            cp $SECRET_FILE src/main/resources/application-secret.yml
+                                            ls -l src/main/resources/application-secret.yml
+                                        '''
+                                    }
+                                    // Gradle을 사용하여 JAR 파일 빌드
                                     sh 'chmod +x ./gradlew'
                                     sh './gradlew clean build -Pprofile=prod -x test'
                                     sh 'ls -l build/libs/'
@@ -97,8 +125,25 @@ pipeline {
                             steps {
                                 dir('backend') {
                                     withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS_ID}", url: "https://index.docker.io/v1/"]) {
-                                        sh "docker build -t ${BACKEND_DOCKERHUB_REPO}:latest ."
-                                        sh "docker push ${BACKEND_DOCKERHUB_REPO}:latest"
+                                        script {
+                                            def remoteDigest = sh(
+                                                script: "docker pull ${BACKEND_DOCKERHUB_REPO}:latest && docker inspect --format='{{index .RepoDigests 0}}' ${BACKEND_DOCKERHUB_REPO}:latest || echo 'no_remote_digest'",
+                                                returnStdout: true
+                                            ).trim()
+                                            def localDigest = sh(
+                                                script: """
+                                                docker build -t ${BACKEND_DOCKERHUB_REPO}:latest .
+                                                docker inspect --format='{{index .RepoDigests 0}}' ${BACKEND_DOCKERHUB_REPO}:latest || echo 'no_local_digest'
+                                                """,
+                                                returnStdout: true
+                                            ).trim()
+
+                                            if (remoteDigest != localDigest && localDigest != 'no_local_digest') {
+                                                sh "docker push ${BACKEND_DOCKERHUB_REPO}:latest"
+                                            } else {
+                                                echo "백엔드 이미지가 최신 상태입니다. 푸시를 생략합니다."
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -109,15 +154,21 @@ pipeline {
                                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}",
                                         usernameVariable: 'DOCKER_USERNAME',
                                         passwordVariable: 'DOCKER_PASSWORD')]) {
-                                        sh """
-                                            ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
-                                            docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
-                                            docker pull ${BACKEND_DOCKERHUB_REPO}:latest && \
-                                            docker stop backend || true && \
-                                            docker rm backend || true && \
-                                            docker run -d --name backend -p 9090:9090 ${BACKEND_DOCKERHUB_REPO}:latest --spring.profiles.active=${SPRING_PROFILE} && \
-                                            docker logout'
-                                        """
+                                                       sh """
+                    ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
+                    docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
+                    docker network inspect 404_dream_solutions_network >/dev/null 2>&1 || docker network create 404_dream_solutions_network && \
+                    docker stop backend || true && \
+                    docker rm backend || true && \
+                    docker image prune -f && \
+                    docker pull ${BACKEND_DOCKERHUB_REPO}:latest && \
+                    docker run -d --name backend \
+                        -p 9090:8080 \
+                        --network 404_dream_solutions_network \
+                        -e SPRING_PROFILES_ACTIVE=prod \
+                        ${BACKEND_DOCKERHUB_REPO}:latest && \
+                    docker logout'
+                """
                                     }
                                 }
                             }

@@ -1,13 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { EventOwnerData } from '@/types/eventCreate';
+import { putCreatorInfo, fetchCreatorInfo } from '@/apis/memberAPI';
+import { FaCirclePlus } from 'react-icons/fa6';
 
 export default function EventOwnerCreate() {
   const [ownerData, setOwnerData] = useState<EventOwnerData>({
-    name: '',
-    snsLink: '',
-    bio: '',
+    participateName: null,
+    creatorName: '',
+    address: null,
+    phone: null,
     profileImage: null,
+    creatorIntroduce: '',
+    snsLink: '',
   });
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (ownerData.profileImage instanceof File) {
+      const url = URL.createObjectURL(ownerData.profileImage);
+      setImageUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [ownerData.profileImage]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchCreatorInfo();
+        setOwnerData(data);
+      } catch (error) {
+        console.error('기존 정보 가져오기 오류:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -23,30 +49,55 @@ export default function EventOwnerCreate() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Event Owner Data:', JSON.stringify(ownerData, null, 2));
+
+    const formData = new FormData();
+    formData.append('participateName', 'null');
+    formData.append('creatorName', ownerData.creatorName);
+    formData.append('address', 'null');
+    formData.append('phone', 'null');
+    formData.append('creatorIntroduce', ownerData.creatorIntroduce);
+    formData.append('snsLink', ownerData.snsLink);
+    if (ownerData.profileImage) {
+      formData.append('profileImage', ownerData.profileImage);
+    }
+
+    try {
+      const result = await putCreatorInfo(formData);
+      console.log(result);
+    } catch (error) {
+      console.error('정보 수정 중 오류 발생:', error);
+    }
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-6 mx-auto max-w-screen-xl space-y-4"
+      className="p-6 mx-auto max-w-screen-xl space-y-6"
     >
-      <h1 className="text-2xl font-bold">개설자 정보</h1>
+      <div className="flex flex-row space-x-4">
+        <span className="bg-mainColor1 px-[12px] py-[5px] rounded-full text-white">
+          2
+        </span>
+        <h1 className="text-2xl font-bold">개설자 정보</h1>
+      </div>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-10">
         <div className="relative">
           <label htmlFor="profileImage" className="cursor-pointer">
-            {ownerData.profileImage ? (
+            {imageUrl ? (
               <img
-                src={URL.createObjectURL(ownerData.profileImage)}
+                src={imageUrl}
                 alt="Profile"
-                className="w-24 h-24 rounded-full object-cover"
+                className="w-40 h-40 rounded-full object-cover"
               />
             ) : (
-              <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
-                +
+              <div className="w-40 h-40 bg-gray-200 rounded-full flex items-end justify-end text-gray-500">
+                <FaCirclePlus
+                  className="text-mainColor1 absolute right-1 bottom-1 bg-white rounded-full border-white border-4"
+                  size={42}
+                />
               </div>
             )}
           </label>
@@ -59,19 +110,19 @@ export default function EventOwnerCreate() {
           />
         </div>
 
-        <div className="flex-1 space-y-2">
+        <div className="flex-1 space-y-4">
           <div>
             <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
+              htmlFor="creatorName"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               이름/닉네임
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={ownerData.name}
+              id="creatorName"
+              name="creatorName"
+              value={ownerData.creatorName}
               onChange={handleInputChange}
               placeholder="이름 또는 닉네임을 입력하세요"
               className="w-full p-2 border rounded"
@@ -81,7 +132,7 @@ export default function EventOwnerCreate() {
           <div>
             <label
               htmlFor="snsLink"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               SNS 링크
             </label>
@@ -101,19 +152,19 @@ export default function EventOwnerCreate() {
       <div className="space-y-2">
         <div className="flex flex-row justify-between items-center">
           <label
-            htmlFor="bio"
+            htmlFor="creatorIntroduce"
             className="block text-sm font-medium text-gray-700"
           >
             소개글
           </label>
-          <button type="button" className="text-blue-500">
+          <button type="button" className="text-blue-500 text-sm font-bold">
             수정
           </button>
         </div>
         <textarea
-          id="bio"
-          name="bio"
-          value={ownerData.bio}
+          id="creatorIntroduce"
+          name="creatorIntroduce"
+          value={ownerData.creatorIntroduce}
           onChange={handleInputChange}
           placeholder="당신에 대해 소개해주세요."
           className="w-full p-2 border rounded h-24"

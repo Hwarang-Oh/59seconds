@@ -1,5 +1,7 @@
 package com.ssafy.fiftyninesec.participation.entity;
 
+import com.ssafy.fiftyninesec.solution.entity.EventRoom;
+import com.ssafy.fiftyninesec.solution.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,11 +24,13 @@ public class Participation { // 담당자가 달라서 미리 만들어둔 가�
     @Column(name = "participation_id")
     private Long participationId;
 
-    @Column(name = "room_id")
-    private Long roomId;
+    @ManyToOne
+    @JoinColumn(name = "room_id")
+    private EventRoom room;
 
-    @Column(name = "member_id")
-    private Long memberId;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Column(name = "joined_at", nullable = false)
     private LocalDateTime joinedAt;

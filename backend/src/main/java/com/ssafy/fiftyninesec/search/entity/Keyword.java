@@ -10,7 +10,7 @@ public class Keyword {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer keywordId;
+    private Long keywordId;
 
     @Column(nullable = false)
     private String word;

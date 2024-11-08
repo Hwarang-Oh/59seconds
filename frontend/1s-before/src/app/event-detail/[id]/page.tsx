@@ -1,14 +1,16 @@
 'use client';
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import EventIntroTab from '@/components/eventDetail/EventIntroTab';
-import EventCreatorTab from '@/components/eventDetail/EventCreatorTab';
-import EventInfoTab from '@/components/eventDetail/EventInfoTab';
-import EventRoomPart from '@/components/eventDetail/EventRoomPart';
-import Header from '@/components/common/Header';
-import eventData from '@/mocks/event.json';
-import CreatorData from '@/mocks/creatorData.json';
 import { FaRegSadTear } from 'react-icons/fa';
+import { EventData } from '@/types/eventDetail';
+import eventData from '@/mocks/event.json';
+import Header from '@/components/common/Header';
+import CreatorData from '@/mocks/creatorData.json';
+import EventInfoTab from '@/components/eventDetail/EventInfoTab';
+import EventIntroTab from '@/components/eventDetail/EventIntroTab';
+import EventRoomPart from '@/components/eventDetail/EventRoomPart';
+import EventRoomInfo from '@/components/eventDetail/EventRoomInfo';
+import EventCreatorTab from '@/components/eventDetail/EventCreatorTab';
 
 export default function EventDetail() {
   const params = useParams();
@@ -30,19 +32,26 @@ export default function EventDetail() {
     return <p>사용자를 찾을 수 없습니다.</p>;
   }
 
-  const safeEvent = {
+  const safeEvent: EventData = {
     ...event,
     eventInfo: {
-      ...event.eventInfo,
+      title: event.eventInfo?.title ?? '',
+      description: event.eventInfo?.description ?? '',
       bannerImage:
-        typeof event.eventInfo.bannerImage === 'string'
+        typeof event.eventInfo?.bannerImage === 'string'
           ? event.eventInfo.bannerImage
           : '',
       rectImage:
-        typeof event.eventInfo.rectImage === 'string'
+        typeof event.eventInfo?.rectImage === 'string'
           ? event.eventInfo.rectImage
           : '',
     },
+    productsOrCoupons: event.productsOrCoupons || [],
+    eventPeriod: {
+      start: event.eventPeriod?.start ?? '',
+      end: event.eventPeriod?.end ?? '',
+    },
+    participationCode: event.participationCode ?? '',
   };
 
   const handleTabClick = (tab: string) => {
@@ -57,7 +66,7 @@ export default function EventDetail() {
           {/* 입력 폼: 2/3 */}
           <div className="col-span-3 border border-inherit p-10 rounded-lg shadow-lg">
             <div>
-              {typeof event.eventInfo.bannerImage === 'string' && (
+              {typeof event.eventInfo?.bannerImage === 'string' && (
                 <div
                   className="w-full h-auto mb-16 rounded-lg overflow-hidden"
                   style={{ aspectRatio: '1920 / 460' }}
@@ -112,13 +121,20 @@ export default function EventDetail() {
             </div>
           </div>
 
-          {/* 미리보기: 1/3 */}
-          <div className="col-span-1">
-            <EventRoomPart
+          {/* 이벤트 참여 미리보기: 1/3 */}
+          <div className="col-span-1 relative max-w-sm">
+            <EventRoomInfo
               event={safeEvent}
               creator={creator}
               id={Number(id)}
             />
+            <div className="sticky top-2 z-10">
+              <EventRoomPart
+                event={safeEvent}
+                creator={creator}
+                id={Number(id)}
+              />
+            </div>
           </div>
         </div>
       </div>
