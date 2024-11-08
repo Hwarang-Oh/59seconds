@@ -5,7 +5,9 @@ import com.ssafy.fiftyninesec.participation.entity.Participation;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.entity.Member;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,4 +19,6 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
     boolean existsByRoomIdAndMemberId(Long roomId, Long memberId);
     int countByRoomId(Long roomId);
     List<Participation> findByMemberId(Long memberId);
+    @Query("SELECT COUNT(p) FROM Participation p WHERE p.room.id = :roomId FOR UPDATE")
+    int countByRoomIdForUpdate(@Param("roomId") Long roomId);
 }

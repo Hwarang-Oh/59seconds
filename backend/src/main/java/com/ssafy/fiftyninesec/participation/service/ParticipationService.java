@@ -78,7 +78,7 @@ public class ParticipationService {
         }
 
         // 4. 현재 참여자 수 확인
-        int currentParticipants = participationRepository.countByRoomId(roomId);
+        int currentParticipants = participationRepository.countByRoomIdForUpdate(roomId);
 //        if (currentParticipants >= room.getWinnerNum()) {
 //            throw new IllegalStateException("선착순 마감되었습니다.");
 //        }
