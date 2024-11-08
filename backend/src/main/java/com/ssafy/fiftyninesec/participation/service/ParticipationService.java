@@ -61,7 +61,7 @@ public class ParticipationService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        EventRoom room = eventRoomRepository.findById(roomId)
+        EventRoom room = eventRoomRepository.findByIdForUpdate(roomId)
                 .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
         // 2. 이벤트 시작 시간 체크
