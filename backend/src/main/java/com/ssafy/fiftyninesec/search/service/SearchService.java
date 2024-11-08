@@ -9,6 +9,7 @@ import com.ssafy.fiftyninesec.solution.entity.Member;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.Criteria;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class SearchService {
@@ -40,9 +42,11 @@ public class SearchService {
 
         esRooms.forEach(room -> room.setTitleCompletion(room.getTitle())); // titleCompletion 설정
         eventRoomSearchRepository.saveAll(esRooms);
+
+        log.info("------ Elasticsearch Synchronization ------");
     }
 
-    private EventRoomSearch convertToES(EventRoom mysqlRoom) {
+    public EventRoomSearch convertToES(EventRoom mysqlRoom) {
         Long memberId = Optional.ofNullable(mysqlRoom.getMember())
                 .map(Member::getId)
                 .orElseThrow(() -> new RuntimeException("Member is null for EventRoom ID: " + mysqlRoom.getId()));
@@ -74,19 +78,19 @@ public class SearchService {
     }
 
     private EventRoomSearchResponseDto mapToResponseDto(EventRoomSearch eventRoomSearch) {
-        EventRoomSearchResponseDto dto = new EventRoomSearchResponseDto();
-        dto.setEventId(eventRoomSearch.getRoomId());
-        dto.setTitle(eventRoomSearch.getTitle());
-        dto.setDescription(eventRoomSearch.getDescription());
-        dto.setStatus(eventRoomSearch.getStatus());
-        dto.setCreatedAt(eventRoomSearch.getCreatedAt());
-        dto.setStartTime(eventRoomSearch.getStartTime());
-        dto.setEndTime(eventRoomSearch.getEndTime());
-        dto.setWinnerNum(eventRoomSearch.getWinnerNum());
-        dto.setBannerImage(eventRoomSearch.getBannerImage());
-        dto.setSquareImage(eventRoomSearch.getSquareImage());
-        dto.setRectangleImage(eventRoomSearch.getRectangleImage());
-        return dto;
+        return EventRoomSearchResponseDto.builder()
+                .eventId(eventRoomSearch.getRoomId())
+                .title(eventRoomSearch.getTitle())
+                .description(eventRoomSearch.getDescription())
+                .status(eventRoomSearch.getStatus())
+                .createdAt(eventRoomSearch.getCreatedAt())
+                .startTime(eventRoomSearch.getStartTime())
+                .endTime(eventRoomSearch.getEndTime())
+                .winnerNum(eventRoomSearch.getWinnerNum())
+                .bannerImage(eventRoomSearch.getBannerImage())
+                .squareImage(eventRoomSearch.getSquareImage())
+                .rectangleImage(eventRoomSearch.getRectangleImage())
+                .build();
     }
 
     public List<String> autocomplete(String keyword) {

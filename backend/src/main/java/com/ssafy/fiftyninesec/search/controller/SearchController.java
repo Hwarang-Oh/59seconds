@@ -37,4 +37,10 @@ public class SearchController {
         List<String> suggestions = searchService.autocomplete(keyword);
         return suggestions.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(suggestions);
     }
+
+    @GetMapping("/synchronize")
+    public ResponseEntity<Void> synchronize() {
+        searchService.synchronizeData();
+        return ResponseEntity.ok().build();
+    }
 }
