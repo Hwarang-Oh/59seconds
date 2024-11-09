@@ -4,6 +4,7 @@ import EventDummy from '@/mocks/EventDummy.json';
 import BannerHeader from '@/components/eventRoom/BannerHeader';
 import EventStatusArea from '@/components/eventRoom/EventStatusArea';
 import EventChatRoomArea from '@/components/eventRoom/EventChatRoomArea';
+import EventResultAllResult from '@/components/eventRoom/EventResultAllResult';
 import { useEffect, useState } from 'react';
 import { useMemberStore } from '@/store/memberStore';
 import { useParams } from 'next/navigation';
@@ -14,7 +15,6 @@ import {
   EventRoomResultInfo,
   EventRoomResultViewInfo,
 } from '@/types/eventRoom';
-import EventAllResult from '@/components/eventRoom/EventAllResult';
 
 export default function EventRoom() {
   const params = useParams();
@@ -110,7 +110,7 @@ export default function EventRoom() {
                 myResult={myResult}
                 goDrawView={() => setIsDrawing(true)}
               />
-              <EventAllResult list={eventResult} />
+              <EventResultAllResult list={eventResult} />
             </div>
             <div className={`transition-all duration-300 cursor-pointer ${getChatRoomAreaWidth()}`}>
               <EventChatRoomArea

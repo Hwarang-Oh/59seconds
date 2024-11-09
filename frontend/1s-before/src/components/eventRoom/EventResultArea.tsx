@@ -1,8 +1,8 @@
-import EventWinOrLoseState from '@/components/eventRoom/EventWinOrLoseState';
-import EventPendingState from '@/components/eventRoom/EventPendingState';
+import EventResultWinOrLoseState from '@/components/eventRoom/EventResultWinOrLoseState';
+import EventResultPendingState from '@/components/eventRoom/EventResultPendingState';
 import { EventStatusView } from '@/types/eventRoom';
 
-export default function EventResult({
+export default function EventResultArea({
   isPending,
   eventId,
   joinedAt,
@@ -11,7 +11,6 @@ export default function EventResult({
   totalParticipants,
   currentProccessed,
 }: Readonly<EventStatusView>) {
-  isPending = false;
   return (
     <div className='flex flex-col gap-[105px]'>
       <div className='flex flex-col items-center'>
@@ -28,9 +27,9 @@ export default function EventResult({
         </p>
       </div>
       {isPending ? (
-        <EventPendingState />
+        <EventResultPendingState />
       ) : (
-        <EventWinOrLoseState
+        <EventResultWinOrLoseState
           isWinner={isWinner}
           eventId={eventId}
           joinedAt={joinedAt}

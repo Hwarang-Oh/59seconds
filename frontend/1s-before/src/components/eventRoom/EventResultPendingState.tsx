@@ -1,4 +1,4 @@
-export default function EventPendingState() {
+export default function EventResultPendingState() {
   return (
     <div className='flex flex-col items-center gap-[105px]'>
       <div className='w-60 h-60 border-[12px] border-gray-400 border-t-[12px] border-t-[#474972] rounded-full animate-spin'></div>

@@ -1,7 +1,7 @@
-import EventStats from '@/components/eventRoom/EventStatus';
-import EventResult from '@/components/eventRoom/EventResult';
-import ActiveButton from '@/components/eventRoom/ActiveButton';
-import CountdownTimer from '@/components/eventRoom/CountdownTimer';
+import EventStatusStats from '@/components/eventRoom/EventStatusStats';
+import EventResultArea from '@/components/eventRoom/EventResultArea';
+import EventStatusActiveButton from '@/components/eventRoom/EventStatusActiveButton';
+import EventStatusCountdownTimer from '@/components/eventRoom/EventStatusCountdownTimer';
 import EventStatusHeader from '@/components/eventRoom/EventStatusHeader';
 import { useState } from 'react';
 import { useMemberStore } from '@/store/memberStore';
@@ -28,7 +28,7 @@ export default function EventStatusArea({
     <div
       className={`h-full max-h-[790px] px-7 rounded-md shadow-md border border-gray-300 shrink-0 ${getBackgroundColor()}`}>
       {isDrawing && (
-        <EventResult
+        <EventResultArea
           isPending={!myResult.isMine}
           eventId={myResult.eventId}
           joinedAt={myResult.joinedAt}
@@ -42,9 +42,12 @@ export default function EventStatusArea({
         <>
           <EventStatusHeader />
           <div className='flex flex-col gap-[105px] pb-20'>
-            <EventStats />
-            <CountdownTimer eventTime={eventTime} onComplete={() => setIsTimerCompleted(true)} />
-            <ActiveButton
+            <EventStatusStats />
+            <EventStatusCountdownTimer
+              eventTime={eventTime}
+              onComplete={() => setIsTimerCompleted(true)}
+            />
+            <EventStatusActiveButton
               isDisabled={!isTimerCompleted}
               onClick={() => {
                 eventParticipate({ eventId: 1, memberId: member.memberId });
