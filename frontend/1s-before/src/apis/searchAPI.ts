@@ -17,3 +17,15 @@ export const fetchSearchResults = async (query: string): Promise<any> => {
         throw new Error('검색 결과를 가져오는 중 오류가 발생했습니다.');
     }
 };
+
+export const fetchAutocompleteResults = async (keyword: string): Promise<string[]> => {
+    try {
+      const response = await axios.get(`${BASE_URL}/search/autocomplete`, {
+        params: { keyword },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('자동완성 결과를 가져오는 중 오류가 발생했습니다:', error);
+      throw new Error('자동완성 결과를 가져오는 중 오류가 발생했습니다.');
+    }
+};
