@@ -7,9 +7,10 @@ import { FaGift, FaCalendarAlt, FaLink, FaEnvelope } from 'react-icons/fa';
 
 export default function EventRoomPart({
   event,
+  creator,
   id,
 }: Readonly<EventIntroTabProps>) {
-  const { productsOrCoupons, eventPeriod, participationCode } = event;
+  const { prizes = [], startTime, endTime, enterCode } = event;
   const {
     inputCode,
     setInputCode,
@@ -17,7 +18,7 @@ export default function EventRoomPart({
     openWindow,
     handleCodeSubmit,
     handleKeyDown,
-  } = useEventDetail(id, participationCode);
+  } = useEventDetail(id, enterCode);
 
   return (
     <div className="max-w-sm">
@@ -59,9 +60,9 @@ export default function EventRoomPart({
               <p className="text-gray-700 font-semibold">상품 정보</p>
             </div>
             <p className="text-gray-600 ml-6 text-sm">
-              {productsOrCoupons.map((product) => (
-                <span key={product.order}>
-                  {product.name} {product.recommendedPeople}개{' '}
+              {prizes.map((product) => (
+                <span key={product.prizeId}>
+                  {product.prizeName} {product.winnerCount}개{' '}
                 </span>
               ))}
             </p>
@@ -72,8 +73,8 @@ export default function EventRoomPart({
               <p className="text-gray-700 font-semibold">이벤트 기간</p>
             </div>
             <p className="text-gray-600 ml-6 text-sm">
-              {new Date(eventPeriod.start).toLocaleString()} ~{' '}
-              {new Date(eventPeriod.end).toLocaleString()}
+              {new Date(startTime).toLocaleString()} ~{' '}
+              {new Date(endTime).toLocaleString()}
             </p>
 
             {/* 주최자 정보 */}
@@ -81,26 +82,7 @@ export default function EventRoomPart({
               <FaLink className="text-mainColor1 mr-2" />
               <p className="text-gray-700 font-semibold">주최자 정보</p>
             </div>
-            <p className="ml-6 text-sm">
-              인스타 : {''}
-              <a
-                href="https://instagram.com/weareone.exo"
-                target="_blank"
-                className="text-blue-500"
-              >
-                @weareone.exo
-              </a>
-            </p>
-            <p className="ml-6 text-sm">
-              유튜브 : {''}
-              <a
-                href="https://www.youtube.com/user/SMTOWN"
-                target="_blank"
-                className="text-blue-500"
-              >
-                SMTOWN
-              </a>
-            </p>
+            <p className="ml-6 text-sm">{creator?.snsLink}</p>
 
             {/* 요청 기한 */}
             <div className="flex items-center mt-4 mb-2">
