@@ -40,6 +40,10 @@ pipeline {
                         stage('Build Frontend') {
                             steps {
                                 dir('frontend/1s-before') {
+                                    // 환경변수 설정 추가
+                                    withCredentials([string(credentialsId: 'frontend-env-vars', variable: 'ENV_VARS')]) {
+                                        sh 'echo "$ENV_VARS" > .env'
+                                    }
                                     sh 'npm install'
                                     sh 'npm run build'
                                 }
@@ -107,14 +111,12 @@ pipeline {
                             steps {
                                 dir('backend') {
                                     withCredentials([file(credentialsId: 'application-secret', variable: 'SECRET_FILE')]) {
-                                        // Secret 파일을 src/main/resources에 복사하여 빌드 시 classpath에 포함되도록 설정
                                         sh '''
                                             mkdir -p src/main/resources
                                             cp $SECRET_FILE src/main/resources/application-secret.yml
                                             ls -l src/main/resources/application-secret.yml
                                         '''
                                     }
-                                    // Gradle을 사용하여 JAR 파일 빌드
                                     sh 'chmod +x ./gradlew'
                                     sh './gradlew clean build -Pprofile=prod -x test'
                                     sh 'ls -l build/libs/'
@@ -154,7 +156,7 @@ pipeline {
                                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}",
                                         usernameVariable: 'DOCKER_USERNAME',
                                         passwordVariable: 'DOCKER_PASSWORD')]) {
-                                                       sh """
+                                        sh """
                     ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
                     docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
                     docker network inspect 404_dream_solutions_network >/dev/null 2>&1 || docker network create 404_dream_solutions_network && \
