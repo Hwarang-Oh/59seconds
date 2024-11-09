@@ -1,15 +1,61 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { fetchEventInfo } from '@/apis/eventDetailApi';
+import { EventData } from '@/types/eventDetail';
 import { useEventStore } from '@/store/eventStore';
+
+const defaultEventData: EventData = {
+  memberResponseDto: {
+    participateName: '',
+    creatorName: '',
+    address: '',
+    phone: '',
+    profileImage: '',
+    creatorIntroduce: '',
+    snsLink: '',
+  },
+  title: '',
+  description: '',
+  status: '',
+  startTime: '',
+  endTime: '',
+  winnerNum: 0,
+  enterCode: '',
+  unlockCount: 0,
+  bannerImage: '',
+  squareImage: '',
+  rectangleImage: '',
+  createdAt: '',
+  prizes: [],
+};
 
 export function useEventDetail(id: number, participationCode: string) {
   const [inputCode, setInputCode] = useState('');
   const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
+  const [eventData, setEventData] = useState<EventData>(defaultEventData);
 
   const isCodeValid = useEventStore((state) => state.isCodeValid);
   const setIsCodeValid = useEventStore((state) => state.setCodeValid);
 
+  useEffect(() => {
+    const loadEventData = async () => {
+      try {
+        const data = await fetchEventInfo(id);
+        setEventData(data);
+      } catch (error) {
+        console.error('이벤트 정보 로드 오류:', error);
+      }
+    };
+
+    loadEventData();
+  }, [id]);
+
+  // IMP: 새창으로 여는 코드
   const openWindow = () => {
-    window.open(`/event-room/${id}`, '_blank', 'width=1280,height=700,noopener,noreferrer');
+    window.open(
+      `/event-room/${id}`,
+      '_blank',
+      'width=1280,height=700,noopener,noreferrer'
+    );
   };
 
   const handleCodeSubmit = () => {
@@ -46,6 +92,7 @@ export function useEventDetail(id: number, participationCode: string) {
   };
 
   return {
+    eventData,
     inputCode,
     setInputCode,
     isCodeValid,

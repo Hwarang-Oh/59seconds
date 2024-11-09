@@ -104,13 +104,13 @@ export default function GeneralUserEdit() {
           </button>
         </div>
         {isEditingPhone ? (
-          <>
+          <div className="flex flex-row space-x-5 mb-3">
             <input
               type="text"
               value={localPhone}
               onChange={(e) => setLocalPhone(e.target.value)}
               placeholder="전화번호를 입력하세요"
-              className="w-40 p-2 border rounded"
+              className="w-48 p-2 border rounded"
               autoFocus
             />
             <button
@@ -122,15 +122,14 @@ export default function GeneralUserEdit() {
             >
               저장
             </button>
-          </>
+          </div>
         ) : (
           <p className="text-gray-700">{userData.phone}</p>
         )}
       </section>
-
       <section className="mb-6 p-4 border rounded">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center mb-2">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center">
             <FaMapMarkerAlt className="mr-2 text-gray-600" />
             <span className="text-gray-700">배송지 정보</span>
           </div>
@@ -148,13 +147,13 @@ export default function GeneralUserEdit() {
           </button>
         </div>
         {isEditingAddress ? (
-          <>
+          <div className="flex flex-row space-x-5 mb-3">
             <input
               type="text"
               value={localAddress}
               onChange={(e) => setLocalAddress(e.target.value)}
               placeholder="배송지 정보를 입력하세요"
-              className="w-full p-2 border rounded"
+              className="w-[80%] p-2 border rounded"
               autoFocus
             />
             <button
@@ -166,7 +165,7 @@ export default function GeneralUserEdit() {
             >
               저장
             </button>
-          </>
+          </div>
         ) : (
           <p className="text-gray-700">{userData.address}</p>
         )}

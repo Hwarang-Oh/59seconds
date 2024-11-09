@@ -49,7 +49,7 @@ export function useUserEdit() {
   const updateParticipateName = async (participateName: string) => {
     setLoading(true);
     try {
-      await putParticipateName(participateName);
+      await putParticipateName(participateName, 1);
       setUserData((prev) => ({ ...prev, participateName }));
     } catch (err) {
       setError('participateName 업데이트 중 오류 발생');

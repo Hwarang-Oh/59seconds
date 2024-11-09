@@ -7,22 +7,21 @@ export default function EventRoomInfo({
   creator,
   id,
 }: Readonly<EventIntroTabProps>) {
-  const { title } = event.eventInfo;
-  const { productsOrCoupons, participationCode } = event;
+  const { title, prizes = [], enterCode } = event;
   const { openSharePopUp, closeSharePopUp, isSharePopupOpen } = useEventDetail(
     id,
-    participationCode
+    enterCode
   );
 
-  const totalProducts = productsOrCoupons.reduce(
-    (sum, product) => sum + product.recommendedPeople,
+  const totalProducts = prizes.reduce(
+    (sum, product) => sum + product.winnerCount,
     0
   );
 
   return (
     <>
       <h2 className="text-lg font-bold text-gray-800 mb-1">
-        [{creator.creatorName}] {title}
+        [{creator?.creatorName}] {title}
       </h2>
       <div className="flex flex-row justify-between">
         <p className="text-sm text-gray-500 mb-4">{totalProducts}명 추첨</p>

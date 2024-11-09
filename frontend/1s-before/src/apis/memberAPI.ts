@@ -1,4 +1,4 @@
-import { UserData } from '@/types/user';
+import { UserData, ParticipatedRoom, CreatedRoom } from '@/types/user';
 import axios from 'axios';
 
 const BASE_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/v1`;
@@ -48,12 +48,13 @@ export const putCreatorInfo = async (formData: FormData): Promise<string> => {
 
 // IMP: 참여자 이름 업데이트
 export const putParticipateName = async (
-  participateName: string
+  participateName: string,
+  memberId: number
 ): Promise<string> => {
   try {
     const response = await api.put('/members/participateName', null, {
       params: { participateName },
-      headers: { memberId: 1 },
+      headers: { memberId },
     });
     return response.status === 200 ? '업데이트 성공' : '업데이트 실패';
   } catch (error) {
@@ -149,6 +150,39 @@ export const putSnsLink = async (snsLink: string): Promise<string> => {
     return response.status === 200 ? '업데이트 성공' : '업데이트 실패';
   } catch (error) {
     console.error('snsLink 업데이트 오류:', error);
+    throw error;
+  }
+};
+
+// IMP: 참여한 이벤트 호출
+export const fetchParticipatedRooms = async (
+  memberId: number
+): Promise<ParticipatedRoom[]> => {
+  try {
+    const response = await api.get<ParticipatedRoom[]>(
+      '/members/participatedroom',
+      {
+        params: { memberId },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching participated rooms:', error);
+    throw error;
+  }
+};
+
+// IMP: 생성한 이벤트 방 정보 호출
+export const fetchCreatedRooms = async (
+  memberId: number
+): Promise<CreatedRoom[]> => {
+  try {
+    const response = await api.get<CreatedRoom[]>('/members/createdroom', {
+      params: { memberId },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching created rooms:', error);
     throw error;
   }
 };

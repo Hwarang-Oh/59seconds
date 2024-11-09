@@ -1,5 +1,26 @@
+import React, { useState } from 'react';
 import CreatorEdit from './CreatorEdit';
+import Banner from '@/assets/defaultBanner.png';
+import { useEventRoom } from '@/hooks/eventRoomHook';
+
 export default function EventCreatorPage() {
+  const { createdRooms, loading } = useEventRoom();
+
+  // 필터 상태 ("전체", "진행중", "종료")
+  const [filter, setFilter] = useState('전체');
+
+  // 현재 시간을 기준으로 진행중인지 종료인지 판단
+  const currentTime = new Date();
+
+  // 필터링된 이벤트 목록
+  const filteredRooms = createdRooms.filter((room) => {
+    const endTime = new Date(room.endTime);
+    if (filter === '전체') return true;
+    if (filter === '진행중') return endTime > currentTime;
+    if (filter === '종료') return endTime <= currentTime;
+    return true;
+  });
+
   return (
     <div>
       <CreatorEdit />
@@ -11,54 +32,79 @@ export default function EventCreatorPage() {
           </span>
         </div>
         <div className="flex space-x-3 mt-10">
-          <button className="px-4 py-1 rounded-full bg-mainColor1 text-white">
+          <button
+            onClick={() => setFilter('전체')}
+            className={`px-4 py-1 rounded-full ${
+              filter === '전체'
+                ? 'bg-mainColor1 text-white'
+                : 'bg-gray-200 text-gray-700'
+            }`}
+          >
             전체
           </button>
-          <button className="px-4 py-1 rounded-full bg-gray-200 text-gray-700">
+          <button
+            onClick={() => setFilter('진행중')}
+            className={`px-4 py-1 rounded-full ${
+              filter === '진행중'
+                ? 'bg-mainColor1 text-white'
+                : 'bg-gray-200 text-gray-700'
+            }`}
+          >
             진행중
           </button>
-          <button className="px-4 py-1 rounded-full bg-gray-200 text-gray-700">
+          <button
+            onClick={() => setFilter('종료')}
+            className={`px-4 py-1 rounded-full ${
+              filter === '종료'
+                ? 'bg-mainColor1 text-white'
+                : 'bg-gray-200 text-gray-700'
+            }`}
+          >
             종료
           </button>
         </div>
       </section>
-      <div className="mt-6 p-4 border border-gray-300 rounded-lg">
-        <img
-          src="/image/KyungSoo.jpg"
-          alt="Event 1"
-          className="w-full h-56 rounded-lg object-cover"
-        />
-        <div className="flex flex-row justify-between items-center mx-1 my-4">
-          <span className="mr-3 bg-subColor4 text-subColor5 rounded-2xl px-2 py-1">
-            진행중
-          </span>
-          <div className="text-subColor3 font-bold">참여자 10,000명</div>
+
+      {loading && <p>Loading...</p>}
+
+      {filteredRooms.length === 0 && !loading ? (
+        <p className="text-gray-500 text-center mt-10">개설한 이벤트 없음</p>
+      ) : (
+        <div className="mt-6 grid grid-cols-1 gap-6">
+          {filteredRooms.map((room) => (
+            <div
+              key={room.eventId}
+              className="p-4 border border-gray-300 rounded-lg"
+            >
+              <img
+                src={room.bannerUrl || Banner.src}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = Banner.src; // 이미지 로드 실패 시 기본 배너로 대체
+                }}
+                alt="배너"
+                className="w-full h-56 rounded-lg object-cover"
+              />
+              <div className="flex flex-row justify-between items-center mx-1 my-4">
+                <span
+                  className={`mr-3 rounded-2xl px-2 py-1 ${
+                    new Date(room.endTime) > currentTime
+                      ? 'bg-subColor4 text-subColor5'
+                      : 'bg-gray-200 text-subColor3'
+                  }`}
+                >
+                  {new Date(room.endTime) > currentTime ? '진행중' : '종료'}
+                </span>
+                <div className="text-subColor3 font-bold">
+                  참여자 {room.unlockCount}명
+                </div>
+              </div>
+              <p className="ml-2 text-gray-600 font-bold text-lg">
+                {room.title}
+              </p>
+            </div>
+          ))}
         </div>
-        <p className="ml-2 text-gray-600 font-bold text-lg">
-          경수 500만 기념 이벤트
-        </p>
-      </div>
-      <div className="mt-6 p-4 border border-gray-300 rounded-lg">
-        <img
-          src="/image/KyungSoo.jpg"
-          alt="Event 1"
-          className="w-full h-56 rounded-lg object-cover"
-        />
-        <div className="flex flex-row justify-between items-center mx-1 my-4">
-          <div>
-            <span className="mr-3 bg-gray-200  text-subColor3 rounded-2xl px-2 py-1">
-              진행중
-            </span>
-            <span className="mr-3 bg-gray-200  text-subColor3 rounded-2xl px-2 py-1">
-              입력완료
-            </span>
-          </div>
-          <div className="text-subColor3 font-bold">참여자 10,000명</div>
-        </div>
-        <p className="ml-2 text-gray-600 font-bold text-lg">
-          경수 500만 기념 이벤트
-        </p>
-      </div>
+      )}
     </div>
   );
 }

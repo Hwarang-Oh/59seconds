@@ -13,6 +13,7 @@ export default function CreatorEdit() {
     updateSnsLink,
   } = useUserEdit();
 
+  //각각의 필드를 위한 수정 상태 추가
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingSnsLink, setIsEditingSnsLink] = useState(false);
   const [isEditingIntroduce, setIsEditingIntroduce] = useState(false);
@@ -36,34 +37,24 @@ export default function CreatorEdit() {
     profileImageSrc = URL.createObjectURL(userData.profileImage);
   }
 
-  const handleEditNameClick = () => {
-    setLocalName(userData.creatorName || ''); // 현재 값을 로컬 상태로 설정
-    setIsEditingName(true);
+  // 수정 버튼 클릭 핸들러
+  const handleEditClick = (
+    setEditing: React.Dispatch<React.SetStateAction<boolean>>,
+    setLocalValue: (value: string) => void,
+    value: string
+  ) => {
+    setEditing(true);
+    setLocalValue(value); // 로컬 상태를 현재 값으로 설정
   };
 
-  const handleEditSnsLinkClick = () => {
-    setLocalSnsLink(userData.snsLink || ''); // 현재 값을 로컬 상태로 설정
-    setIsEditingSnsLink(true);
-  };
-
-  const handleEditIntroduceClick = () => {
-    setLocalIntroduce(userData.creatorIntroduce || ''); // 현재 값을 로컬 상태로 설정
-    setIsEditingIntroduce(!isEditingIntroduce);
-  };
-
-  const handleSaveName = async () => {
-    await updateCreatorName(localName); // API 호출
-    setIsEditingName(false);
-  };
-
-  const handleSaveSnsLink = async () => {
-    await updateSnsLink(localSnsLink); // API 호출
-    setIsEditingSnsLink(false);
-  };
-
-  const handleIntroduceSave = async () => {
-    await updateCreatorIntroduce(localIntroduce); // API 호출
-    setIsEditingIntroduce(false);
+  // 저장 버튼 클릭 핸들러
+  const handleSave = (
+    setEditing: React.Dispatch<React.SetStateAction<boolean>>,
+    updateFunc: (value: string) => void,
+    localValue: string
+  ) => {
+    updateFunc(localValue); // 저장 버튼 클릭 시 API 호출
+    setEditing(false);
   };
 
   return (
@@ -113,7 +104,9 @@ export default function CreatorEdit() {
                   autoFocus
                 />
                 <button
-                  onClick={handleSaveName}
+                  onClick={() =>
+                    handleSave(setIsEditingName, updateCreatorName, localName)
+                  }
                   type="button"
                   className="py-1 px-3 bg-mainColor1 text-white rounded"
                 >
@@ -124,7 +117,13 @@ export default function CreatorEdit() {
               <>
                 <h1 className="text-2xl font-bold">{userData.creatorName}</h1>
                 <button
-                  onClick={handleEditNameClick}
+                  onClick={() =>
+                    handleEditClick(
+                      setIsEditingName,
+                      setLocalName,
+                      userData.creatorName || ''
+                    )
+                  }
                   type="button"
                   className="text-blue-500 flex items-center"
                 >
@@ -143,36 +142,45 @@ export default function CreatorEdit() {
                 <span className="text-gray-700">SNS 링크</span>
               </div>
               <button
-                onClick={() => setIsEditingSnsLink(true)} // 단순히 편집 모드로 전환
+                onClick={() =>
+                  handleEditClick(
+                    setIsEditingSnsLink,
+                    setLocalSnsLink,
+                    userData.snsLink || ''
+                  )
+                }
                 className="text-blue-500 flex items-center"
+                type="button"
               >
                 <FaEdit className="mr-1 text-mainColor1" />
               </button>
             </div>
             {isEditingSnsLink ? (
-              <>
+              <div className="flex flex-row space-x-5 mb-3">
                 <input
                   type="url"
                   value={localSnsLink}
                   onChange={(e) => setLocalSnsLink(e.target.value)}
                   placeholder="https://"
-                  className="w-[80vh] p-2 border rounded"
+                  className="w-48 p-2 border rounded"
                   autoFocus
                 />
                 <button
-                  onClick={handleSaveSnsLink} // 저장 버튼 클릭 시에만 API 호출
+                  onClick={() =>
+                    handleSave(setIsEditingSnsLink, updateSnsLink, localSnsLink)
+                  }
                   type="button"
                   className="py-1 px-3 bg-mainColor1 text-white rounded"
                 >
                   저장
                 </button>
-              </>
+              </div>
             ) : (
               <p className="text-gray-700">{userData.snsLink}</p>
             )}
           </section>
 
-          <header className="flex-1 space-y-4">
+          <section className="flex-1 space-y-4">
             <div className="border p-4 rounded">
               <div className="mb-4 flex justify-between">
                 <div className="flex flex-row items-center">
@@ -180,7 +188,19 @@ export default function CreatorEdit() {
                   <span className="text-sm font-bold">소개글</span>
                 </div>
                 <button
-                  onClick={handleEditIntroduceClick}
+                  onClick={() =>
+                    isEditingIntroduce
+                      ? handleSave(
+                          setIsEditingIntroduce,
+                          updateCreatorIntroduce,
+                          localIntroduce
+                        )
+                      : handleEditClick(
+                          setIsEditingIntroduce,
+                          setLocalIntroduce,
+                          userData.creatorIntroduce || ''
+                        )
+                  }
                   type="button"
                   className="text-blue-500 text-sm font-bold"
                 >
@@ -193,10 +213,15 @@ export default function CreatorEdit() {
                   onChange={(content) => setLocalIntroduce(content)}
                 />
               ) : (
-                <p className="text-gray-700">{userData.creatorIntroduce}</p>
+                <div
+                  className="text-gray-700"
+                  dangerouslySetInnerHTML={{
+                    __html: userData.creatorIntroduce,
+                  }}
+                />
               )}
             </div>
-          </header>
+          </section>
         </div>
       </div>
     </form>
