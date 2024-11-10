@@ -15,4 +15,5 @@ public class ParticipationResponseDto {
     private LocalDateTime joinedAt;
     private Integer ranking;
     private Boolean isWinner;
+    private String winnerName;
 }

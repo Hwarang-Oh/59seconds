@@ -52,6 +52,7 @@ public class ParticipationService {
                 .joinedAt(participation.getJoinedAt())
                 .ranking(participation.getRanking())
                 .isWinner(participation.getIsWinner())
+                .winnerName(participation.getMember().getCreatorName())
                 .build();
     }
 
