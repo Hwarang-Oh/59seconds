@@ -53,7 +53,7 @@ export default function Toolbar({ editor }: Readonly<Props>) {
     return null;
   }
   return (
-    <div className="flex gap-3 border-b pb-3 bg-transparent">
+    <div className="flex gap-3 border-b pb-3 mb-3 bg-transparent">
       <Toggle
         size="md"
         pressed={editor.isActive('heading', { level: 2 })}

@@ -1,75 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { EventOwnerData } from '@/types/eventCreate';
-import { putCreatorInfo, fetchCreatorInfo } from '@/apis/memberAPI';
 import { FaCirclePlus } from 'react-icons/fa6';
+import Tiptap from '@/components/common/TextEditor';
+import React from 'react';
+import { useEventOwner } from '@/hooks/eventOwnerHook';
 
 export default function EventOwnerCreate() {
-  const [ownerData, setOwnerData] = useState<EventOwnerData>({
-    participateName: null,
-    creatorName: '',
-    address: null,
-    phone: null,
-    profileImage: null,
-    creatorIntroduce: '',
-    snsLink: '',
-  });
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (ownerData.profileImage instanceof File) {
-      const url = URL.createObjectURL(ownerData.profileImage);
-      setImageUrl(url);
-      return () => URL.revokeObjectURL(url);
-    }
-  }, [ownerData.profileImage]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchCreatorInfo();
-        setOwnerData(data);
-      } catch (error) {
-        console.error('기존 정보 가져오기 오류:', error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setOwnerData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setOwnerData((prev) => ({ ...prev, profileImage: file }));
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-    formData.append('participateName', 'null');
-    formData.append('creatorName', ownerData.creatorName);
-    formData.append('address', 'null');
-    formData.append('phone', 'null');
-    formData.append('creatorIntroduce', ownerData.creatorIntroduce);
-    formData.append('snsLink', ownerData.snsLink);
-    if (ownerData.profileImage) {
-      formData.append('profileImage', ownerData.profileImage);
-    }
-
-    try {
-      const result = await putCreatorInfo(formData);
-      console.log(result);
-    } catch (error) {
-      console.error('정보 수정 중 오류 발생:', error);
-    }
-  };
+  const {
+    ownerData,
+    imageUrl,
+    getProfileImageSrc,
+    handleInputChange,
+    handleEditorChange,
+    handleImageChange,
+    handleSubmit,
+  } = useEventOwner();
 
   return (
     <form
@@ -86,20 +29,21 @@ export default function EventOwnerCreate() {
       <div className="flex items-center space-x-10">
         <div className="relative">
           <label htmlFor="profileImage" className="cursor-pointer">
-            {imageUrl ? (
+            {imageUrl || typeof ownerData.profileImage === 'string' ? (
               <img
-                src={imageUrl}
-                alt="Profile"
-                className="w-40 h-40 rounded-full object-cover"
+                src={getProfileImageSrc()}
+                alt=""
+                className="w-40 h-40 rounded-full object-cover border-2"
               />
             ) : (
-              <div className="w-40 h-40 bg-gray-200 rounded-full flex items-end justify-end text-gray-500">
-                <FaCirclePlus
-                  className="text-mainColor1 absolute right-1 bottom-1 bg-white rounded-full border-white border-4"
-                  size={42}
-                />
+              <div className="w-40 h-40 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+                사진 없음
               </div>
             )}
+            <FaCirclePlus
+              className="text-mainColor1 absolute right-1 bottom-1 bg-white rounded-full border-white border-4"
+              size={42}
+            />
           </label>
           <input
             type="file"
@@ -161,14 +105,12 @@ export default function EventOwnerCreate() {
             수정
           </button>
         </div>
-        <textarea
-          id="creatorIntroduce"
-          name="creatorIntroduce"
-          value={ownerData.creatorIntroduce}
-          onChange={handleInputChange}
-          placeholder="당신에 대해 소개해주세요."
-          className="w-full p-2 border rounded h-24"
-        />
+        <div className="border p-2 rounded">
+          <Tiptap
+            value={ownerData.creatorIntroduce}
+            onChange={handleEditorChange}
+          />
+        </div>
       </div>
 
       <div className="flex justify-between">

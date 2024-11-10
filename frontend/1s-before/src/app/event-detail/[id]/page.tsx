@@ -3,9 +3,8 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { FaRegSadTear } from 'react-icons/fa';
 import { EventData } from '@/types/eventDetail';
-import eventData from '@/mocks/event.json';
+import { useEventDetail } from '@/hooks/eventDetailHook';
 import Header from '@/components/common/Header';
-import CreatorData from '@/mocks/creatorData.json';
 import EventInfoTab from '@/components/eventDetail/EventInfoTab';
 import EventIntroTab from '@/components/eventDetail/EventIntroTab';
 import EventRoomPart from '@/components/eventDetail/EventRoomPart';
@@ -17,8 +16,9 @@ export default function EventDetail() {
   const { id } = params as { id: string };
   const [activeTab, setActiveTab] = useState('event'); // 기본 탭 설정
 
-  const event = eventData.event.find((e) => e.id === Number(id));
-  if (!event) {
+  const { eventData } = useEventDetail(Number(id), '참여 코드');
+
+  if (!eventData) {
     return (
       <p className="flex flex-col justify-center items-center h-screen text-mainColor1">
         <FaRegSadTear className="mb-3" size={30} />
@@ -27,32 +27,8 @@ export default function EventDetail() {
     );
   }
 
-  const creator = CreatorData.user.find((u) => u.id === Number(id));
-  if (!creator) {
-    return <p>사용자를 찾을 수 없습니다.</p>;
-  }
-
-  const safeEvent: EventData = {
-    ...event,
-    eventInfo: {
-      title: event.eventInfo?.title ?? '',
-      description: event.eventInfo?.description ?? '',
-      bannerImage:
-        typeof event.eventInfo?.bannerImage === 'string'
-          ? event.eventInfo.bannerImage
-          : '',
-      rectImage:
-        typeof event.eventInfo?.rectImage === 'string'
-          ? event.eventInfo.rectImage
-          : '',
-    },
-    productsOrCoupons: event.productsOrCoupons || [],
-    eventPeriod: {
-      start: event.eventPeriod?.start ?? '',
-      end: event.eventPeriod?.end ?? '',
-    },
-    participationCode: event.participationCode ?? '',
-  };
+  // eventData에서 memberResponseDto를 creator로 설정
+  const creator = eventData.memberResponseDto;
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -66,14 +42,14 @@ export default function EventDetail() {
           {/* 입력 폼: 2/3 */}
           <div className="col-span-3 border border-inherit p-10 rounded-lg shadow-lg">
             <div>
-              {typeof event.eventInfo?.bannerImage === 'string' && (
+              {typeof eventData.bannerImage === 'string' && (
                 <div
                   className="w-full h-auto mb-16 rounded-lg overflow-hidden"
                   style={{ aspectRatio: '1920 / 460' }}
                 >
                   <img
-                    src={event.eventInfo.bannerImage}
-                    alt={event.eventInfo.title}
+                    src={eventData.bannerImage}
+                    alt={eventData.title}
                     className="w-full h-full object-cover rounded-lg"
                   />
                 </div>
@@ -112,7 +88,7 @@ export default function EventDetail() {
               </div>
 
               <div className="mt-6">
-                {activeTab === 'event' && <EventIntroTab event={safeEvent} />}
+                {activeTab === 'event' && <EventIntroTab event={eventData} />}
                 {activeTab === 'creator' && (
                   <EventCreatorTab creator={creator} />
                 )}
@@ -124,13 +100,13 @@ export default function EventDetail() {
           {/* 이벤트 참여 미리보기: 1/3 */}
           <div className="col-span-1 relative max-w-sm">
             <EventRoomInfo
-              event={safeEvent}
+              event={eventData}
               creator={creator}
               id={Number(id)}
             />
             <div className="sticky top-2 z-10">
               <EventRoomPart
-                event={safeEvent}
+                event={eventData}
                 creator={creator}
                 id={Number(id)}
               />

@@ -28,9 +28,11 @@ export default function HeaderInfo() {
         >
           로그인
         </button>
-        <p className="text-[15px] font-normal leading-[18px] text-[#474972]">
-          마이페이지
-        </p>
+        <Link href="/my-page">
+          <p className="text-[15px] font-normal leading-[18px] text-[#474972]">
+            마이페이지
+          </p>
+        </Link>
         <Link href="/event-create">
           <p className="text-[15px] font-normal leading-[18px] text-[#474972]">
             이벤트 생성

@@ -123,14 +123,22 @@ public class MemberController {
     }
 
     @GetMapping("/createdroom")
-    public ResponseEntity<List<CreatedEventResponseDto>> getCreatedEventRooms(HttpServletRequest request) {
-        List<CreatedEventResponseDto> events = memberService.getCreatedEventRooms((Long) request.getAttribute("memberId"));
+    public ResponseEntity<List<CreatedEventResponseDto>> getCreatedEventRooms(
+            HttpServletRequest request,
+            @RequestParam Long memberId
+    ) {
+//        List<CreatedEventResponseDto> events = memberService.getCreatedEventRooms((Long) request.getAttribute("memberId"));
+        List<CreatedEventResponseDto> events = memberService.getCreatedEventRooms(memberId);
         return ResponseEntity.ok(events);
     }
 
     @GetMapping("/participatedroom")
-    public ResponseEntity<List<ParticipatedEventResponseDto>> getParticipatedEventRooms(HttpServletRequest request) {
-        List<ParticipatedEventResponseDto> events = memberService.getParticipatedEventRooms((Long) request.getAttribute("memberId"));
+    public ResponseEntity<List<ParticipatedEventResponseDto>> getParticipatedEventRooms(
+            HttpServletRequest request,
+            @RequestParam Long memberId
+    ) {
+//        List<ParticipatedEventResponseDto> events = memberService.getParticipatedEventRooms((Long) request.getAttribute("memberId"));
+        List<ParticipatedEventResponseDto> events = memberService.getParticipatedEventRooms(memberId);
         return ResponseEntity.ok(events);
     }
 }

@@ -1,10 +1,10 @@
 import React from 'react';
-import { useEventCreate } from '@/hooks/eventCreateHook';
+import { ko } from 'date-fns/locale';
 import Cropper from 'react-easy-crop';
+import Tiptap from '../common/TextEditor';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { ko } from 'date-fns/locale';
-import Tiptap from '../common/TextEditor';
+import { useEventCreate } from '@/hooks/eventCreateHook';
 export default function EventDetailCreate() {
   const {
     formData,
