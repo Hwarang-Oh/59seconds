@@ -14,7 +14,7 @@ interface MemberStore {
 }
 
 const defaultMember: MemberState = {
-  memberId: 170,
+  memberId: 760,
   nickname: 'Guest',
 };
 
@@ -25,7 +25,12 @@ export const useMemberStore = create(
       setMember: (member) => set({ member }),
       clearMember: () => set({ member: defaultMember }),
       plusMemberId: () =>
-        set((state) => ({ member: { ...state.member, memberId: state.member.memberId + 1 } })),
+        set((state) => ({
+          member: {
+            ...state.member,
+            memberId: state.member.memberId + 1,
+          },
+        })),
     }),
     {
       name: 'member-storage',
