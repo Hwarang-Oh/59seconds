@@ -48,3 +48,26 @@ input::-webkit-outer-spin-button {
 .react-datepicker__input-container input {
   width: 100% !important;
 }
+
+.custom-scrollbar {
+  padding-right: 10px; /* 스크롤바가 조금 안쪽으로 들어가도록 설정 */
+  border-radius: 0.75rem; /* rounded-lg 크기와 유사하게 설정 */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 12px; /* 스크롤바 너비 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 스크롤바 트랙 배경 */
+  border-radius: 10px; /* 트랙에 rounded 적용 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #9091aa; /* 스크롤바 색상 */
+  border-radius: 8px; /* 스크롤바에 rounded 적용 */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #7a7a7a; /* 스크롤바 호버 시 색상 */
+}

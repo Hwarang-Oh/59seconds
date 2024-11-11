@@ -17,9 +17,12 @@ export default function EventIntroTab({ event }: Readonly<EventIntroTabProps>) {
 
       <div className="bg-white rounded-lg border p-4 mb-6">
         <h3 className="font-semibold text-lg mb-2">이벤트 설명</h3>
-        <p className="text-gray-700">
-          {description || '이벤트 설명이 없습니다.'}
-        </p>
+        <p
+          className="text-gray-700"
+          dangerouslySetInnerHTML={{
+            __html: description || '이벤트 설명이 없습니다.',
+          }}
+        />
       </div>
 
       <div className="bg-white rounded-lg border p-4 mb-6">

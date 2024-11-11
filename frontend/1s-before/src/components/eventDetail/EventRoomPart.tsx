@@ -1,5 +1,4 @@
-import React from 'react';
-import { Loader2 } from 'lucide-react';
+import React, { useState } from 'react';
 import { IoMdLock } from 'react-icons/io';
 import { IoEnterOutline } from 'react-icons/io5';
 import { MdOutlineRefresh } from 'react-icons/md';
@@ -23,6 +22,8 @@ export default function EventRoomPart({
     lastUpdated,
     refreshUnlockCount,
   } = useEventDetail(id);
+
+  const [showTooltip, setShowTooltip] = useState(false);
 
   return (
     <div className="max-w-sm">
@@ -50,16 +51,21 @@ export default function EventRoomPart({
         </div>
       ) : (
         <div className="sticky top-0 z-10 bg-white border rounded-lg shadow-lg px-5 pb-5 pt-2">
-          <div className="flex flex-row justify-end items-center mb-2">
-            {lastUpdated && (
-              <span className="mr-2 text-[10px] text-gray-400">
-                {lastUpdated}에 업데이트됨
-              </span>
+          <div className="flex flex-row justify-end items-center my-1">
+            {showTooltip && lastUpdated && (
+              <div className="absolute bottom-full right-0 mb-2 whitespace-nowrap">
+                <div className="bg-gray-800 text-white text-[10px] px-2 py-1 rounded shadow-lg">
+                  {lastUpdated}에 업데이트됨
+                </div>
+                <div className="absolute -bottom-1 right-1.5 w-2 h-2 bg-gray-800 transform rotate-45" />
+              </div>
             )}
             <MdOutlineRefresh
-              className="text-gray-400 cursor-pointer"
+              className="text-gray-400 cursor-pointer hover:text-gray-600 transition-colors duration-200"
+              onMouseEnter={() => setShowTooltip(true)}
+              onMouseLeave={() => setShowTooltip(false)}
               onClick={refreshUnlockCount}
-              size={15}
+              size={18}
             />
           </div>
           <div className="text-center mb-4 border-b flex items-center justify-center">
