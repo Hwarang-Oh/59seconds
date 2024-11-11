@@ -10,6 +10,8 @@ import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.Criteria;
@@ -70,8 +72,9 @@ public class SearchService {
         return esRoom;
     }
 
-    public List<EventRoomSearchResponseDto> searchEventRooms(EventRoomSearchRequestDto requestDto) {
-        List<EventRoomSearch> eventRooms = eventRoomSearchRepository.findByTitle(requestDto.getKeyword());
+    public List<EventRoomSearchResponseDto> searchEventRooms(EventRoomSearchRequestDto requestDto, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<EventRoomSearch> eventRooms = eventRoomSearchRepository.findByTitle(requestDto.getKeyword(), pageable);
         return eventRooms.stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
@@ -93,13 +96,14 @@ public class SearchService {
                 .build();
     }
 
-    public List<String> autocomplete(String keyword) {
+    public List<String> autocomplete(String keyword, int page, int size) {
         // 검색 키워드에서 공백 제거
         String processedKeyword = keyword.replace(" ", "");
 
-        // CriteriaQuery를 이용해 title 필드에 keyword 포함 여부를 확인
+        // CriteriaQuery를 이용해 title 필드에 keyword 포함 여부를 확인하고 페이지네이션 추가
         Criteria criteria = new Criteria("title").contains(processedKeyword);
-        CriteriaQuery query = new CriteriaQuery(criteria);
+        Pageable pageable = PageRequest.of(page, size);
+        CriteriaQuery query = new CriteriaQuery(criteria, pageable);
 
         SearchHits<EventRoomSearch> searchHits = elasticsearchOperations.search(query, EventRoomSearch.class);
 
