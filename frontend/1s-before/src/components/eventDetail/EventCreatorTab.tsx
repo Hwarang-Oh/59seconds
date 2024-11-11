@@ -21,7 +21,11 @@ export default function EventCreatorTab({
           ) : (
             <HiUserCircle className="text-mainColor2" size={150} />
           )}
-          <h2 className="text-lg">{creator?.creatorName}</h2>
+          {creator?.creatorName ? (
+            <h2 className="text-lg">[{creator?.creatorName}]</h2>
+          ) : (
+            <span></span>
+          )}
         </div>
       </div>
 
