@@ -27,7 +27,7 @@ export function useUserEdit() {
   // 페이지 로드 시 fetchUserData 호출
   useEffect(() => {
     fetchUserData();
-  }, []); // 빈 배열을 넣어 컴포넌트 마운트 시에만 호출되도록 설정
+  }, []);
 
   // 초기 데이터 가져오기
   const fetchUserData = async () => {
@@ -35,7 +35,6 @@ export function useUserEdit() {
     try {
       const data = await fetchCreatorInfo();
       setUserData(data);
-      console.log(data);
     } catch (err) {
       setError('데이터를 가져오는 중 오류 발생');
       console.error(err);

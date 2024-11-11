@@ -1,4 +1,5 @@
 import React from 'react';
+import { Loader2 } from 'lucide-react';
 import { IoMdLock } from 'react-icons/io';
 import { IoEnterOutline } from 'react-icons/io5';
 import { MdOutlineRefresh } from 'react-icons/md';
@@ -19,8 +20,10 @@ export default function EventRoomPart({
     openWindow,
     handleCodeSubmit,
     handleKeyDown,
+    lastUpdated,
     refreshUnlockCount,
   } = useEventDetail(id);
+
   return (
     <div className="max-w-sm">
       {!isCodeValid ? (
@@ -46,16 +49,23 @@ export default function EventRoomPart({
           </div>
         </div>
       ) : (
-        <div className="sticky top-0 z-10 bg-white border rounded-lg shadow-lg p-5">
-          <div className="text-center mb-4 border-b flex items-center justify-center">
-            <p className="text-gray-400 mb-4 font-semibold mr-2">
-              현재 {unlockCount}명 참여 중 !
-            </p>
+        <div className="sticky top-0 z-10 bg-white border rounded-lg shadow-lg px-5 pb-5 pt-2">
+          <div className="flex flex-row justify-end items-center mb-2">
+            {lastUpdated && (
+              <span className="mr-2 text-[10px] text-gray-400">
+                {lastUpdated}에 업데이트됨
+              </span>
+            )}
             <MdOutlineRefresh
               className="text-gray-400 cursor-pointer"
               onClick={refreshUnlockCount}
-              size={24}
+              size={15}
             />
+          </div>
+          <div className="text-center mb-4 border-b flex items-center justify-center">
+            <p className="text-gray-400 font-semibold mb-4">
+              현재 {unlockCount}명 참여 중 !
+            </p>
           </div>
 
           {/* 이벤트 정보 */}

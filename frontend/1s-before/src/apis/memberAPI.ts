@@ -167,7 +167,7 @@ export const fetchParticipatedRooms = async (
     );
     return response.data;
   } catch (error) {
-    console.error('Error fetching participated rooms:', error);
+    console.error('참여한 방 가져오기 실패:', error);
     throw error;
   }
 };
@@ -182,7 +182,7 @@ export const fetchCreatedRooms = async (
     });
     return response.data;
   } catch (error) {
-    console.error('Error fetching created rooms:', error);
+    console.error('개설한 방 가져오기 실패:', error);
     throw error;
   }
 };

@@ -31,6 +31,7 @@ const defaultEventData: EventData = {
 export function useEventDetail(id: number) {
   const [inputCode, setInputCode] = useState('');
   const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [eventData, setEventData] = useState<EventData>(defaultEventData);
 
   const isCodeValid = useEventStore((state) => state.isCodeValid);
@@ -52,12 +53,13 @@ export function useEventDetail(id: number) {
 
   const refreshUnlockCount = () => {
     loadEventData();
+    const currentTime = new Date().toLocaleTimeString();
+    setLastUpdated(currentTime);
   };
 
   useEffect(() => {
     refreshUnlockCount();
 
-    // 10분마다 unlockCount 자동 업데이트
     const interval = setInterval(refreshUnlockCount, 600000);
 
     return () => clearInterval(interval);
@@ -117,6 +119,7 @@ export function useEventDetail(id: number) {
     closeSharePopUp,
     isSharePopupOpen,
     copyUrl,
+    lastUpdated,
     refreshUnlockCount,
   };
 }

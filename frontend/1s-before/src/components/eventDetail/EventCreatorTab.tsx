@@ -14,7 +14,7 @@ export default function EventCreatorTab({
         <div className="flex flex-col items-center">
           {creator?.profileImage ? (
             <img
-              src={creator.profileImage}
+              src={creator.profileImage || undefined}
               alt={creator.creatorName || '프로필'}
               className="w-32 h-32 rounded-full object-cover mb-4 ml-2"
             />
