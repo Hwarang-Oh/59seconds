@@ -11,26 +11,29 @@ export function useEventRoom() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchRoomData = async () => {
-    setLoading(true);
+  const fetchParticipatedRoomData = async () => {
     try {
       const partRoomsData = await fetchParticipatedRooms(1);
       setParticipatedRooms(partRoomsData);
+    } catch (err) {
+      setError('참여한 방 데이터를 가져오는 중 오류가 발생했습니다.');
+    }
+  };
 
+  const fetchCreatedRoomData = async () => {
+    try {
       const createdRoomsData = await fetchCreatedRooms(1);
       setCreatedRooms(createdRoomsData);
-
-      setError(null);
     } catch (err) {
-      setError('데이터를 가져오는 중 오류 발생');
-      console.error('Error fetching room data:', err);
-    } finally {
-      setLoading(false);
+      setError('개설한 방 데이터를 가져오는 중 오류가 발생했습니다.');
     }
   };
 
   useEffect(() => {
-    fetchRoomData();
+    setLoading(true);
+    fetchParticipatedRoomData(); // 참여한 방 데이터 로드
+    fetchCreatedRoomData(); // 생성한 방 데이터 로드
+    setLoading(false);
   }, []);
 
   return {

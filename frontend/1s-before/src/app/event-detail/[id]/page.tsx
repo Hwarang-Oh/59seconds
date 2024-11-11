@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { FaRegSadTear } from 'react-icons/fa';
-import { EventData } from '@/types/eventDetail';
+import Banner from '@/assets/defaultBanner.png';
 import { useEventDetail } from '@/hooks/eventDetailHook';
 import Header from '@/components/common/Header';
 import EventInfoTab from '@/components/eventDetail/EventInfoTab';
@@ -16,7 +16,7 @@ export default function EventDetail() {
   const { id } = params as { id: string };
   const [activeTab, setActiveTab] = useState('event'); // 기본 탭 설정
 
-  const { eventData } = useEventDetail(Number(id), '참여 코드');
+  const { eventData } = useEventDetail(Number(id));
 
   if (!eventData) {
     return (
@@ -48,8 +48,11 @@ export default function EventDetail() {
                   style={{ aspectRatio: '1920 / 460' }}
                 >
                   <img
-                    src={eventData.bannerImage}
-                    alt={eventData.title}
+                    src={eventData.bannerImage || Banner.src}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = Banner.src;
+                    }}
+                    alt="배너"
                     className="w-full h-full object-cover rounded-lg"
                   />
                 </div>
