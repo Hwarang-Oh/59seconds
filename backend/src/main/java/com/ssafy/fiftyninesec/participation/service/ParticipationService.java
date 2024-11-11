@@ -62,44 +62,45 @@ public class ParticipationService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        EventRoom room = eventRoomRepository.findByIdForUpdate(roomId)
-                .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+        // synchronized 블록으로 동시 접근 제어
+        synchronized (this.getClass()) {
+            EventRoom room = eventRoomRepository.findByIdForUpdate(roomId)
+                    .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
-        // 2. 이벤트 시작 시간 체크
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startTime = room.getStartTime();
+            // 2. 이벤트 시작 시간 체크
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime startTime = room.getStartTime();
 
-        if (now.isBefore(startTime)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이벤트가 아직 시작되지 않았습니다.");
+            if (now.isBefore(startTime)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이벤트가 아직 시작되지 않았습니다.");
+            }
+
+            // 3. 이미 참여했는지 체크
+            if (participationRepository.existsByRoomIdAndMemberId(roomId, memberId)) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 참여한 이벤트입니다.");
+            }
+
+            // 현재 순위를 가져올 때 Lock을 걸고 조회
+            int currentRanking = participationRepository.findMaxRankingByRoomId(roomId)
+                    .orElse(0) + 1;
+
+            // 5. 참여 정보 생성
+            Participation participation = Participation.builder()
+                    .room(room)
+                    .member(member)
+                    .joinedAt(now)
+                    .ranking(currentRanking)  // 순차적인 ranking 부여
+                    .isWinner(currentRanking <= room.getWinnerNum())
+                    .build();
+
+            // 6. 저장 및 웹소켓 전송
+            Participation savedParticipation = participationRepository.save(participation);
+            ParticipationResponseDto responseDto = convertToDto(savedParticipation);
+
+            // 웹소켓을 통해 새로운 참여자 정보를 전송
+            messagingTemplate.convertAndSend("/result/sub/participations/" + roomId, responseDto);
+
+            return responseDto;
         }
-
-        // 3. 이미 참여했는지 체크
-        if (participationRepository.existsByRoomIdAndMemberId(roomId, memberId)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 참여한 이벤트입니다.");
-        }
-
-        // 4. 현재 참여자 수 확인
-        int currentParticipants = participationRepository.countByRoomId(roomId);
-//        if (currentParticipants >= room.getWinnerNum()) {
-//            throw new IllegalStateException("선착순 마감되었습니다.");
-//        }
-
-        // 5. 참여 정보 생성
-        Participation participation = Participation.builder()
-                .room(room)
-                .member(member)
-                .joinedAt(now)
-                .ranking(currentParticipants + 1)
-                .isWinner(currentParticipants < room.getWinnerNum())
-                .build();
-
-        // 6. 저장 및 웹소켓 전송
-        Participation savedParticipation = participationRepository.save(participation);
-        ParticipationResponseDto responseDto = convertToDto(savedParticipation);
-
-        // 웹소켓을 통해 새로운 참여자 정보를 전송
-        messagingTemplate.convertAndSend("/result/sub/participations/" + roomId, responseDto);
-
-        return responseDto;
     }
 }
