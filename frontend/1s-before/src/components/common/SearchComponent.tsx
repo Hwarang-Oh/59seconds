@@ -7,23 +7,17 @@ import { useEventSearch } from '@/hooks/eventSearchHook';
 export default function SearchComponent() {
   const router = useRouter();
   const {
-    suggestions,
     searchTerm,
+    suggestions,
+    selectedIndex,
     recentSearches,
     searchContainerRef,
     isSearchResultVisible,
     handleFocus,
-    handleSearch,
     handleKeyDown,
-    handleInputChange,
     handleClickTerm,
-    handleClickSuggestion,
-    selectedIndex,
+    handleInputChange,
   } = useEventSearch();
-
-  const onSearch = async () => {
-    await handleSearch(undefined, router);
-  };
 
   return (
     <div className="relative w-[450px]" ref={searchContainerRef}>
@@ -35,10 +29,10 @@ export default function SearchComponent() {
           placeholder="관심있는 이벤트를 검색해보세요."
           value={searchTerm}
           onChange={handleInputChange}
-          onKeyDown={(e) => handleKeyDown(e, router)}
           onFocus={handleFocus}
+          onKeyDown={(e) => handleKeyDown(e, router)}
         />
-        <button onClick={onSearch}>
+        <button onClick={() => handleClickTerm(searchTerm, router)}>
           <SearchIcon />
         </button>
       </div>
@@ -50,7 +44,7 @@ export default function SearchComponent() {
             searchTerm={searchTerm}
             selectedIndex={selectedIndex}
             onSuggestionClick={(suggestion: string) =>
-              handleClickSuggestion(suggestion, router)
+              handleClickTerm(suggestion, router)
             }
             onTermClick={(term: string) => handleClickTerm(term, router)}
           />
