@@ -45,6 +45,7 @@ pipeline {
                                         sh 'echo "$ENV_VARS" > .env'
                                     }
                                     sh 'npm install'
+                                    sh 'npm install --cpu=wasm32 sharp'
                                     sh 'npm run build'
                                 }
                             }

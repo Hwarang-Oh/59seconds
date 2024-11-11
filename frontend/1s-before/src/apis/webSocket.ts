@@ -9,6 +9,7 @@ import {
 
 let stompClient: Client | null = null;
 let subscriptionMap = new Map();
+let activeEventIds = new Set<number>();
 
 const connect = ({
   eventId,
@@ -26,6 +27,10 @@ const connect = ({
       onMessageReceived,
       subscriptions,
     });
+    if (!activeEventIds.has(eventId)) {
+      sendEnterEventRoom(eventId);
+      activeEventIds.add(eventId);
+    }
   } else {
     stompClient = new Client({
       brokerURL: process.env.NEXT_PUBLIC_WEBSOCKET_URL,
@@ -33,7 +38,7 @@ const connect = ({
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
       onConnect: () => {
-        console.log('Connected : ');
+        console.log('Connected');
         addSubscription({
           eventId,
           onEventRoomResultReceived,
@@ -41,6 +46,18 @@ const connect = ({
           onMessageReceived,
           subscriptions,
         });
+        if (!activeEventIds.has(eventId)) {
+          sendEnterEventRoom(eventId);
+          activeEventIds.add(eventId);
+        }
+      },
+      onDisconnect: () => {
+        console.log('Disconnected');
+        handleDisconnect();
+      },
+      onWebSocketClose: () => {
+        console.log('WebSocket Closed');
+        handleDisconnect();
       },
     });
     stompClient.activate();
@@ -130,7 +147,65 @@ const sendEventRoomMessage = (eventId: number, message: EventRoomMessageInfo) =>
   }
 };
 
+const sendEnterEventRoom = (eventId: number) => {
+  if (stompClient?.connected) {
+    stompClient.publish({
+      destination: `/chat/pub/room/${eventId}/enter`,
+      body: JSON.stringify({ eventId: eventId }),
+    });
+  }
+};
+
+const sendLeaveEventRoom = (eventId: number) => {
+  if (stompClient?.connected) {
+    stompClient.publish({
+      destination: `/chat/pub/room/${eventId}/leave`,
+      body: JSON.stringify({ eventId: eventId }),
+    });
+  }
+};
+
+const handleDisconnect = () => {
+  activeEventIds.forEach((eventId) => {
+    sendLeaveEventRoom(eventId);
+  });
+  activeEventIds.clear();
+};
+
+const disconnectAll = () => {
+  handleDisconnect();
+  subscriptionMap.forEach((subscription) => subscription.unsubscribe());
+  subscriptionMap.clear();
+  if (stompClient?.connected) {
+    stompClient.deactivate();
+  }
+  stompClient = null;
+};
+
+const disconnectFromEvent = (eventId: number) => {
+  if (activeEventIds.has(eventId)) {
+    const subscriptionKeys = Array.from(subscriptionMap.keys()).filter((key) =>
+      key.endsWith(`-${eventId}`)
+    );
+    subscriptionKeys.forEach((key) => {
+      const subscription = subscriptionMap.get(key);
+      subscription?.unsubscribe();
+      subscriptionMap.delete(key);
+    });
+    sendLeaveEventRoom(eventId);
+    activeEventIds.delete(eventId);
+    console.log(`Disconnected from event: ${eventId}`);
+  }
+  if (activeEventIds.size === 0) {
+    console.log('No active events, deactivating WebSocket connection');
+    stompClient?.deactivate();
+    stompClient = null;
+  }
+};
+
 export default {
   connect,
+  disconnectFromEvent,
+  disconnectAll,
   sendEventRoomMessage,
 };
