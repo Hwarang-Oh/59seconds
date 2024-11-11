@@ -6,6 +6,7 @@ import com.ssafy.fiftyninesec.search.service.SearchService;
 import com.ssafy.fiftyninesec.solution.dto.PrizeDto;
 import com.ssafy.fiftyninesec.solution.dto.request.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.global.util.MinioUtil;
+import com.ssafy.fiftyninesec.solution.dto.response.MemberResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.response.RoomUnlockResponse;
 import com.ssafy.fiftyninesec.solution.dto.request.WinnerRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.response.WinnerResponseDto;
@@ -287,6 +288,9 @@ public class EventService {
         EventRoom event = eventRoomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
+        Member member = event.getMember();
+        MemberResponseDto memberResponseDto = MemberResponseDto.of(member);
+
         List<Prize> prizes = prizeRepository.findByEventRoom_Id(roomId);
         List<PrizeDto> prizeDtos = prizes.stream()
                 .map(prize -> PrizeDto.builder()
@@ -313,6 +317,7 @@ public class EventService {
                 .rectangleImage(event.getRectangleImage())
                 .createdAt(event.getCreatedAt())
                 .prizes(prizeDtos)
+                .memberResponseDto(memberResponseDto)
                 .build();
 
         return responseDto;
