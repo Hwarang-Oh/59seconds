@@ -227,7 +227,7 @@ public class MemberService {
 
         List<Participation> participatedEvents = participationRepository.findByMemberId(memberId);
         if (participatedEvents.isEmpty()) {
-            log.info("참여한 이벤트가 없습니다.");
+            log.info("회원 ID {}: 참여한 이벤트가 없습니다.", memberId);
             return Collections.emptyList();
         }
 
@@ -239,13 +239,20 @@ public class MemberService {
 
             // 이벤트 정보 조회
             EventRoom eventRoom = eventRoomRepository.findById(participation.getRoom().getId())
-                    .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+                    .orElseThrow(() -> {
+                        log.error("회원 ID {}: 이벤트 ID {}를 찾을 수 없습니다.", memberId, participation.getRoom().getId());
+                        return new CustomException(EVENT_NOT_FOUND);
+                    });
 
-            // 당첨된 경우만
+            // 당첨된 경우에만 상품 정보 조회
             Prize prize = null;
-            if(participation.getIsWinner()) {
-                 prize = prizeRepository.findByEventRoomAndRanking(eventRoom, participation.getRanking())
-                         .orElseThrow(() -> new CustomException(PRIZE_NOT_FOUND));
+            if (participation.getIsWinner()) {
+                prize = prizeRepository.findByEventRoomAndRanking(eventRoom, participation.getRanking())
+                        .orElseThrow(() -> {
+                            log.error("회원 ID {}: 이벤트 ID {}에서 등수 {}에 해당하는 상품을 찾을 수 없습니다.",
+                                    memberId, eventRoom.getId(), participation.getRanking());
+                            return new CustomException(PRIZE_NOT_FOUND);
+                        });
             }
 
             // DTO 생성 및 리스트에 추가
@@ -260,6 +267,7 @@ public class MemberService {
                     .prizeName(prize != null ? prize.getPrizeName() : null)
                     .startTime(eventRoom.getStartTime())
                     .build();
+
             responseDtos.add(dto);
         }
 
