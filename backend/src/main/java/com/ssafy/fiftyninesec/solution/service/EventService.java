@@ -6,11 +6,8 @@ import com.ssafy.fiftyninesec.search.service.SearchService;
 import com.ssafy.fiftyninesec.solution.dto.PrizeDto;
 import com.ssafy.fiftyninesec.solution.dto.request.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.global.util.MinioUtil;
-import com.ssafy.fiftyninesec.solution.dto.response.MemberResponseDto;
-import com.ssafy.fiftyninesec.solution.dto.response.RoomUnlockResponse;
+import com.ssafy.fiftyninesec.solution.dto.response.*;
 import com.ssafy.fiftyninesec.solution.dto.request.WinnerRequestDto;
-import com.ssafy.fiftyninesec.solution.dto.response.WinnerResponseDto;
-import com.ssafy.fiftyninesec.solution.dto.response.EventRoomResponseDto;
 import com.ssafy.fiftyninesec.solution.entity.*;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import com.ssafy.fiftyninesec.solution.repository.MemberRepository;
@@ -18,6 +15,7 @@ import com.ssafy.fiftyninesec.solution.repository.PrizeRepository;
 import com.ssafy.fiftyninesec.solution.repository.WinnerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.time.ZoneId;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
@@ -138,7 +137,6 @@ public class EventService {
                     .winnerCount(productOrCoupon.getRecommendedPeople())
                     .build();
             prizeRepository.save(prize);
-            log.info("Saved prize: {}", prize.toString());
         });
     }
 
@@ -220,55 +218,41 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public Page<EventRoom> getPopularEvents(int page, int size) {
-        try {
-            log.info("Getting popular events for page: {}, size: {}", page, size);
-            // 페이지네이션 제한
-            long totalEvents = eventRoomRepository.count();
-            if (page > (totalEvents / size) + 1) {
-                log.warn("Invalid page number requested: page {}, total events {}", page, totalEvents);
-                throw new CustomException(INVALID_REQUEST);
-            }
+    public Page<PopularEventResponseDto> getPopularEvents(int page, int size) {
+        log.info("인기 이벤트 조회 시작 - page: {}, size: {}", page, size);
+        validatePageNumber(page, size);
 
-            return eventRoomRepository.findAllByOrderByUnlockCountDesc(PageRequest.of(page, size));
+        Page<EventRoom> eventRooms = eventRoomRepository.findAllByOrderByUnlockCountDesc(PageRequest.of(page, size));
 
-        } catch (Exception e) {
-            log.error("Exception while getting popular events: {}", e.getMessage());
-            throw e;
-        }
+        return eventRooms.map(eventRoom -> {
+
+            String mainPrize = getMainPrize(eventRoom);
+            int prizeCount = getPrizeCount(eventRoom.getId());
+            int ranking = calculateRanking(eventRoom, eventRooms);
+
+            return PopularEventResponseDto.of(eventRoom, mainPrize, prizeCount, ranking);
+        });
     }
 
     @Transactional(readOnly = true)
-    public List<EventRoom> getDeadlineEvents(int size) {
-        try {
-            log.info("Getting deadline events with size: {}", size);
+    public List<DeadlineEventResponseDto> getDeadlineEvents(int size) {
+        log.info("마감 임박 이벤트 조회 시작 - size: {}", size);
 
-            // 한국 시간(KST)으로 현재 시간으로부터 24시간 후의 시간 계산
-            ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
-            LocalDateTime endDateTime = LocalDateTime.now(koreaZoneId).plusHours(24);
+        LocalDateTime endDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusHours(24);
+        List<EventRoom> events = eventRoomRepository.findDeadlineEventsByUpcoming(endDateTime, PageRequest.of(0, size));
 
-            List<EventRoom> events = eventRoomRepository.findDeadlineEventsByUpcoming(
-                    endDateTime,
-                    PageRequest.of(0, size)
-            );
-
-            if (events.isEmpty()) {
-                log.warn("No deadline events found");
-                throw new CustomException(NO_DEADLINE_EVENTS_FOUND);
-            }
-
-            log.info("Found {} deadline events", events.size());
-            return events;
-
-        } catch (CustomException ce) {
-            // 이미 정의된 CustomException은 그대로 throw
-            log.error("Custom exception while getting deadline events: {}", ce.getMessage());
-            throw ce;
-        } catch (Exception e) {
-            // 예상치 못한 에러는 INVALID_REQUEST로 처리
-            log.error("Unexpected error while getting deadline events: ", e);
-            throw new CustomException(INVALID_REQUEST);
+        if (events.isEmpty()) {
+            log.warn("마감 임박 이벤트가 없습니다");
+            return Collections.emptyList();
         }
+
+        return events.stream()
+                .map(eventRoom -> DeadlineEventResponseDto.of(
+                        eventRoom,
+                        getMainPrize(eventRoom),
+                        getPrizeCount(eventRoom.getId())
+                ))
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -339,6 +323,31 @@ public class EventService {
             log.error("Error while getting latest event banner: ", e);
             throw new CustomException(IMAGE_NOT_FOUND);
         }
+    }
+
+    // -----------------------------------------------
+
+    private void validatePageNumber(int page, int size) {
+        long totalEvents = eventRoomRepository.count();
+        if (page > (totalEvents / size) + 1) {
+            log.warn("유효하지 않은 페이지 요청 - page: {}, totalEvents: {}", page, totalEvents);
+            throw new CustomException(INVALID_REQUEST);
+        }
+    }
+
+    private String getMainPrize(EventRoom eventRoom) {
+        return prizeRepository.findFirstByEventRoomAndRanking(eventRoom, 1)
+                .map(Prize::getPrizeName)
+                .orElse(null);
+    }
+
+    private int getPrizeCount(Long eventRoomId) {
+        return prizeRepository.countByEventRoom_Id(eventRoomId);
+    }
+
+    private int calculateRanking(EventRoom eventRoom, Page<EventRoom> eventRooms) {
+        return (int) (eventRooms.getNumber() * eventRooms.getSize() +
+                eventRooms.getContent().indexOf(eventRoom) + 1);
     }
 
     // TEST ------------------------------------------
