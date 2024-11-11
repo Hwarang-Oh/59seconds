@@ -34,9 +34,14 @@ public enum ErrorCode {
     INVALID_CREATOR_INTRODUCE(HttpStatus.BAD_REQUEST, "잘못된 형식의 자기소개입니다. 소개는 최대 1000자까지 가능합니다."),
     INVALID_SNS_LINK(HttpStatus.BAD_REQUEST, "잘못된 형식의 SNS 링크입니다. 링크는 올바른 URL 형식이어야 합니다."),
 
-    PARTICIPATIONS_NOT_FOUND(HttpStatus.NOT_FOUND, "Participations가 없습니다.")
-    ;
+    PARTICIPATIONS_NOT_FOUND(HttpStatus.NOT_FOUND, "Participations가 없습니다."),
 
+    //redis 분산락 관련 에러
+    LOCK_ACQUISITION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "분산 락 획득에 실패했습니다."),
+    LOCK_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, "분산 락 처리 중 인터럽트가 발생했습니다."),
+    EVENT_NOT_STARTED(HttpStatus.BAD_REQUEST, "아직 시작하지 않은 이벤트입니다."),
+    ALREADY_PARTICIPATED(HttpStatus.BAD_REQUEST, "이미 참여한 이벤트입니다.")
+    ;
     private final HttpStatus httpStatus;
     private final String message;
 }

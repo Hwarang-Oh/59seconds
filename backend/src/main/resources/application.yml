@@ -38,9 +38,11 @@ spring:
           uris: ${spring.elasticsearch.uris} # Elasticsearch 설정
           username: ${spring.elasticsearch.username}
           password: ${spring.elasticsearch.password}
-  redis:
-    host: ${redis.host}
-    port: ${redis.port}
+    redis:
+      host: localhost
+      port: 6379
+      #host: ${redis.host}
+      #port: ${redis.port}
 
   doc:
     api-docs:
