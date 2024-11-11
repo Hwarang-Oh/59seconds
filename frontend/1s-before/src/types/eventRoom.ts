@@ -1,3 +1,6 @@
+/**
+ * IMP : Event Room Page Component에서 사용하는 Type 정의
+ */
 export interface EventRoomInfo {
   eventId: number;
   title: string;
@@ -14,6 +17,25 @@ export interface EventStatusAreaProps {
   participants: number;
   competitionRate: number;
   eventTime: string;
+  myResult: EventRoomResultViewInfo;
+  goDrawView: () => void;
+}
+
+export interface EventStatusView {
+  isPending: boolean;
+  eventId: number;
+  joinedAt: string;
+  ranking: number;
+  isWinner: boolean;
+  totalParticipants: number;
+  currentProccessed: number;
+}
+
+export interface EventWinOrLoseStateView {
+  isWinner: boolean;
+  eventId: number;
+  joinedAt: string;
+  ranking: number;
 }
 
 export interface CountdownTimerProps {
@@ -43,6 +65,14 @@ export interface EventChatRoomProps {
 }
 
 /**
+ * IMP : Event Room Page에서 사용하는 API Type 정의
+ */
+export interface EventParticipation {
+  eventId: number;
+  memberId: number;
+}
+
+/**
  * IMP : Event Room Page에서 사용하는 WebSocket Type 정의
  */
 
@@ -61,12 +91,15 @@ export interface EventRoomMessageInfo extends EventRoomSubscription {
   sentAt: string;
 }
 
-export interface EventRoomResult extends EventRoomSubscription {
-  participationId: number;
+export interface EventRoomResultInfo extends EventRoomSubscription {
   memberId: number;
   joinedAt: string;
   ranking: number;
   isWinner: boolean;
+}
+
+export interface EventRoomResultViewInfo extends EventRoomResultInfo {
+  isMine: boolean;
 }
 
 // Type : Subscription Type 정의
@@ -79,12 +112,12 @@ export interface EventRoomMessageSubscription extends EventRoomSubscription {
 }
 
 export interface EventRoomResultSubscription extends EventRoomSubscription {
-  onEventRoomResultReceived: (eventRoomResult: EventRoomResult) => void;
+  onEventRoomResultReceived: (eventRoomResult: EventRoomResultInfo) => void;
 }
 
 export interface EventSocketProps extends EventRoomSubscription {
   onEventRoomInfoReceived: (eventRoomCurrentInfo: EventRoomCurrentInfo) => void;
-  onEventRoomResultReceived: (eventRoomResult: EventRoomResult) => void;
+  onEventRoomResultReceived: (eventRoomResult: EventRoomResultInfo) => void;
   onMessageReceived: (messageInfo: EventRoomMessageInfo) => void;
   subscriptions: string[];
 }

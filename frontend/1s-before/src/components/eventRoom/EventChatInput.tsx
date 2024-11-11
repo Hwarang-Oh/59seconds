@@ -1,17 +1,18 @@
 import webSocket from '@/apis/webSocket';
 import SendIcon from '@/components/icon/SendIcon';
 import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { useMemberStore } from '@/store/memberStore';
 import { EventRoomMessageInfo } from '@/types/eventRoom';
 
 export default function EventChatInput({ eventId }: Readonly<{ eventId: number }>) {
   const [input, setInput] = useState('');
+  const { member } = useMemberStore();
 
   const handleSendMessage = () => {
     if (input.trim() !== '') {
       webSocket.sendEventRoomMessage(eventId, {
         eventId,
-        sender: uuidv4(),
+        sender: member.nickname,
         content: input,
         sentAt: new Date().toISOString(),
       } as EventRoomMessageInfo);
@@ -21,7 +22,7 @@ export default function EventChatInput({ eventId }: Readonly<{ eventId: number }
 
   return (
     <div
-      className='flex items-center px-4 mb-6 gap-1 border rounded-2xl border-gray-300 cursor-pointer'
+      className='flex items-center px-4 gap-1 mb-5 border rounded-2xl border-gray-300 cursor-pointer'
       onClick={(e) => e.stopPropagation()}>
       <input
         className='w-full py-4 text-base font-normal leading-6

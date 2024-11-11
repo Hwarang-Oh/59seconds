@@ -1,6 +1,6 @@
 import PeopleIcon from '@/components/icon/PeopleIcon';
 import FireIcon from '@/components/icon/FireIcon';
-export default function EventStats() {
+export default function EventStatusStats() {
   return (
     <div className='flex flex-col gap-[30px] px-2'>
       <div className='flex justify-between items-center'>
