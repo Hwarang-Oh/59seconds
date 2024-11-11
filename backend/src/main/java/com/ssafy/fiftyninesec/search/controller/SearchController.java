@@ -20,10 +20,13 @@ public class SearchController {
     private final LogService logService;
 
     @GetMapping("/eventrooms")
-    public ResponseEntity<List<EventRoomSearchResponseDto>> searchEventRooms(@ModelAttribute EventRoomSearchRequestDto requestDto) {
+    public ResponseEntity<List<EventRoomSearchResponseDto>> searchEventRooms(
+            @ModelAttribute EventRoomSearchRequestDto requestDto,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         logService.logSearch(requestDto.getKeyword(), requestDto.getMemberId()); // 검색 로그 기록
 
-        List<EventRoomSearchResponseDto> responseDtos = searchService.searchEventRooms(requestDto);
+        List<EventRoomSearchResponseDto> responseDtos = searchService.searchEventRooms(requestDto, page, size);
 
         if (responseDtos.isEmpty()) {
             return ResponseEntity.noContent().build(); // 204 No Content 반환
@@ -33,11 +36,13 @@ public class SearchController {
     }
 
     @GetMapping("/autocomplete")
-    public ResponseEntity<List<String>> autocomplete(@RequestParam String keyword) {
-        List<String> suggestions = searchService.autocomplete(keyword);
+    public ResponseEntity<List<String>> autocomplete(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        List<String> suggestions = searchService.autocomplete(keyword, page, size);
         return suggestions.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(suggestions);
     }
-
     @GetMapping("/synchronize")
     public ResponseEntity<Void> synchronize() {
         searchService.synchronizeData();
