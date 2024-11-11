@@ -90,6 +90,22 @@ export default function EventRoom() {
         subscriptions: ['eventRoomInfo', 'eventRoomMessage', 'eventRoomResult'],
       });
     }
+    return () => {
+      console.log('Cleaning up WebSocket connection for event:', eventId);
+      WebsocketAPI.disconnectFromEvent(Number(eventId));
+    };
+  }, [eventId]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      WebsocketAPI.disconnectFromEvent(Number(eventId));
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
   }, [eventId]);
 
   return (

@@ -122,6 +122,7 @@ public class EventService {
                 .rectangleImage(eventRoomRequestDto.getEventInfo().getRectImage())
                 .createdAt(LocalDateTime.now())
                 .winnerNum(0)
+                .unlockCount(0)
                 .build();
 
         return eventRoomRepository.save(eventRoom);
@@ -252,15 +253,21 @@ public class EventService {
             );
 
             if (events.isEmpty()) {
+                log.warn("No deadline events found");
                 throw new CustomException(NO_DEADLINE_EVENTS_FOUND);
             }
 
             log.info("Found {} deadline events", events.size());
             return events;
 
+        } catch (CustomException ce) {
+            // 이미 정의된 CustomException은 그대로 throw
+            log.error("Custom exception while getting deadline events: {}", ce.getMessage());
+            throw ce;
         } catch (Exception e) {
+            // 예상치 못한 에러는 INVALID_REQUEST로 처리
             log.error("Unexpected error while getting deadline events: ", e);
-            throw new CustomException(EVENT_NOT_FOUND);
+            throw new CustomException(INVALID_REQUEST);
         }
     }
 

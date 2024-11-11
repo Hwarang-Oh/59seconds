@@ -1,32 +1,83 @@
-export interface LargeBannerProps {
-  id: number;
-  bannerImage: string;
-  rectImage: string;
+/**
+ * IMP : API Type 정의
+ */
+
+/**
+ * IMP : 인기 Event 받아오는 Type
+ */
+export interface PopularEventTypes {
+  eventId: number;
   title: string;
-  content: string;
-  date: string;
+  ranking: number; // Type: index로 자체 가능
+  description: string;
+  endTime: string;
+  mainPrize: string;
+  prizeCount: number;
+  unlockCount: number;
+  isDeadline: boolean;
+  bannerImage: string;
+  rectangleImage: string;
+}
+
+/**
+ * IMP : 마감 임박 Event 받아오는 Type
+ */
+export interface DeadlineEventTypes {
+  eventId: number;
+  title: string;
+  leftTime: string; // Type: endTime이 있다면, 자체 가능
+  mainPrize: string;
+  prizeCount: number;
+  rectangleImage: string;
+}
+
+/**
+ * IMP : 인플루언서가 만든 Event를 받아오는 Type
+ */
+export interface InfluencerEventTypes {
+  eventId: number;
+  title: string;
+  status: string;
+  participantCount: number;
+  leftTime: string; // Type: endTime이 있다면, 자체 가능
+}
+
+/**
+ * IMP : Page Type 정의
+ */
+
+export interface LargeBannerProps {
+  eventId: number;
+  title: string;
+  description: string;
+  endTime: string;
+  bannerImage: string;
+  rectangleImage: string;
 }
 
 export interface NormalBannerProps {
-  id: number;
-  rectImage: string;
+  eventId: number;
   title: string;
-  details: string;
-  date: string;
-  participants: number;
+  ranking: number; // Type : index로 자체 가능
+  endTime: string;
+  unlockCount: number;
   isDeadline: boolean;
+  mainPrize: string;
+  prizeCount: number;
+  rectangleImage: string;
 }
 
 export interface ParticipantButtonProps {
-  participants: number;
+  unlockCount: number;
 }
 
 export interface CardBannerProps {
-  id: number;
-  rectImage: string;
+  eventId: number;
   title: string;
-  leftTime: string;
-  details: string;
+  leftTime: string; // Type: endTime이 있다면, 자체 가능
+  mainPrize: string;
+  prizeCount: number;
+  rectangleImage: string;
 }
 
 export interface FancyCardProps {

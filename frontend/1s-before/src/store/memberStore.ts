@@ -13,8 +13,8 @@ interface MemberStore {
 }
 
 const defaultMember: MemberState = {
-  memberId: 2,
-  nickname: 'Guest',
+  memberId: 15,
+  nickname: 'Hwarang',
 };
 
 export const useMemberStore = create(

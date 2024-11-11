@@ -11,12 +11,13 @@ export default function EndBannerList({ Banners }: Readonly<CardBannerListProps>
         <div className='grid grid-cols-2 md:grid-cols-3 gap-5'>
           {Banners.map((banner) => (
             <CardBanner
-              key={banner.id}
-              id={banner.id}
-              rectImage={banner.rectImage}
+              key={banner.eventId}
+              eventId={banner.eventId}
               title={banner.title}
               leftTime={banner.leftTime}
-              details={banner.details}
+              mainPrize={banner.mainPrize}
+              prizeCount={banner.prizeCount}
+              rectangleImage={banner.rectangleImage}
             />
           ))}
         </div>

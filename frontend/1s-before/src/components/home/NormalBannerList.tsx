@@ -8,16 +8,18 @@ export default function NormalBannerList({ Banners }: Readonly<NormalBannerListP
       <div className='flex flex-col gap-7'>
         <p className='text-3xl font-bold'>인기 이벤트</p>
         <div className='flex items-center justify-center gap-5'>
-          {Banners.map((banner) => (
+          {Banners.map((banner, index) => (
             <NormalBanner
-              key={banner.id}
-              id={banner.id}
-              rectImage={banner.rectImage}
+              key={banner.eventId}
+              eventId={banner.eventId}
               title={banner.title}
-              details={banner.details}
-              date={banner.date}
-              participants={banner.participants}
+              ranking={banner.ranking}
+              endTime={banner.endTime}
+              unlockCount={banner.unlockCount}
               isDeadline={banner.isDeadline}
+              mainPrize={banner.mainPrize}
+              prizeCount={banner.prizeCount}
+              rectangleImage={banner.rectangleImage}
             />
           ))}
         </div>
