@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.time.ZoneId;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
@@ -231,7 +232,21 @@ public class EventService {
         Pageable pageable = PageRequest.of(page, size);
         Page<EventRoom> eventRooms = eventRoomRepository.findAllByOrderByUnlockCountDesc(pageable);
 
-        return eventRooms.map(PopularEventResponseDto::of);
+        return eventRooms.map(eventRoom -> {
+            // eventId를 사용하여 1등 상품을 조회
+            Optional<Prize> firstPrize = prizeRepository.findFirstByEventRoomAndRanking(eventRoom, 1);
+
+            // Prize 상품 타입 개수 조회
+            Integer prizeCount = prizeRepository.countByEventRoom_Id(eventRoom.getId());
+            
+            // 1등 상품명 조회
+            String mainPrize = firstPrize.map(Prize::getPrizeName).orElse("상품 없음");
+
+            // 전체 이벤트에서의 순위 계산
+            int ranking = (int) (eventRooms.getNumber() * eventRooms.getSize() + eventRooms.getContent().indexOf(eventRoom) + 1);
+
+            return PopularEventResponseDto.of(eventRoom, mainPrize, prizeCount, ranking);
+        });
     }
 
     @Transactional(readOnly = true)

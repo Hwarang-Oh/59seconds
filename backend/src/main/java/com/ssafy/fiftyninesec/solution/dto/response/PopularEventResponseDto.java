@@ -12,29 +12,30 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PopularEventResponseDto {
-    private Long eventId; // Type: number
+    private Long eventId;
     private String title;
-    private Integer ranking; // Type: index로 자체 가능
+    private Integer ranking;
     private String description;
-    private LocalDateTime endTime; // Type: string
+    private LocalDateTime endTime;
     private String mainPrize;
     private Integer prizeCount;
     private Integer unlockCount;
-    private Boolean isDeadline; // Type: boolean
+    private Boolean isDeadline;
     private String bannerImage;
     private String rectangleImage;
 
-    public static PopularEventResponseDto of(EventRoom eventRoom) {
+    public static PopularEventResponseDto of(EventRoom eventRoom, String mainPrize, Integer prizeCount, int ranking) {
+        boolean isDeadline = eventRoom.getEndTime().isBefore(LocalDateTime.now().plusHours(24));
         return PopularEventResponseDto.builder()
                 .eventId(eventRoom.getId())
                 .title(eventRoom.getTitle())
-                .ranking(eventRoom.getUnlockCount()) // 예시로 unlockCount를 ranking으로 사용
+                .ranking(ranking)
                 .description(eventRoom.getDescription())
                 .endTime(eventRoom.getEndTime())
-                .mainPrize("Example Prize") // 실제 prize 정보가 있는 경우 변경
-                .prizeCount(eventRoom.getUnlockCount()) // 예시
-                .unlockCount(eventRoom.getUnlockCount())
-                .isDeadline(eventRoom.getEndTime().isBefore(LocalDateTime.now()))
+                .prizeCount(prizeCount)
+                .unlockCount(eventRoom.getUnlockCount() == null ? 0 : eventRoom.getUnlockCount())
+                .isDeadline(isDeadline)
+                .mainPrize(mainPrize)
                 .bannerImage(eventRoom.getBannerImage())
                 .rectangleImage(eventRoom.getRectangleImage())
                 .build();

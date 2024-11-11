@@ -10,6 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface PrizeRepository extends JpaRepository<Prize, Long> {
+    Integer countByEventRoom_Id(Long id);
     List<Prize> findByEventRoom_Id(Long roomId);
     Optional<Prize> findByEventRoomAndRanking(EventRoom eventRoom, Integer ranking);
+    Optional<Prize> findFirstByEventRoomAndRanking(EventRoom eventRoom, Integer ranking);
 }
