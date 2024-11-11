@@ -11,7 +11,6 @@ export default function EventResultArea({
   totalParticipants,
   currentProccessed,
 }: Readonly<EventStatusView>) {
-  // isPending = false;
   return (
     <div className='flex flex-col gap-[105px]'>
       <div className='flex flex-col items-center'>
@@ -21,10 +20,10 @@ export default function EventResultArea({
           이벤트 응모 결과
         </div>
         <p className='text-2xl mb-1' style={{ color: '#1C1C1E' }}>
-          총 참가자 <span className='font-bold'>10,000</span>명 중
+          총 참가자 <span className='font-bold'>{totalParticipants}</span>명 중
         </p>
         <p className='text-2xl font-bold' style={{ color: '#1C1C1E' }}>
-          5 명 추첨!
+          {currentProccessed} 명 추첨!
         </p>
       </div>
       {isPending ? (

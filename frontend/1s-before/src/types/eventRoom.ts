@@ -3,9 +3,11 @@
  */
 export interface EventRoomInfo {
   eventId: number;
+  creatorName: string;
   title: string;
-  bannerImage: string;
+  winnerNum: number;
   eventTime: string;
+  bannerImage: string;
 }
 
 export interface BannerHeaderProps {
@@ -13,12 +15,19 @@ export interface BannerHeaderProps {
 }
 
 export interface EventStatusAreaProps {
+  eventId: number;
   isDrawing: boolean;
-  participants: number;
+  totalParticipants: number;
+  currentProccessed: number;
   competitionRate: number;
   eventTime: string;
   myResult: EventRoomResultViewInfo;
   goDrawView: () => void;
+}
+
+export interface EventStatusStatsProps {
+  participants: number;
+  competitionRate: number;
 }
 
 export interface EventStatusView {
@@ -71,7 +80,6 @@ export interface EventParticipation {
   eventId: number;
   memberId: number;
 }
-
 /**
  * IMP : Event Room Page에서 사용하는 WebSocket Type 정의
  */

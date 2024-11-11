@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface MemberState {
   memberId: number;
@@ -8,35 +7,21 @@ interface MemberState {
 }
 
 interface MemberStore {
-  member: MemberState;
+  member: MemberState | null;
   setMember: (memberId: number, nickname: string) => void;
   clearMember: () => void;
   toggleCreatorMode: () => void;
 }
 
-const defaultMember: MemberState = {
-  memberId: 0,
-  nickname: 'Hwarang',
-  isCreatorMode: false,
-};
-
-export const useMemberStore = create<MemberStore>()(
-  persist(
-    (set) => ({
-      member: defaultMember,
-      setMember: (memberId, nickname) =>
-        set((state) => ({
-          member: { ...state.member, memberId, nickname },
-        })),
-      clearMember: () => set({ member: defaultMember }),
-      toggleCreatorMode: () =>
-        set((state) => ({
-          member: { ...state.member, isCreatorMode: !state.member.isCreatorMode },
-        })),
+export const useMemberStore = create<MemberStore>((set) => ({
+  member: null, // 초기 상태를 null로 설정하여 로그인 전에는 member가 없는 상태로 유지
+  setMember: (memberId, nickname) =>
+    set({
+      member: { memberId, nickname, isCreatorMode: false },
     }),
-    {
-      name: 'member-storage',
-      storage: createJSONStorage(() => localStorage),
-    }
-  )
-);
+  clearMember: () => set({ member: null }), // 로그아웃 시 member 상태를 null로 재설정
+  toggleCreatorMode: () =>
+    set((state) => ({
+      member: state.member ? { ...state.member, isCreatorMode: !state.member.isCreatorMode } : null, // member가 null이 아닌 경우에만 토글
+    })),
+}));

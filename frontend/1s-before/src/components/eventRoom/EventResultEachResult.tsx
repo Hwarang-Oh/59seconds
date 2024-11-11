@@ -1,4 +1,5 @@
 import { EventRoomResultViewInfo } from '@/types/eventRoom';
+import { formatTimeWithMilliseconds } from '@/utils/timeUtils';
 import { Trophy, Clock, Medal, Award, Star, AlertCircle } from 'lucide-react';
 
 export default function EventResultEachResult({
@@ -73,7 +74,7 @@ export default function EventResultEachResult({
           </div>
           <div className='flex items-center mt-1 text-gray-500'>
             <Clock className='w-4 h-4 mr-2' />
-            <span className='font-mono'>{joinedAt}</span>
+            <span className='font-mono'>{formatTimeWithMilliseconds(joinedAt)}</span>
           </div>
         </div>
       </div>

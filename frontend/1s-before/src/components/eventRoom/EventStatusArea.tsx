@@ -10,7 +10,9 @@ import { EventStatusAreaProps } from '@/types/eventRoom';
 
 export default function EventStatusArea({
   isDrawing,
-  participants,
+  eventId,
+  totalParticipants,
+  currentProccessed,
   competitionRate,
   eventTime,
   myResult,
@@ -34,15 +36,15 @@ export default function EventStatusArea({
           joinedAt={myResult.joinedAt}
           ranking={myResult.ranking}
           isWinner={myResult.isWinner}
-          totalParticipants={participants}
-          currentProccessed={0}
+          totalParticipants={totalParticipants}
+          currentProccessed={currentProccessed}
         />
       )}
       {!isDrawing && (
         <>
           <EventStatusHeader />
           <div className='flex flex-col gap-[105px] pb-20'>
-            <EventStatusStats />
+            <EventStatusStats participants={totalParticipants} competitionRate={competitionRate} />
             <EventStatusCountdownTimer
               eventTime={eventTime}
               onComplete={() => setIsTimerCompleted(true)}
@@ -50,7 +52,7 @@ export default function EventStatusArea({
             <EventStatusActiveButton
               isDisabled={!isTimerCompleted}
               onClick={() => {
-                eventParticipate({ eventId: 1, memberId: member.memberId });
+                eventParticipate({ eventId: eventId, memberId: member.memberId });
                 goDrawView();
               }}
               text={isTimerCompleted ? '추첨 시작!' : '추첨 시작 전'}

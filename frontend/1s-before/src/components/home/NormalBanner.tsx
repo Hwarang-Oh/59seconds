@@ -16,7 +16,7 @@ export default function NormalBanner({
   return (
     <div className='flex flex-col w-[240px]'>
       <div className='relative w-[240px] h-[320px] overflow-hidden rounded-lg'>
-        <Image src={`/${rectangleImage}`} alt={title} fill className='object-cover' quality={100} />
+        <Image src={rectangleImage} alt={title} fill className='object-cover' quality={100} />
         <div
           className='absolute bottom-3 left-4 text-white text-[60px] font-bold'
           style={{

@@ -1,4 +1,3 @@
-import axios from 'axios';
 import api from '@/apis/commonAPI';
 const SEARCH_URL = 'v1/search';
 

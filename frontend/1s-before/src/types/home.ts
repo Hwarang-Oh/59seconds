@@ -1,8 +1,4 @@
 /**
- * IMP : API Type 정의
- */
-
-/**
  * IMP : 인기 Event 받아오는 Type
  */
 export interface PopularEventTypes {
@@ -43,7 +39,7 @@ export interface InfluencerEventTypes {
 }
 
 /**
- * IMP : Page Type 정의
+ * IMP : General Mode Page Type 정의
  */
 
 export interface LargeBannerProps {
@@ -80,12 +76,6 @@ export interface CardBannerProps {
   rectangleImage: string;
 }
 
-export interface FancyCardProps {
-  id: number;
-  title: string;
-  content: string;
-}
-
 export interface BannerCarouselProps {
   Banners: LargeBannerProps[];
 }
@@ -96,4 +86,25 @@ export interface NormalBannerListProps {
 
 export interface CardBannerListProps {
   Banners: CardBannerProps[];
+}
+
+/**
+ * IMP : Creator Mode Page Type 정의
+ */
+export interface CreatorBannerProps {
+  bannerImage: string;
+}
+
+/**
+ * IMP : 공통 Mode Page Type 정의
+ */
+export interface HomeContentProps {
+  popularEvents: PopularEventTypes[];
+  deadlineEvents: CardBannerProps[];
+}
+
+export interface FancyCardProps {
+  id: number;
+  title: string;
+  content: string;
 }

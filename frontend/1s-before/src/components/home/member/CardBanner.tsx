@@ -12,7 +12,7 @@ export default function CardBanner({
   return (
     <div className='flex h-[185px] shadow-md'>
       <div className='relative w-[140px] overflow-hidden rounded-l-lg'>
-        <Image src={`/${rectangleImage}`} alt={title} fill className='object-cover' />
+        <Image src={rectangleImage} alt={title} fill className='object-cover' />
       </div>
 
       <div className='flex flex-col w-[280px] justify-center px-5 gap-1 border rounded-r'>
