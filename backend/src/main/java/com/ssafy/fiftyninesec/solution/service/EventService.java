@@ -6,11 +6,8 @@ import com.ssafy.fiftyninesec.search.service.SearchService;
 import com.ssafy.fiftyninesec.solution.dto.PrizeDto;
 import com.ssafy.fiftyninesec.solution.dto.request.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.global.util.MinioUtil;
-import com.ssafy.fiftyninesec.solution.dto.response.MemberResponseDto;
-import com.ssafy.fiftyninesec.solution.dto.response.RoomUnlockResponse;
+import com.ssafy.fiftyninesec.solution.dto.response.*;
 import com.ssafy.fiftyninesec.solution.dto.request.WinnerRequestDto;
-import com.ssafy.fiftyninesec.solution.dto.response.WinnerResponseDto;
-import com.ssafy.fiftyninesec.solution.dto.response.EventRoomResponseDto;
 import com.ssafy.fiftyninesec.solution.entity.*;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
 import com.ssafy.fiftyninesec.solution.repository.MemberRepository;
@@ -18,6 +15,7 @@ import com.ssafy.fiftyninesec.solution.repository.PrizeRepository;
 import com.ssafy.fiftyninesec.solution.repository.WinnerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -220,22 +218,20 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public Page<EventRoom> getPopularEvents(int page, int size) {
-        try {
-            log.info("Getting popular events for page: {}, size: {}", page, size);
-            // 페이지네이션 제한
-            long totalEvents = eventRoomRepository.count();
-            if (page > (totalEvents / size) + 1) {
-                log.warn("Invalid page number requested: page {}, total events {}", page, totalEvents);
-                throw new CustomException(INVALID_REQUEST);
-            }
+    public Page<PopularEventResponseDto> getPopularEvents(int page, int size) {
+        log.info("인기 이벤트를 가져오는 중: 페이지: {}, 크기: {}", page, size);
 
-            return eventRoomRepository.findAllByOrderByUnlockCountDesc(PageRequest.of(page, size));
-
-        } catch (Exception e) {
-            log.error("Exception while getting popular events: {}", e.getMessage());
-            throw e;
+        // 페이지네이션 제한
+        long totalEvents = eventRoomRepository.count();
+        if (page > (totalEvents / size) + 1) {
+            log.warn("요청된 페이지 번호가 유효하지 않습니다: 페이지 {}, 총 이벤트 수 {}", page, totalEvents);
+            throw new CustomException(INVALID_REQUEST);
         }
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<EventRoom> eventRooms = eventRoomRepository.findAllByOrderByUnlockCountDesc(pageable);
+
+        return eventRooms.map(PopularEventResponseDto::of);
     }
 
     @Transactional(readOnly = true)

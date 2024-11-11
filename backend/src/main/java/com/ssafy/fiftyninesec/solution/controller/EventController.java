@@ -4,6 +4,7 @@ import com.ssafy.fiftyninesec.solution.dto.request.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.request.RoomUnlockRequest;
 import com.ssafy.fiftyninesec.solution.dto.request.WinnerRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.response.EventRoomResponseDto;
+import com.ssafy.fiftyninesec.solution.dto.response.PopularEventResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.response.RoomUnlockResponse;
 import com.ssafy.fiftyninesec.solution.dto.response.WinnerResponseDto;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
@@ -88,10 +89,10 @@ public class EventController {
             @ApiResponse(responseCode = "200", description = "인기 이벤트 룸 목록이 성공적으로 조회되었습니다.")
     })
     @GetMapping("/popular")
-    public ResponseEntity<Page<EventRoom>> getPopularRooms(
+    public ResponseEntity<Page<PopularEventResponseDto>> getPopularRooms(
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "한 페이지에 보여질 이벤트 룸의 수", example = "5") @RequestParam(defaultValue = "5") int size) {
-        Page<EventRoom> popularRooms = eventService.getPopularEvents(page, size);
+        Page<PopularEventResponseDto> popularRooms = eventService.getPopularEvents(page, size);
         return ResponseEntity.ok(popularRooms);
     }
 
