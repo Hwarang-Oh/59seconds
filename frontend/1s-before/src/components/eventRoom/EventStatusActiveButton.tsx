@@ -1,6 +1,10 @@
 import { ActiveButtonProps } from '@/types/eventRoom';
 
-export default function ActiveButton({ isDisabled, onClick, text }: Readonly<ActiveButtonProps>) {
+export default function EventStatusActiveButton({
+  isDisabled,
+  onClick,
+  text,
+}: Readonly<ActiveButtonProps>) {
   return (
     <div className='flex justify-center'>
       <button

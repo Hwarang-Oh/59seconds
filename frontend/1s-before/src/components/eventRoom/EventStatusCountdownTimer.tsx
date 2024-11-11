@@ -3,7 +3,10 @@ import { CountdownTimerProps } from '@/types/eventRoom';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
 import { getRemainingTimeInSeconds } from '@/utils/timeUtils';
 
-export default function CountdownTimer({ eventTime, onComplete }: Readonly<CountdownTimerProps>) {
+export default function EventStatusCountdownTimer({
+  eventTime,
+  onComplete,
+}: Readonly<CountdownTimerProps>) {
   const remainingTimeInSeconds = getRemainingTimeInSeconds(eventTime);
   return (
     <div className='flex flex-col items-center justify-center'>

@@ -4,17 +4,37 @@ import EventDummy from '@/mocks/EventDummy.json';
 import BannerHeader from '@/components/eventRoom/BannerHeader';
 import EventStatusArea from '@/components/eventRoom/EventStatusArea';
 import EventChatRoomArea from '@/components/eventRoom/EventChatRoomArea';
+import EventResultAllResult from '@/components/eventRoom/EventResultAllResult';
 import { useEffect, useState } from 'react';
+import { useMemberStore } from '@/store/memberStore';
 import { useParams } from 'next/navigation';
-import { EventRoomInfo, EventRoomCurrentInfo, EventRoomMessageInfo } from '@/types/eventRoom';
+import {
+  EventRoomInfo,
+  EventRoomCurrentInfo,
+  EventRoomMessageInfo,
+  EventRoomResultInfo,
+  EventRoomResultViewInfo,
+} from '@/types/eventRoom';
 
 export default function EventRoom() {
   const params = useParams();
   const { id: eventId } = params as { id: string };
+  // * Test용 Member Store
+  const { member } = useMemberStore();
+
   // IMP : Chat Size 조절을 위한 State
   // IMP : Event Result 조회를 위한 View 조절 State
+  // IMP : Event 당첨을 확인하는 State
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [myResult, setMyResult] = useState<EventRoomResultViewInfo>({
+    eventId: 0,
+    memberId: 0,
+    joinedAt: '',
+    ranking: 0,
+    isWinner: false,
+    isMine: false,
+  });
 
   const toggleChatSize = () => {
     setIsChatExpanded(!isChatExpanded);
@@ -32,9 +52,19 @@ export default function EventRoom() {
   // IMP : eventInfo -> Event 정보 저장 ( API )
   // IMP : message -> Chat 내용 저장 ( WebSocket )
   // IMP : eventStatus -> Event 상태 저장 ( WebSocket )
+  // IMP : eventResult -> 당첨 결과 저장 ( WebSocket )
   const [eventInfo, setEventInfo] = useState<EventRoomInfo | null>(null);
   const [messages, setMessages] = useState<EventRoomMessageInfo[]>([]);
   const [eventStatus, setEventStatus] = useState<EventRoomCurrentInfo | null>(null);
+  const [eventResult, setEventResult] = useState<EventRoomResultViewInfo[]>([]);
+
+  const getEventResult = (receivedEachEventResult: EventRoomResultInfo) => {
+    const isMine = receivedEachEventResult.memberId === member.memberId;
+    const processedResult = { ...receivedEachEventResult, isMine };
+    if (isMine) setMyResult(processedResult);
+    setEventResult((prevResult) => [...prevResult, processedResult]);
+    console.log('Event Room Result Received : ', processedResult);
+  };
 
   useEffect(() => {
     if (eventId) {
@@ -55,7 +85,7 @@ export default function EventRoom() {
           setMessages((prevMessages) => [...prevMessages, messageInfo]);
         },
         onEventRoomResultReceived: (eventRoomResult) => {
-          console.log('Event Room Result Received : ', eventRoomResult);
+          getEventResult(eventRoomResult);
         },
         subscriptions: ['eventRoomInfo', 'eventRoomMessage', 'eventRoomResult'],
       });
@@ -71,15 +101,17 @@ export default function EventRoom() {
             [Event : {eventInfo.eventId}] <span className='font-bold'>{eventInfo.title}</span>
           </div>
           <div className='flex gap-5'>
-            <div className={`relative transition-all duration-300 ${getStatusAreaWidth()}`}>
+            <div className={`transition-all duration-300 ${getStatusAreaWidth()}`}>
               <EventStatusArea
                 isDrawing={isDrawing}
                 participants={eventStatus?.userCount ?? 0}
                 competitionRate={eventStatus?.userCount ?? 0}
                 eventTime={eventInfo.eventTime}
+                myResult={myResult}
+                goDrawView={() => setIsDrawing(true)}
               />
+              <EventResultAllResult list={eventResult} />
             </div>
-
             <div className={`transition-all duration-300 cursor-pointer ${getChatRoomAreaWidth()}`}>
               <EventChatRoomArea
                 eventId={eventInfo.eventId}
