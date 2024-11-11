@@ -24,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
@@ -214,11 +212,13 @@ public class MemberService {
         // 생성일 내림차순
         Sort sort = Sort.by(Sort.Direction.DESC, "startTime");
         List<EventRoom> events = eventRoomRepository.findByMember(member, sort);
-        List<CreatedEventResponseDto> responseDto = events.stream()
-                .map(CreatedEventResponseDto::new)
-                .collect(Collectors.toList());
 
-        return responseDto;
+        return Optional.ofNullable(events)
+                .filter(eventList -> !eventList.isEmpty())
+                .map(eventList -> eventList.stream()
+                        .map(CreatedEventResponseDto::new)
+                        .collect(Collectors.toList()))
+                .orElse(Collections.emptyList());
     }
 
     public List<ParticipatedEventResponseDto> getParticipatedEventRooms(Long memberId) {
@@ -226,10 +226,11 @@ public class MemberService {
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
         List<Participation> participatedEvents = participationRepository.findByMemberId(memberId);
-        if(participatedEvents.isEmpty()) {
+        if (participatedEvents.isEmpty()) {
             log.info("참여한 이벤트가 없습니다.");
-            throw new CustomException(EVENT_NOT_FOUND);
+            return Collections.emptyList();
         }
+
         log.info("참여한 이벤트 수 : {}", participatedEvents.size());
 
         List<ParticipatedEventResponseDto> responseDtos = new ArrayList<>();
@@ -259,11 +260,8 @@ public class MemberService {
                     .prizeName(prize != null ? prize.getPrizeName() : null)
                     .startTime(eventRoom.getStartTime())
                     .build();
-
             responseDtos.add(dto);
         }
-
-
 
         return responseDtos;
     }
