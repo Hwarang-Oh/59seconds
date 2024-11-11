@@ -79,7 +79,7 @@ export default function EventCreatorPage() {
               <img
                 src={room.bannerUrl || Banner.src}
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = Banner.src; // 이미지 로드 실패 시 기본 배너로 대체
+                  (e.target as HTMLImageElement).src = Banner.src;
                 }}
                 alt="배너"
                 className="w-full h-56 rounded-lg object-cover"

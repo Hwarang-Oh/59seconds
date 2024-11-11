@@ -28,7 +28,7 @@ const defaultEventData: EventData = {
   prizes: [],
 };
 
-export function useEventDetail(id: number, participationCode: string) {
+export function useEventDetail(id: number) {
   const [inputCode, setInputCode] = useState('');
   const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
   const [eventData, setEventData] = useState<EventData>(defaultEventData);
@@ -36,17 +36,31 @@ export function useEventDetail(id: number, participationCode: string) {
   const isCodeValid = useEventStore((state) => state.isCodeValid);
   const setIsCodeValid = useEventStore((state) => state.setCodeValid);
 
-  useEffect(() => {
-    const loadEventData = async () => {
-      try {
-        const data = await fetchEventInfo(id);
-        setEventData(data);
-      } catch (error) {
-        console.error('이벤트 정보 로드 오류:', error);
-      }
-    };
+  const loadEventData = async () => {
+    try {
+      const data = await fetchEventInfo(id);
+      setEventData(data);
+      console.log(data);
+    } catch (error) {
+      console.error('이벤트 정보 로드 오류:', error);
+    }
+  };
 
+  useEffect(() => {
     loadEventData();
+  }, [id]);
+
+  const refreshUnlockCount = () => {
+    loadEventData();
+  };
+
+  useEffect(() => {
+    refreshUnlockCount();
+
+    // 10분마다 unlockCount 자동 업데이트
+    const interval = setInterval(refreshUnlockCount, 600000);
+
+    return () => clearInterval(interval);
   }, [id]);
 
   // IMP: 새창으로 여는 코드
@@ -59,7 +73,7 @@ export function useEventDetail(id: number, participationCode: string) {
   };
 
   const handleCodeSubmit = () => {
-    if (inputCode === participationCode) {
+    if (inputCode === eventData.enterCode) {
       setIsCodeValid(true);
     } else {
       alert('올바른 참여 코드를 입력하세요.');
@@ -103,5 +117,6 @@ export function useEventDetail(id: number, participationCode: string) {
     closeSharePopUp,
     isSharePopupOpen,
     copyUrl,
+    refreshUnlockCount,
   };
 }

@@ -7,11 +7,9 @@ export default function EventRoomInfo({
   creator,
   id,
 }: Readonly<EventIntroTabProps>) {
-  const { title, prizes = [], enterCode } = event;
-  const { openSharePopUp, closeSharePopUp, isSharePopupOpen } = useEventDetail(
-    id,
-    enterCode
-  );
+  const { title, prizes = [] } = event;
+  const { openSharePopUp, closeSharePopUp, isSharePopupOpen } =
+    useEventDetail(id);
 
   const totalProducts = prizes.reduce(
     (sum, product) => sum + product.winnerCount,
@@ -21,7 +19,7 @@ export default function EventRoomInfo({
   return (
     <>
       <h2 className="text-lg font-bold text-gray-800 mb-1">
-        [{creator?.creatorName}] {title}
+        [{creator?.creatorName ? creator?.creatorName : '이벤트'}] {title}
       </h2>
       <div className="flex flex-row justify-between">
         <p className="text-sm text-gray-500 mb-4">{totalProducts}명 추첨</p>

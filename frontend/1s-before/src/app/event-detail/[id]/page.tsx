@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { FaRegSadTear } from 'react-icons/fa';
-import { EventData } from '@/types/eventDetail';
 import { useEventDetail } from '@/hooks/eventDetailHook';
 import Header from '@/components/common/Header';
 import EventInfoTab from '@/components/eventDetail/EventInfoTab';

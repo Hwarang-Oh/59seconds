@@ -7,30 +7,13 @@ interface EventIntroTabProps {
 }
 
 export default function EventIntroTab({ event }: Readonly<EventIntroTabProps>) {
-  const {
-    title,
-    description,
-    bannerImage,
-    startTime,
-    endTime,
-    prizes = [],
-  } = event ?? {};
+  const { title, description, startTime, endTime, prizes = [] } = event ?? {};
 
   return (
     <div className="p-8 max-w-screen-lg mx-auto">
       <h2 className="text-2xl font-bold mb-10 text-gray-800">
         {title || '이벤트 제목'}
       </h2>
-
-      {bannerImage && (
-        <div className="mb-10">
-          <img
-            src={bannerImage}
-            alt={`${title} 배너`}
-            className="w-full h-auto object-cover rounded-lg shadow-md"
-          />
-        </div>
-      )}
 
       <div className="bg-white rounded-lg border p-4 mb-6">
         <h3 className="font-semibold text-lg mb-2">이벤트 설명</h3>
@@ -49,7 +32,7 @@ export default function EventIntroTab({ event }: Readonly<EventIntroTabProps>) {
                 className="flex-1 bg-white py-4 rounded-lg border text-center"
               >
                 <p className="text-gray-800 text-lg mb-2">
-                  <span className="font-bold mr-1">{item.ranking}등</span>{' '}
+                  <span className="font-bold mr-1">{item.ranking}등</span>
                   {item.prizeName || '상품 이름 없음'}
                 </p>
                 <div className="flex justify-center items-center mb-2">
@@ -74,16 +57,16 @@ export default function EventIntroTab({ event }: Readonly<EventIntroTabProps>) {
         <h3 className="font-semibold text-lg mb-2">이벤트 기간</h3>
         <p className="text-gray-700 flex flex-row mb-1">
           <FaCalendarAlt className="text-mainColor1 mr-2 mt-1" />
-          <span className="font-semibold">시작: </span>{' '}
+          <span className="font-bold">시작:&nbsp;</span>
           {startTime ? new Date(startTime).toLocaleString() : '시작 날짜 없음'}
         </p>
         <p className="text-gray-700 flex flex-row">
           <FaCalendarAlt className="text-mainColor1 mr-2 mt-1" />
-          <span className="font-semibold">종료: </span>{' '}
+          <span className="font-bold">종료:&nbsp;</span>
           {endTime ? new Date(endTime).toLocaleString() : '종료 날짜 없음'}
         </p>
         <p className="text-sm text-gray-500 mt-2">
-          상품 조기 소진 시, 이벤트가 조기 마감될 수 있습니다.
+          상품 소진 시, 이벤트가 조기 마감될 수 있습니다.
         </p>
       </div>
     </div>

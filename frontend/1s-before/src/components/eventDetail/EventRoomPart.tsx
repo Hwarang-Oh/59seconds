@@ -1,6 +1,7 @@
 import React from 'react';
 import { IoMdLock } from 'react-icons/io';
 import { IoEnterOutline } from 'react-icons/io5';
+import { MdOutlineRefresh } from 'react-icons/md';
 import { EventIntroTabProps } from '@/types/eventDetail';
 import { useEventDetail } from '@/hooks/eventDetailHook';
 import { FaGift, FaCalendarAlt, FaLink, FaEnvelope } from 'react-icons/fa';
@@ -10,7 +11,7 @@ export default function EventRoomPart({
   creator,
   id,
 }: Readonly<EventIntroTabProps>) {
-  const { prizes = [], startTime, endTime, enterCode } = event;
+  const { prizes = [], startTime, endTime, unlockCount } = event;
   const {
     inputCode,
     setInputCode,
@@ -18,8 +19,8 @@ export default function EventRoomPart({
     openWindow,
     handleCodeSubmit,
     handleKeyDown,
-  } = useEventDetail(id, enterCode);
-
+    refreshUnlockCount,
+  } = useEventDetail(id);
   return (
     <div className="max-w-sm">
       {!isCodeValid ? (
@@ -39,17 +40,22 @@ export default function EventRoomPart({
             />
             <IoEnterOutline
               className="text-mainColor1 pr-2 cursor-pointer"
-              size={30}
+              size={20}
               onClick={handleCodeSubmit}
             />
           </div>
         </div>
       ) : (
         <div className="sticky top-0 z-10 bg-white border rounded-lg shadow-lg p-5">
-          <div className="text-center mb-4 border-b">
-            <p className="text-gray-400 mb-4 font-semibold">
-              현재 10,000명 참여 중 !
+          <div className="text-center mb-4 border-b flex items-center justify-center">
+            <p className="text-gray-400 mb-4 font-semibold mr-2">
+              현재 {unlockCount}명 참여 중 !
             </p>
+            <MdOutlineRefresh
+              className="text-gray-400 cursor-pointer"
+              onClick={refreshUnlockCount}
+              size={24}
+            />
           </div>
 
           {/* 이벤트 정보 */}
@@ -62,7 +68,7 @@ export default function EventRoomPart({
             <p className="text-gray-600 ml-6 text-sm">
               {prizes.map((product) => (
                 <span key={product.prizeId}>
-                  {product.prizeName} {product.winnerCount}개{' '}
+                  {product.prizeName} {product.winnerCount}개 <br />
                 </span>
               ))}
             </p>
@@ -73,8 +79,11 @@ export default function EventRoomPart({
               <p className="text-gray-700 font-semibold">이벤트 기간</p>
             </div>
             <p className="text-gray-600 ml-6 text-sm">
-              {new Date(startTime).toLocaleString()} ~{' '}
-              {new Date(endTime).toLocaleString()}
+              {startTime
+                ? new Date(startTime).toLocaleString()
+                : '시작 날짜 없음'}
+              <span>&nbsp;~&nbsp;</span>
+              {endTime ? new Date(endTime).toLocaleString() : '종료 날짜 없음'}
             </p>
 
             {/* 주최자 정보 */}
@@ -82,7 +91,9 @@ export default function EventRoomPart({
               <FaLink className="text-mainColor1 mr-2" />
               <p className="text-gray-700 font-semibold">주최자 정보</p>
             </div>
-            <p className="ml-6 text-sm">{creator?.snsLink}</p>
+            <p className="ml-6 text-sm text-gray-600">
+              {creator?.snsLink ? creator.snsLink : '입력된 정보 없음'}
+            </p>
 
             {/* 요청 기한 */}
             <div className="flex items-center mt-4 mb-2">
