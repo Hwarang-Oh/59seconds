@@ -11,6 +11,7 @@ export default function EventResultArea({
   totalParticipants,
   currentProccessed,
 }: Readonly<EventStatusView>) {
+  // isPending = false;
   return (
     <div className='flex flex-col gap-[105px]'>
       <div className='flex flex-col items-center'>

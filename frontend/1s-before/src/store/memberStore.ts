@@ -10,11 +10,10 @@ interface MemberStore {
   member: MemberState;
   setMember: (member: MemberState) => void;
   clearMember: () => void;
-  plusMemberId: () => void;
 }
 
 const defaultMember: MemberState = {
-  memberId: 760,
+  memberId: 2,
   nickname: 'Guest',
 };
 
@@ -24,17 +23,10 @@ export const useMemberStore = create(
       member: defaultMember,
       setMember: (member) => set({ member }),
       clearMember: () => set({ member: defaultMember }),
-      plusMemberId: () =>
-        set((state) => ({
-          member: {
-            ...state.member,
-            memberId: state.member.memberId + 1,
-          },
-        })),
     }),
     {
       name: 'member-storage',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => sessionStorage),
     }
   )
 );

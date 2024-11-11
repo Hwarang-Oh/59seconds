@@ -57,7 +57,6 @@ export default function EventRoom() {
   const [messages, setMessages] = useState<EventRoomMessageInfo[]>([]);
   const [eventStatus, setEventStatus] = useState<EventRoomCurrentInfo | null>(null);
   const [eventResult, setEventResult] = useState<EventRoomResultViewInfo[]>([]);
-  const plusMemberId = useMemberStore((state) => state.plusMemberId);
 
   const getEventResult = (receivedEachEventResult: EventRoomResultInfo) => {
     const isMine = receivedEachEventResult.memberId === member.memberId;
@@ -65,7 +64,6 @@ export default function EventRoom() {
     if (isMine) setMyResult(processedResult);
     setEventResult((prevResult) => [...prevResult, processedResult]);
     console.log('Event Room Result Received : ', processedResult);
-    // plusMemberId();
   };
 
   useEffect(() => {

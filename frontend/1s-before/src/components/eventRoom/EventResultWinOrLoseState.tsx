@@ -10,6 +10,7 @@ export default function EventResultWinOrLoseState({
   joinedAt,
   ranking,
 }: Readonly<EventWinOrLoseStateView>) {
+  // isWinner = false;
   return (
     <>
       {isWinner ? (

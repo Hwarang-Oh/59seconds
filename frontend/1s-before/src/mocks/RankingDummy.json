@@ -5,7 +5,7 @@
     "joinedAt": "2024-11-08T12:00:00Z",
     "ranking": 1,
     "isWinner": true,
-    "isMine": true
+    "isMine": false
   },
   {
     "eventId": 1,
@@ -253,7 +253,7 @@
     "joinedAt": "2024-11-08T12:00:00Z",
     "ranking": 32,
     "isWinner": false,
-    "isMine": false
+    "isMine": true
   },
   {
     "eventId": 1,
