@@ -3,11 +3,7 @@ package com.ssafy.fiftyninesec.solution.controller;
 import com.ssafy.fiftyninesec.solution.dto.request.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.request.RoomUnlockRequest;
 import com.ssafy.fiftyninesec.solution.dto.request.WinnerRequestDto;
-import com.ssafy.fiftyninesec.solution.dto.response.EventRoomResponseDto;
-import com.ssafy.fiftyninesec.solution.dto.response.PopularEventResponseDto;
-import com.ssafy.fiftyninesec.solution.dto.response.RoomUnlockResponse;
-import com.ssafy.fiftyninesec.solution.dto.response.WinnerResponseDto;
-import com.ssafy.fiftyninesec.solution.entity.EventRoom;
+import com.ssafy.fiftyninesec.solution.dto.response.*;
 import com.ssafy.fiftyninesec.solution.service.EventService;
 import jakarta.validation.Valid;
 
@@ -101,9 +97,9 @@ public class EventController {
             @ApiResponse(responseCode = "200", description = "마감 임박 이벤트 룸 목록이 성공적으로 조회되었습니다.")
     })
     @GetMapping("/deadline")
-    public ResponseEntity<List<EventRoom>> getDeadlineRooms(
+    public ResponseEntity<List<DeadlineEventResponseDto>> getDeadlineRooms(
             @Parameter(description = "조회할 마감 임박 이벤트 수", example = "6") @RequestParam(defaultValue = "6") int size) {
-        List<EventRoom> deadlineRooms = eventService.getDeadlineEvents(size);
+        List<DeadlineEventResponseDto> deadlineRooms = eventService.getDeadlineEvents(size);
         return ResponseEntity.ok(deadlineRooms);
     }
 

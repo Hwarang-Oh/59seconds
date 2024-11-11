@@ -5,15 +5,25 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 @Data
 @Builder
 public class DeadlineEventResponseDto {
-    private Long eventId;       // Type: number
+    private Long eventId;
     private String title;
-    private String leftTime;    // Type: endTime이 있다면, 자체 가능
+    private LocalDateTime endTime;
     private String mainPrize;
-    private Integer prizeCount;
+    private int prizeCount;
     private String rectangleImage;
+
+    public static DeadlineEventResponseDto of(EventRoom eventRoom, String mainPrize, int prizeCount) {
+        return DeadlineEventResponseDto.builder()
+                .eventId(eventRoom.getId())
+                .title(eventRoom.getTitle())
+                .endTime(eventRoom.getEndTime())
+                .mainPrize(mainPrize)
+                .prizeCount(prizeCount)
+                .rectangleImage(eventRoom.getRectangleImage())
+                .build();
+    }
 }

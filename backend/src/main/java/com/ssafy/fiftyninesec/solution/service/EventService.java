@@ -137,7 +137,6 @@ public class EventService {
                     .winnerCount(productOrCoupon.getRecommendedPeople())
                     .build();
             prizeRepository.save(prize);
-            log.info("Saved prize: {}", prize.toString());
         });
     }
 
@@ -220,66 +219,40 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public Page<PopularEventResponseDto> getPopularEvents(int page, int size) {
-        log.info("인기 이벤트를 가져오는 중: 페이지: {}, 크기: {}", page, size);
+        log.info("인기 이벤트 조회 시작 - page: {}, size: {}", page, size);
+        validatePageNumber(page, size);
 
-        // 페이지네이션 제한
-        long totalEvents = eventRoomRepository.count();
-        if (page > (totalEvents / size) + 1) {
-            log.warn("요청된 페이지 번호가 유효하지 않습니다: 페이지 {}, 총 이벤트 수 {}", page, totalEvents);
-            throw new CustomException(INVALID_REQUEST);
-        }
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<EventRoom> eventRooms = eventRoomRepository.findAllByOrderByUnlockCountDesc(pageable);
+        Page<EventRoom> eventRooms = eventRoomRepository.findAllByOrderByUnlockCountDesc(PageRequest.of(page, size));
 
         return eventRooms.map(eventRoom -> {
-            // eventId를 사용하여 1등 상품을 조회
-            Optional<Prize> firstPrize = prizeRepository.findFirstByEventRoomAndRanking(eventRoom, 1);
 
-            // Prize 상품 타입 개수 조회
-            Integer prizeCount = prizeRepository.countByEventRoom_Id(eventRoom.getId());
-            
-            // 1등 상품명 조회
-            String mainPrize = firstPrize.map(Prize::getPrizeName).orElse("상품 없음");
-
-            // 전체 이벤트에서의 순위 계산
-            int ranking = (int) (eventRooms.getNumber() * eventRooms.getSize() + eventRooms.getContent().indexOf(eventRoom) + 1);
+            String mainPrize = getMainPrize(eventRoom);
+            int prizeCount = getPrizeCount(eventRoom.getId());
+            int ranking = calculateRanking(eventRoom, eventRooms);
 
             return PopularEventResponseDto.of(eventRoom, mainPrize, prizeCount, ranking);
         });
     }
 
     @Transactional(readOnly = true)
-    public List<EventRoom> getDeadlineEvents(int size) {
-        try {
-            log.info("Getting deadline events with size: {}", size);
+    public List<DeadlineEventResponseDto> getDeadlineEvents(int size) {
+        log.info("마감 임박 이벤트 조회 시작 - size: {}", size);
 
-            // 한국 시간(KST)으로 현재 시간으로부터 24시간 후의 시간 계산
-            ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
-            LocalDateTime endDateTime = LocalDateTime.now(koreaZoneId).plusHours(24);
+        LocalDateTime endDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusHours(24);
+        List<EventRoom> events = eventRoomRepository.findDeadlineEventsByUpcoming(endDateTime, PageRequest.of(0, size));
 
-            List<EventRoom> events = eventRoomRepository.findDeadlineEventsByUpcoming(
-                    endDateTime,
-                    PageRequest.of(0, size)
-            );
-
-            if (events.isEmpty()) {
-                log.warn("No deadline events found");
-                throw new CustomException(NO_DEADLINE_EVENTS_FOUND);
-            }
-
-            log.info("Found {} deadline events", events.size());
-            return events;
-
-        } catch (CustomException ce) {
-            // 이미 정의된 CustomException은 그대로 throw
-            log.error("Custom exception while getting deadline events: {}", ce.getMessage());
-            throw ce;
-        } catch (Exception e) {
-            // 예상치 못한 에러는 INVALID_REQUEST로 처리
-            log.error("Unexpected error while getting deadline events: ", e);
-            throw new CustomException(INVALID_REQUEST);
+        if (events.isEmpty()) {
+            log.warn("마감 임박 이벤트가 없습니다");
+            return Collections.emptyList();
         }
+
+        return events.stream()
+                .map(eventRoom -> DeadlineEventResponseDto.of(
+                        eventRoom,
+                        getMainPrize(eventRoom),
+                        getPrizeCount(eventRoom.getId())
+                ))
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -350,6 +323,31 @@ public class EventService {
             log.error("Error while getting latest event banner: ", e);
             throw new CustomException(IMAGE_NOT_FOUND);
         }
+    }
+
+    // -----------------------------------------------
+
+    private void validatePageNumber(int page, int size) {
+        long totalEvents = eventRoomRepository.count();
+        if (page > (totalEvents / size) + 1) {
+            log.warn("유효하지 않은 페이지 요청 - page: {}, totalEvents: {}", page, totalEvents);
+            throw new CustomException(INVALID_REQUEST);
+        }
+    }
+
+    private String getMainPrize(EventRoom eventRoom) {
+        return prizeRepository.findFirstByEventRoomAndRanking(eventRoom, 1)
+                .map(Prize::getPrizeName)
+                .orElse(null);
+    }
+
+    private int getPrizeCount(Long eventRoomId) {
+        return prizeRepository.countByEventRoom_Id(eventRoomId);
+    }
+
+    private int calculateRanking(EventRoom eventRoom, Page<EventRoom> eventRooms) {
+        return (int) (eventRooms.getNumber() * eventRooms.getSize() +
+                eventRooms.getContent().indexOf(eventRoom) + 1);
     }
 
     // TEST ------------------------------------------
