@@ -122,6 +122,7 @@ public class EventService {
                 .rectangleImage(eventRoomRequestDto.getEventInfo().getRectImage())
                 .createdAt(LocalDateTime.now())
                 .winnerNum(0)
+                .unlockCount(0)
                 .build();
 
         return eventRoomRepository.save(eventRoom);
