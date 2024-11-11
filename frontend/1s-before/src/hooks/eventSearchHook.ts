@@ -3,18 +3,24 @@ import {
   useState,
   useRef,
   useEffect,
+  useCallback,
   KeyboardEvent as ReactKeyboardEvent,
 } from 'react';
 import { useSearchStore } from '@/store/searchStore';
-import { fetchSearchResults, fetchAutocompleteResults } from '@/apis/searchAPI';
+import { fetchAutocompleteResults } from '@/apis/searchAPI';
 
 export function useEventSearch() {
-  const [autoCompletePage, setAutoCompletePage] = useState(0); // 자동완성 페이지 관리
-  const [searchResultPage, setSearchResultPage] = useState(0); // 검색 결과 페이지 관리
-  const [searchTerm, setSearchTerm] = useState<string>(''); // 검색어 상태 타입 정의
-  const [suggestions, setSuggestions] = useState<string[]>([]); // 자동완성 리스트 상태 타입 정의
-  const [searchResults, setSearchResults] = useState<any[]>([]); // 검색 결과 리스트 상태
-  const [isLoadingMoreResults, setIsLoadingMoreResults] = useState(false); // 추가 결과 로딩 상태
+  // IMP: 검색어 상태 정의
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  // IMP: 자동완성 기록 관리
+  const [autoCompletePage, setAutoCompletePage] = useState(0);
+  const autoCompletePageRef = useRef(0);
+  // IMP: 자동완성 리스트 상태 타입 정의
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  // IMP: 추가 결과 로딩 상태
+  const [isLoadingMoreSuggestions, setIsLoadingMoreSuggestions] =
+    useState(false);
+  const [hasMoreSuggestions, setHasMoreSuggestions] = useState(true);
   const recentSearches = useSearchStore((state) => state.recentSearches);
   const addRecentSearch = useSearchStore((state) => state.addRecentSearch);
   const removeRecentSearch = useSearchStore(
@@ -23,11 +29,15 @@ export function useEventSearch() {
   const clearAllRecentSearches = useSearchStore(
     (state) => state.clearAllRecentSearches
   );
+  // IMP: 키보드 업다운으로 검색 결과 접근하기 위해 index값 저장
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+  const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(false);
+  const [isRecentSearchesVisible, setIsRecentSearchesVisible] = useState(true);
+  // IMP: 검색창 꺼지도록 하는 기능
   const [isSearchResultVisible, setIsSearchResultVisible] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement | null>(null);
 
-  // 자동완성 결과 로드
+  // IMP: 자동완성 결과 로드
   const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
 
@@ -37,94 +47,87 @@ export function useEventSearch() {
     setSuggestions([]);
 
     if (value.trim()) {
+      setIsRecentSearchesVisible(false); // 검색어 입력 시 최근 검색 숨김
+      setIsSuggestionsVisible(true); // 자동완성 표시
+
       try {
-        const results = await fetchAutocompleteResults(
-          value,
-          autoCompletePage,
-          10
-        );
+        const results = await fetchAutocompleteResults(value, 0, 10);
         setSuggestions(results);
-        console.log('자동완성 결과:', results);
       } catch (error) {
         console.error('자동완성 검색 중 오류 발생:', error);
       }
     } else {
-      setSuggestions([]);
+      setIsRecentSearchesVisible(true); // 검색어 지워지면 최근 검색 표시
+      setSuggestions([]); // 자동완성 리스트 초기화
+      setIsSuggestionsVisible(false); // 자동완성 숨김
     }
   };
 
-  const handleSearch = async (
-    selectedTerm?: string,
+  // IMP: 자동완성 무한 스크롤 기능
+  const loadMoreSuggestions = useCallback(async () => {
+    if (isLoadingMoreSuggestions || !hasMoreSuggestions) return;
+
+    setIsLoadingMoreSuggestions(true);
+
+    try {
+      const newPage = autoCompletePageRef.current + 1;
+      const results = await fetchAutocompleteResults(searchTerm, newPage, 10);
+      if (results && results.length > 0) {
+        setSuggestions((prev) => [...prev, ...results]);
+        autoCompletePageRef.current = newPage;
+      } else {
+        setHasMoreSuggestions(false);
+      }
+    } catch (error) {
+      console.error('자동 검색어 가져오기 실패:', error);
+    } finally {
+      setIsLoadingMoreSuggestions(false);
+    }
+  }, [searchTerm, isLoadingMoreSuggestions, hasMoreSuggestions]);
+
+  // IMP: 검색하면 작동할 것들
+  const handleSearch = (
+    term: string = searchTerm,
     router?: { push: (url: string) => void }
   ) => {
-    const term =
-      selectedTerm ??
-      (selectedIndex >= 0 ? suggestions[selectedIndex] : searchTerm);
-    if (!term) return;
+    const selectedTerm =
+      term || (selectedIndex >= 0 ? suggestions[selectedIndex] : searchTerm);
+    if (!selectedTerm) return;
 
-    setSearchTerm(term);
-    setSearchResults([]);
-    setSearchResultPage(0);
-    setIsLoadingMoreResults(true);
+    setSearchTerm(selectedTerm);
+    addRecentSearch(selectedTerm);
+    setIsSuggestionsVisible(false);
+    setIsRecentSearchesVisible(false);
+    setIsSearchResultVisible(false);
+    setSelectedIndex(-1);
 
-    try {
-      const results = await fetchSearchResults(term, searchResultPage, 10);
-      setSearchResults(results.data);
-      addRecentSearch(term);
-      setIsSearchResultVisible(false);
-      router?.push(`/event-search?term=${encodeURIComponent(term)}`);
-    } catch (error) {
-      console.error('검색 중 오류 발생:', error);
-    } finally {
-      setIsLoadingMoreResults(false);
-    }
+    router?.push(`/event-search?term=${encodeURIComponent(term)}`);
   };
 
-  // 무한 스크롤 로드 함수
-  const loadMoreResults = async () => {
-    if (isLoadingMoreResults) return;
-
-    setIsLoadingMoreResults(true);
-    try {
-      const nextPage = searchResultPage + 1;
-      const results = await fetchSearchResults(searchTerm, nextPage, 10);
-      setSearchResults((prevResults) => [...prevResults, ...results.data]);
-      setSearchResultPage(nextPage);
-    } catch (error) {
-      console.error('추가 검색 중 오류 발생:', error);
-    } finally {
-      setIsLoadingMoreResults(false);
-    }
-  };
-
-  // 스크롤 감지하여 로드 추가
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight - 100
-      ) {
-        loadMoreResults();
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [searchTerm, searchResultPage]);
-
+  // IMP: 키보드 작동
   const handleKeyDown = (
     e: ReactKeyboardEvent<HTMLInputElement>,
     router?: { push: (url: string) => void }
   ) => {
+    const listToNavigate = isRecentSearchesVisible
+      ? recentSearches
+      : suggestions;
+
+    if (listToNavigate.length === 0) return;
+
     if (e.key === 'ArrowDown') {
       setSelectedIndex((prevIndex) =>
-        prevIndex < suggestions.length - 1 ? prevIndex + 1 : 0
+        prevIndex < listToNavigate.length - 1 ? prevIndex + 1 : 0
       );
     } else if (e.key === 'ArrowUp') {
       setSelectedIndex((prevIndex) =>
-        prevIndex > 0 ? prevIndex - 1 : suggestions.length - 1
+        prevIndex > 0 ? prevIndex - 1 : listToNavigate.length - 1
       );
     } else if (e.key === 'Enter') {
-      handleSearch(undefined, router);
+      // 선택된 항목이 있을 경우 검색 실행
+      const selectedTerm =
+        selectedIndex >= 0 ? listToNavigate[selectedIndex] : searchTerm;
+      handleSearch(selectedTerm, router);
     }
   };
 
@@ -135,57 +138,53 @@ export function useEventSearch() {
     handleSearch(term, router);
   };
 
-  const handleClickSuggestion = (
-    suggestion: string,
-    router?: { push: (url: string) => void }
-  ) => {
-    handleSearch(suggestion, router);
-  };
-
-  const handleGlobalKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      setIsSearchResultVisible(false);
+  const handleFocus = () => {
+    if (searchTerm) {
+      setIsSuggestionsVisible(true);
+      setIsRecentSearchesVisible(false);
+    } else {
+      setIsRecentSearchesVisible(true);
+      setIsSuggestionsVisible(false);
     }
-  };
-  const handleClickOutside = (event: PointerEvent) => {
-    if (
-      searchContainerRef.current &&
-      !searchContainerRef.current.contains(event.target as Node)
-    ) {
-      setIsSearchResultVisible(false);
-    }
+    setIsSearchResultVisible(true);
   };
 
   useEffect(() => {
+    const handleClickOutside = (event: PointerEvent) => {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(event.target as Node)
+      ) {
+        setIsSearchResultVisible(false);
+      }
+    };
+
     document.addEventListener('pointerdown', handleClickOutside);
-    document.addEventListener('keydown', handleGlobalKeyDown);
     return () => {
       document.removeEventListener('pointerdown', handleClickOutside);
-      document.removeEventListener('keydown', handleGlobalKeyDown);
     };
-  }, [suggestions, selectedIndex]);
-
-  const handleFocus = () => {
-    setIsSearchResultVisible(true);
-  };
+  }, []);
 
   return {
     searchTerm,
     suggestions,
-    searchResults,
     selectedIndex,
     recentSearches,
+    hasMoreSuggestions,
     searchContainerRef,
+    isSuggestionsVisible,
     isSearchResultVisible,
-    isLoadingMoreResults,
+    isRecentSearchesVisible,
+    isLoadingMoreSuggestions,
     handleFocus,
     handleSearch,
     handleKeyDown,
     addRecentSearch,
+    handleClickTerm,
     handleInputChange,
     removeRecentSearch,
-    handleClickTerm,
-    handleClickSuggestion,
+    loadMoreSuggestions,
     clearAllRecentSearches,
+    setIsSearchResultVisible,
   };
 }
