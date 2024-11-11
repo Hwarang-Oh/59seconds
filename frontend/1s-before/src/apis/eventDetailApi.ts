@@ -1,19 +1,16 @@
-import axios from 'axios';
+import api from '@/apis/commonAPI';
+import { isAxiosError } from 'axios';
 import { EventData } from '@/types/eventDetail';
-
-const BASE_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/v1`;
-
-const api = axios.create({
-  baseURL: BASE_URL,
-  withCredentials: true,
-});
+const EVENT_DETAIL_URL = '/v1/rooms';
 
 export const fetchEventInfo = async (roomId: number): Promise<EventData> => {
   try {
-    const response = await api.get<EventData>(`/rooms/${roomId}`);
+    const response = await api.get<EventData>(`${EVENT_DETAIL_URL}/${roomId}`);
     return response.data;
-  } catch (error) {
-    console.error('기존 정보 가져오기 오류:', error);
-    throw error;
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      if (error.response?.status === 404) throw new Error('Not Found');
+      else throw error;
+    } else throw error;
   }
 };

@@ -1,9 +1,9 @@
 import { ParticipantButtonProps } from '@/types/home';
 
-export default function ParticipantButton({ participants }: Readonly<ParticipantButtonProps>) {
+export default function ParticipantButton({ unlockCount }: Readonly<ParticipantButtonProps>) {
   // 인원 수에 따른 표시 형식 처리
   const displayText =
-    participants < 100 ? `${participants}명` : `${Math.floor(participants / 100) * 100}명+`;
+    unlockCount < 100 ? `${unlockCount}명` : `${Math.floor(unlockCount / 100) * 100}명+`;
 
   return (
     <div

@@ -6,6 +6,18 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 
 export default function LargeBannerCarousel({ Banners }: Readonly<BannerCarouselProps>) {
+  const pagination = {
+    el: '.custom-pagination',
+    clickable: true,
+    renderBullet: (index: number, className: string) => {
+      const banner = Banners[index];
+      return `<div key="bullet-${index}" class="${className} swiper-pagination-custom-bullet w-[52px] h-[52px] rounded-lg overflow-hidden relative inline-block mx-1 transition-transform duration-300 ease-in-out hover:scale-110">
+          <img src="{/${banner.rectangleImage}}" alt="${banner.title}" class="object-cover w-full h-full" />
+          <div class="absolute inset-0 bg-black opacity-30 transition-opacity duration-300"></div>
+        </div>`;
+    },
+  };
+
   return (
     <div className='relative'>
       <Swiper
@@ -13,28 +25,16 @@ export default function LargeBannerCarousel({ Banners }: Readonly<BannerCarousel
         slidesPerView={1}
         modules={[Autoplay, Pagination]}
         autoplay={{ delay: 5000, disableOnInteraction: false }}
-        pagination={{
-          el: '.custom-pagination',
-          clickable: true,
-          renderBullet: (index, className) => {
-            const banner = Banners[index];
-            return `
-            <div class="${className} swiper-pagination-custom-bullet w-[52px] h-[52px] rounded-lg overflow-hidden relative inline-block mx-1 transition-transform duration-300 ease-in-out hover:scale-110">
-              <img src="${banner.rectImage}" alt="${banner.title}" class="object-cover w-full h-full" />
-              <div class="absolute inset-0 bg-black opacity-30 transition-opacity duration-300"></div>
-            </div>
-          `;
-          },
-        }}>
-        {Banners.map((banner, index) => (
-          <SwiperSlide key={banner.id}>
+        pagination={pagination}>
+        {Banners?.map((banner, index) => (
+          <SwiperSlide key={`${banner.eventId}-${index}`}>
             <LargeBanner
-              id={banner.id}
-              bannerImage={banner.bannerImage}
-              rectImage={banner.rectImage}
+              eventId={banner.eventId}
               title={banner.title}
-              content={banner.content}
-              date={banner.date}
+              description={banner.description}
+              endTime={banner.endTime}
+              bannerImage={banner.bannerImage}
+              rectangleImage={banner.rectangleImage}
             />
           </SwiperSlide>
         ))}
