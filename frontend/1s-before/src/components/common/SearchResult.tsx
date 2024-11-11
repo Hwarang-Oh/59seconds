@@ -8,6 +8,7 @@ interface SearchResultProps {
   searchTerm?: string;
   selectedIndex?: number;
   onSuggestionClick?: (suggestion: string) => void;
+  onTermClick?: (term: string) => void;
 }
 
 export default function SearchResult({
@@ -16,6 +17,7 @@ export default function SearchResult({
   searchTerm = '',
   selectedIndex = -1,
   onSuggestionClick,
+  onTermClick,
 }: Readonly<SearchResultProps>) {
   const { removeRecentSearch, clearAllRecentSearches } = useEventSearch();
 
@@ -44,9 +46,7 @@ export default function SearchResult({
                 index === selectedIndex ? 'bg-gray-200' : 'hover:bg-gray-50'
               }`}
               onKeyDown={(e) =>
-                e.key === 'Enter' &&
-                onSuggestionClick &&
-                onSuggestionClick(term)
+                e.key === 'Enter' && onTermClick && onTermClick(term)
               }
             >
               <div className="flex items-center gap-2">

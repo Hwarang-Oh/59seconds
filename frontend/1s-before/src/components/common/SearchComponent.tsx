@@ -52,6 +52,7 @@ export default function SearchComponent() {
             onSuggestionClick={(suggestion: string) =>
               handleClickSuggestion(suggestion, router)
             }
+            onTermClick={(term: string) => handleClickTerm(term, router)}
           />
         </div>
       )}

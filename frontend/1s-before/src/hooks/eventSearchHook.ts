@@ -9,8 +9,12 @@ import { useSearchStore } from '@/store/searchStore';
 import { fetchSearchResults, fetchAutocompleteResults } from '@/apis/searchAPI';
 
 export function useEventSearch() {
+  const [autoCompletePage, setAutoCompletePage] = useState(0); // 자동완성 페이지 관리
+  const [searchResultPage, setSearchResultPage] = useState(0); // 검색 결과 페이지 관리
   const [searchTerm, setSearchTerm] = useState<string>(''); // 검색어 상태 타입 정의
   const [suggestions, setSuggestions] = useState<string[]>([]); // 자동완성 리스트 상태 타입 정의
+  const [searchResults, setSearchResults] = useState<any[]>([]); // 검색 결과 리스트 상태
+  const [isLoadingMoreResults, setIsLoadingMoreResults] = useState(false); // 추가 결과 로딩 상태
   const recentSearches = useSearchStore((state) => state.recentSearches);
   const addRecentSearch = useSearchStore((state) => state.addRecentSearch);
   const removeRecentSearch = useSearchStore(
@@ -23,15 +27,22 @@ export function useEventSearch() {
   const [isSearchResultVisible, setIsSearchResultVisible] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement | null>(null);
 
+  // 자동완성 결과 로드
   const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
 
     setSearchTerm(value);
     setSelectedIndex(-1);
+    setAutoCompletePage(0);
+    setSuggestions([]);
 
     if (value.trim()) {
       try {
-        const results = await fetchAutocompleteResults(value);
+        const results = await fetchAutocompleteResults(
+          value,
+          autoCompletePage,
+          10
+        );
         setSuggestions(results);
         console.log('자동완성 결과:', results);
       } catch (error) {
@@ -50,21 +61,55 @@ export function useEventSearch() {
       selectedTerm ??
       (selectedIndex >= 0 ? suggestions[selectedIndex] : searchTerm);
     if (!term) return;
+
+    setSearchTerm(term);
+    setSearchResults([]);
+    setSearchResultPage(0);
+    setIsLoadingMoreResults(true);
+
     try {
-      const results = await fetchSearchResults(term);
-      console.log('검색 결과:', results);
-
+      const results = await fetchSearchResults(term, searchResultPage, 10);
+      setSearchResults(results.data);
       addRecentSearch(term);
-      setSearchTerm('');
-      setSuggestions([]);
-      setSelectedIndex(-1);
       setIsSearchResultVisible(false);
-
       router?.push(`/event-search?term=${encodeURIComponent(term)}`);
     } catch (error) {
       console.error('검색 중 오류 발생:', error);
+    } finally {
+      setIsLoadingMoreResults(false);
     }
   };
+
+  // 무한 스크롤 로드 함수
+  const loadMoreResults = async () => {
+    if (isLoadingMoreResults) return;
+
+    setIsLoadingMoreResults(true);
+    try {
+      const nextPage = searchResultPage + 1;
+      const results = await fetchSearchResults(searchTerm, nextPage, 10);
+      setSearchResults((prevResults) => [...prevResults, ...results.data]);
+      setSearchResultPage(nextPage);
+    } catch (error) {
+      console.error('추가 검색 중 오류 발생:', error);
+    } finally {
+      setIsLoadingMoreResults(false);
+    }
+  };
+
+  // 스크롤 감지하여 로드 추가
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 100
+      ) {
+        loadMoreResults();
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [searchTerm, searchResultPage]);
 
   const handleKeyDown = (
     e: ReactKeyboardEvent<HTMLInputElement>,
@@ -127,10 +172,12 @@ export function useEventSearch() {
   return {
     searchTerm,
     suggestions,
+    searchResults,
     selectedIndex,
     recentSearches,
     searchContainerRef,
     isSearchResultVisible,
+    isLoadingMoreResults,
     handleFocus,
     handleSearch,
     handleKeyDown,

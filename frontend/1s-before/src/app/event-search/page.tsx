@@ -20,6 +20,7 @@ interface SearchResult {
 
 export default function EventSearch() {
   const searchParams = useSearchParams();
+  const [page, setPage] = useState(0);
   const term = searchParams.get('term');
   const [results, setResults] = useState<SearchResult[]>([]);
 
@@ -27,7 +28,7 @@ export default function EventSearch() {
     if (term) {
       const fetchResults = async () => {
         try {
-          const searchResults = await fetchSearchResults(term);
+          const searchResults = await fetchSearchResults(term, page, 10);
           setResults(searchResults);
         } catch (error) {
           console.error('검색 결과를 가져오는 중 오류 발생:', error);
@@ -44,16 +45,18 @@ export default function EventSearch() {
       <div className="flex items-center justify-center gap-5">
         {results.length > 0 ? (
           results.map((result) => (
-            <NormalBanner
-              key={result.eventId}
-              id={result.eventId}
-              rectImage={result.rectangleImage}
-              title={result.title}
-              details={result.description}
-              date={result.createdAt}
-              participants={100}
-              isDeadline={true}
-            />
+            <p>{result.title}</p>
+            // <NormalBanner
+            //   key={result.eventId}
+            //   eventId={result.eventId}
+            //   title={result.title}
+            //   ranking={result.ranking}
+            //   endTime={result.endTime}
+            //   isDeadline={true}
+            //   mainPrize={result.mainPrize}
+            //   prizeCount={result.prizeCount}
+            //   rectangleImage={result.rectangleImage}
+            // />
           ))
         ) : (
           <p>검색 결과가 없습니다.</p>
