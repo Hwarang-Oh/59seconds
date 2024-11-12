@@ -16,12 +16,8 @@ export function useEventSearch() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const recentSearches = useSearchStore((state) => state.recentSearches);
   const addRecentSearch = useSearchStore((state) => state.addRecentSearch);
-  const removeRecentSearch = useSearchStore(
-    (state) => state.removeRecentSearch
-  );
-  const clearAllRecentSearches = useSearchStore(
-    (state) => state.clearAllRecentSearches
-  );
+  const removeRecentSearch = useSearchStore((state) => state.removeRecentSearch);
+  const clearAllRecentSearches = useSearchStore((state) => state.clearAllRecentSearches);
   // IMP: 키보드 업다운으로 검색 결과 접근하기 위해 index값 저장
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [isSuggestionsVisible, setIsSuggestionsVisible] = useState(false);
@@ -56,12 +52,8 @@ export function useEventSearch() {
   };
 
   // IMP: 검색하면 작동할 것들
-  const handleSearch = (
-    term: string = searchTerm,
-    router?: { push: (url: string) => void }
-  ) => {
-    const selectedTerm =
-      term || (selectedIndex >= 0 ? suggestions[selectedIndex] : searchTerm);
+  const handleSearch = (term: string = searchTerm, router?: { push: (url: string) => void }) => {
+    const selectedTerm = term || (selectedIndex >= 0 ? suggestions[selectedIndex] : searchTerm);
     if (!selectedTerm) return;
 
     setSearchTerm(selectedTerm);
@@ -71,7 +63,7 @@ export function useEventSearch() {
     setIsSearchResultVisible(false);
     setSelectedIndex(-1);
 
-    router?.push(`/event-search?term=${encodeURIComponent(term)}`);
+    router?.push(`/event-search/${term}`);
   };
 
   // IMP: 키보드 작동
@@ -79,32 +71,22 @@ export function useEventSearch() {
     e: ReactKeyboardEvent<HTMLInputElement>,
     router?: { push: (url: string) => void }
   ) => {
-    const listToNavigate = isRecentSearchesVisible
-      ? recentSearches
-      : suggestions;
+    const listToNavigate = isRecentSearchesVisible ? recentSearches : suggestions;
 
     if (listToNavigate.length === 0) return;
 
     if (e.key === 'ArrowDown') {
-      setSelectedIndex((prevIndex) =>
-        prevIndex < listToNavigate.length - 1 ? prevIndex + 1 : 0
-      );
+      setSelectedIndex((prevIndex) => (prevIndex < listToNavigate.length - 1 ? prevIndex + 1 : 0));
     } else if (e.key === 'ArrowUp') {
-      setSelectedIndex((prevIndex) =>
-        prevIndex > 0 ? prevIndex - 1 : listToNavigate.length - 1
-      );
+      setSelectedIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : listToNavigate.length - 1));
     } else if (e.key === 'Enter') {
       // 선택된 항목이 있을 경우 검색 실행
-      const selectedTerm =
-        selectedIndex >= 0 ? listToNavigate[selectedIndex] : searchTerm;
+      const selectedTerm = selectedIndex >= 0 ? listToNavigate[selectedIndex] : searchTerm;
       handleSearch(selectedTerm, router);
     }
   };
 
-  const handleClickTerm = (
-    term: string,
-    router?: { push: (url: string) => void }
-  ) => {
+  const handleClickTerm = (term: string, router?: { push: (url: string) => void }) => {
     handleSearch(term, router);
   };
 
