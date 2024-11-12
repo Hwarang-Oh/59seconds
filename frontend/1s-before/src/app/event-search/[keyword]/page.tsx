@@ -1,30 +1,20 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { fetchSearchResults } from '@/apis/searchAPI';
+import { PopularEventTypes } from '@/types/home';
 import Header from '@/components/common/Header';
 import NormalBanner from '@/components/home/NormalBanner';
 import NavigateButton from '@/components/search/NavigateButton';
 
-interface SearchResult {
-  eventId: number;
-  title: string;
-  description: string;
-  status: string;
-  createdAt: string;
-  startTime: string;
-  endTime: string;
-  winnerNum: number;
-  bannerImage: string;
-  squareImage: string;
-  rectangleImage: string;
-}
-
 export default function EventSearch() {
-  const searchParams = useSearchParams();
-  const term = searchParams.get('term');
+  const params = useParams();
+  const { term } = params as { term: string };
+
+  // const searchParams = useSearchParams();
+  // const term = searchParams.get('term');
   const [page, setPage] = useState(0);
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [results, setResults] = useState<PopularEventTypes[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
