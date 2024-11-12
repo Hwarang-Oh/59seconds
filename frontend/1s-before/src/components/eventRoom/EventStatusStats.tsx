@@ -1,6 +1,11 @@
 import PeopleIcon from '@/components/icon/PeopleIcon';
 import FireIcon from '@/components/icon/FireIcon';
-export default function EventStatusStats() {
+import { EventStatusStatsProps } from '@/types/eventRoom';
+
+export default function EventStatusStats({
+  participants,
+  competitionRate,
+}: Readonly<EventStatusStatsProps>) {
   return (
     <div className='flex flex-col gap-[30px] px-2'>
       <div className='flex justify-between items-center'>
@@ -8,7 +13,7 @@ export default function EventStatusStats() {
           <PeopleIcon /> 현재 참여자
         </div>
         <p className='text-[21px] font-semibold' style={{ color: '#9E96C1' }}>
-          32,847명
+          {participants}명
         </p>
       </div>
       <div className='flex justify-between items-center'>
@@ -16,7 +21,7 @@ export default function EventStatusStats() {
           <FireIcon /> 예상 경쟁률
         </div>
         <p className='text-[21px] font-semibold' style={{ color: '#F26E68' }}>
-          1 : 3.28
+          {competitionRate} : 1
         </p>
       </div>
     </div>

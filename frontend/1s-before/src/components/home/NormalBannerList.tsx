@@ -1,5 +1,5 @@
 import NormalBanner from '@/components/home/NormalBanner';
-import NavigateButton from '@/components/home/NavigateButton';
+import NavigateButton from '@/components/home/member/NavigateButton';
 import { NormalBannerListProps } from '@/types/home';
 
 export default function NormalBannerList({

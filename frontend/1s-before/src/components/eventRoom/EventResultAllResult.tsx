@@ -8,7 +8,9 @@ interface SplitResults {
   afterMine: EventRoomResultViewInfo[];
 }
 
-export default function EventResultAllResult({ list }: { list: EventRoomResultViewInfo[] }) {
+export default function EventResultAllResult({
+  list,
+}: Readonly<{ list: EventRoomResultViewInfo[] }>) {
   const [expandedSection, setExpandedSection] = useState<'before' | 'after' | null>(null);
   const [displayData, setDisplayData] = useState<EventRoomResultViewInfo[]>([]);
   // const [currentIndex, setCurrentIndex] = useState(5);
@@ -62,7 +64,7 @@ export default function EventResultAllResult({ list }: { list: EventRoomResultVi
   // 현재까지의 데이터를 기반으로 표시할 항목 분류
   const getDisplaySections = useCallback(() => {
     const myResult = displayData.find((item) => item.isMine);
-    const myRank = myResult?.ranking || 0;
+    const myRank = myResult?.ranking ?? 0;
 
     // 상위 10개는 항상 표시
     const top10 = displayData.slice(0, 10);

@@ -11,9 +11,7 @@ export function useEventCreate() {
       bannerImage: null,
       rectImage: null,
     },
-    productsOrCoupons: [
-      { id: uuidv4(), order: 1, type: '상품', name: '', recommendedPeople: 0 },
-    ],
+    productsOrCoupons: [{ id: uuidv4(), order: 1, type: '상품', name: '', recommendedPeople: 0 }],
     eventPeriod: {
       start: '',
       end: '',
@@ -115,9 +113,7 @@ export function useEventCreate() {
   const handleRemoveProductOrCoupon = (id: string) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      productsOrCoupons: prevFormData.productsOrCoupons.filter(
-        (item) => item.id !== id
-      ),
+      productsOrCoupons: prevFormData.productsOrCoupons.filter((item) => item.id !== id),
     }));
   };
 
@@ -134,28 +130,20 @@ export function useEventCreate() {
     });
   };
 
-  const handleBannerCropChange = (newCrop: { x: number; y: number }) =>
-    setBannerCrop(newCrop);
+  const handleBannerCropChange = (newCrop: { x: number; y: number }) => setBannerCrop(newCrop);
 
   const handleBannerZoomChange = (newZoom: number) => setBannerZoom(newZoom);
 
   const handleRectangleCropChange = (newCrop: { x: number; y: number }) =>
     setRectangleCrop(newCrop);
 
-  const handleRectangleZoomChange = (newZoom: number) =>
-    setRectangleZoom(newZoom);
+  const handleRectangleZoomChange = (newZoom: number) => setRectangleZoom(newZoom);
 
-  const handleBannerCropComplete = (
-    croppedArea: any,
-    croppedAreaPixels: any
-  ) => {
+  const handleBannerCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
     setCroppedBannerPixels(croppedAreaPixels);
   };
 
-  const handleRectangleCropComplete = (
-    croppedArea: any,
-    croppedAreaPixels: any
-  ) => {
+  const handleRectangleCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
     setCroppedRectanglePixels(croppedAreaPixels);
   };
 
@@ -228,13 +216,7 @@ export function useEventCreate() {
       let rectangleBlob: File | null = null;
 
       if (croppedBannerPixels) {
-        bannerBlob = await getCroppedImg(
-          fileURL,
-          croppedBannerPixels,
-          1920,
-          460,
-          'banner-image'
-        );
+        bannerBlob = await getCroppedImg(fileURL, croppedBannerPixels, 1920, 460, 'banner-image');
       }
 
       if (croppedRectanglePixels) {
