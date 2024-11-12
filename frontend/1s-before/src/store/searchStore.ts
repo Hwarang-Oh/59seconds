@@ -8,7 +8,11 @@ interface RecentSearchState {
 }
 
 export const useSearchStore = create<RecentSearchState>((set) => ({
-  recentSearches: JSON.parse(sessionStorage.getItem('recentSearches') || '[]'),
+  // 클라이언트 환경에서만 `sessionStorage`의 초기값을 불러옴
+  recentSearches:
+    typeof window !== 'undefined'
+      ? JSON.parse(sessionStorage.getItem('recentSearches') ?? '[]')
+      : [],
 
   // IMP: 검색어 추가 함수
   addRecentSearch: (searchTerm: string) =>
@@ -18,25 +22,29 @@ export const useSearchStore = create<RecentSearchState>((set) => ({
         ...state.recentSearches.filter((term) => term !== searchTerm),
       ].slice(0, 100);
 
-      sessionStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+      }
       return { recentSearches: updatedSearches };
     }),
 
   // IMP: 특정 검색어 삭제 함수
   removeRecentSearch: (searchTerm: string) =>
     set((state) => {
-      const updatedSearches = state.recentSearches.filter(
-        (term) => term !== searchTerm
-      );
+      const updatedSearches = state.recentSearches.filter((term) => term !== searchTerm);
 
-      sessionStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
+      }
       return { recentSearches: updatedSearches };
     }),
 
   // IMP: 전체 검색어 삭제 함수
   clearAllRecentSearches: () =>
     set(() => {
-      sessionStorage.removeItem('recentSearches');
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('recentSearches');
+      }
       return { recentSearches: [] };
     }),
 }));

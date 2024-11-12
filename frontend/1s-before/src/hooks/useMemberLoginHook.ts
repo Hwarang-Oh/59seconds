@@ -2,14 +2,12 @@ import { useState } from 'react';
 import { useMemberStore } from '@/store/memberStore';
 
 export const useMemberLogin = () => {
-  const [isCreatorMode, setIsCreatorMode] = useState(false);
+  const { member, setMember, clearMember, toggleCreatorMode } = useMemberStore();
   const [isLoginPopUpOpen, setIsLoginPopUpOpen] = useState(false);
-  const { member, toggleCreatorMode, clearMember } = useMemberStore();
 
   const handleToggle = () => {
     if (member) {
-      setIsCreatorMode(!isCreatorMode);
-      toggleCreatorMode();
+      toggleCreatorMode(); // Member가 존재할 때만 CreatorMode를 토글합니다.
     } else {
       openLoginPopUp();
     }
@@ -23,18 +21,23 @@ export const useMemberLogin = () => {
     setIsLoginPopUpOpen(false);
   };
 
+  const handleLogin = (memberId: number, nickname: string) => {
+    setMember(memberId, nickname); // Member 정보 설정
+    setIsLoginPopUpOpen(false); // 로그인 후 팝업 닫기
+  };
+
   const handleLogout = () => {
-    clearMember();
-    setIsCreatorMode(false);
+    clearMember(); // 로그아웃 시 Member 정보 초기화
   };
 
   return {
     member,
-    isCreatorMode,
+    isCreatorMode: member?.isCreatorMode ?? false,
     isLoginPopUpOpen,
     handleToggle,
     openLoginPopUp,
     closeLoginPopUp,
+    handleLogin,
     handleLogout,
   };
 };

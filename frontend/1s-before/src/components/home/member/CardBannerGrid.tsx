@@ -14,7 +14,7 @@ export default function CardBannerGrid({ Banners }: Readonly<CardBannerListProps
               key={banner.eventId}
               eventId={banner.eventId}
               title={banner.title}
-              leftTime={banner.leftTime}
+              endTime={banner.endTime}
               mainPrize={banner.mainPrize}
               prizeCount={banner.prizeCount}
               rectangleImage={banner.rectangleImage}

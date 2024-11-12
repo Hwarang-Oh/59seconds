@@ -2,8 +2,8 @@
 import NormalBannerList from '@/components/home/NormalBannerList';
 import CreatorBanner from '@/components/home/creator/CreatorBanner';
 import CardBannerGrid from '@/components/home/member/CardBannerGrid';
-import CreatorCardBannerGrid from '@/components/home/creator/CreatorCardBannerGrid';
 import LargeBannerCarousel from '@/components/home/member/LargeBannerCarousel';
+import CreatorCardBannerGrid from '@/components/home/creator/CreatorCardBannerGrid';
 import CreatorEventMakeBanner from '@/components/home/creator/CreatorEventMakeBanner';
 import { CreatedRoom } from '@/types/user';
 import { useState, useEffect } from 'react';

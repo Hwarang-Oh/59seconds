@@ -2,14 +2,17 @@ package com.ssafy.fiftyninesec.search.service;
 
 import com.ssafy.fiftyninesec.search.dto.EventRoomSearchRequestDto;
 import com.ssafy.fiftyninesec.search.dto.EventRoomSearchResponseDto;
+import com.ssafy.fiftyninesec.search.dto.EventRoomSearchResponseWrapper;
 import com.ssafy.fiftyninesec.search.entity.EventRoomSearch;
 import com.ssafy.fiftyninesec.search.repository.EventRoomSearchRepository;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.entity.Member;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
+import com.ssafy.fiftyninesec.solution.util.EventRoomUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -18,6 +21,7 @@ import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
@@ -30,6 +34,7 @@ public class SearchService {
     private final EventRoomSearchRepository eventRoomSearchRepository; // Elasticsearch 레포지토리
     private final EventRoomRepository eventRoomRepository; // JPA 레포지토리
     private final ElasticsearchOperations elasticsearchOperations;
+    private final EventRoomUtils eventRoomUtils;
 
     // 애플리케이션 시작 시 데이터 동기화
     @PostConstruct
@@ -72,27 +77,47 @@ public class SearchService {
         return esRoom;
     }
 
-    public List<EventRoomSearchResponseDto> searchEventRooms(EventRoomSearchRequestDto requestDto, int page, int size) {
+
+    public EventRoomSearchResponseWrapper searchEventRooms(EventRoomSearchRequestDto requestDto, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        List<EventRoomSearch> eventRooms = eventRoomSearchRepository.findByTitle(requestDto.getKeyword(), pageable);
-        return eventRooms.stream()
-                .map(this::mapToResponseDto)
+        Page<EventRoomSearch> eventRoomsPage = eventRoomSearchRepository.findByTitle(requestDto.getKeyword(), pageable);
+
+        int currentPage = eventRoomsPage.getNumber();
+        boolean hasFirst = eventRoomsPage.isFirst();
+        boolean hasNext = eventRoomsPage.hasNext();
+
+        List<EventRoomSearchResponseDto> responseDtos = eventRoomsPage.stream()
+                .map(eventRoom -> mapToResponseDto(eventRoom, eventRoomsPage))
                 .collect(Collectors.toList());
+
+        return new EventRoomSearchResponseWrapper(responseDtos, currentPage, hasFirst, hasNext);
     }
 
-    private EventRoomSearchResponseDto mapToResponseDto(EventRoomSearch eventRoomSearch) {
+    private EventRoomSearchResponseDto mapToResponseDto(EventRoomSearch eventRoomSearch, Page<EventRoomSearch> eventRoomsPage) {
+
+        Long eventId = eventRoomSearch.getRoomId();
+        EventRoom eventRoom = eventRoomRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("EventRoom not found for ID: " + eventId));
+
+        String mainPrize = eventRoomUtils.getMainPrize(eventRoom);
+        int prizeCount = eventRoomUtils.getPrizeCount(eventId);
+        int ranking = eventRoomUtils.calculateRanking(eventRoomSearch, eventRoomsPage);
+        int unlockCount = eventRoom.getUnlockCount() == null ? 0 : eventRoom.getUnlockCount();
+        boolean isDeadline = eventRoom.getEndTime().isBefore(LocalDateTime.now().plusHours(24));
+
         return EventRoomSearchResponseDto.builder()
                 .eventId(eventRoomSearch.getRoomId())
                 .title(eventRoomSearch.getTitle())
                 .description(eventRoomSearch.getDescription())
-                .status(eventRoomSearch.getStatus())
-                .createdAt(eventRoomSearch.getCreatedAt())
-                .startTime(eventRoomSearch.getStartTime())
                 .endTime(eventRoomSearch.getEndTime())
                 .winnerNum(eventRoomSearch.getWinnerNum())
                 .bannerImage(eventRoomSearch.getBannerImage())
-                .squareImage(eventRoomSearch.getSquareImage())
                 .rectangleImage(eventRoomSearch.getRectangleImage())
+                .mainPrize(mainPrize)
+                .prizeCount(prizeCount)
+                .ranking(ranking)
+                .unlockCount(unlockCount)
+                .isDeadline(isDeadline)
                 .build();
     }
 

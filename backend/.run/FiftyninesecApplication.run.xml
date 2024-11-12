@@ -7,6 +7,7 @@
       <env name="FILE_MANAGER_PASSWORD" value="5V3IMI5u0mijbHWk3D4y8e4KafENOWZg7eK67awZ" />
     </envs>
     <module name="fiftyninesec.main" />
+    <option name="SHORTEN_COMMAND_LINE" value="ARGS_FILE" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.ssafy.fiftyninesec.FiftyninesecApplication" />
     <method v="2">
       <option name="Make" enabled="true" />
