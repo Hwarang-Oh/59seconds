@@ -2,6 +2,7 @@ package com.ssafy.fiftyninesec.search.service;
 
 import com.ssafy.fiftyninesec.search.dto.EventRoomSearchRequestDto;
 import com.ssafy.fiftyninesec.search.dto.EventRoomSearchResponseDto;
+import com.ssafy.fiftyninesec.search.dto.EventRoomSearchResponseWrapper;
 import com.ssafy.fiftyninesec.search.entity.EventRoomSearch;
 import com.ssafy.fiftyninesec.search.repository.EventRoomSearchRepository;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
@@ -11,6 +12,7 @@ import com.ssafy.fiftyninesec.solution.util.EventRoomUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -74,12 +76,22 @@ public class SearchService {
         return esRoom;
     }
 
-    public List<EventRoomSearchResponseDto> searchEventRooms(EventRoomSearchRequestDto requestDto, int page, int size) {
+
+    public EventRoomSearchResponseWrapper searchEventRooms(EventRoomSearchRequestDto requestDto, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        List<EventRoomSearch> eventRooms = eventRoomSearchRepository.findByTitle(requestDto.getKeyword(), pageable);
-        return eventRooms.stream()
+        Page<EventRoomSearch> eventRoomsPage = eventRoomSearchRepository.findByTitle(requestDto.getKeyword(), pageable);
+
+        // 페이지네이션 관련 정보 설정
+        int currentPage = eventRoomsPage.getNumber();
+        boolean hasFirst = eventRoomsPage.isFirst();
+        boolean hasNext = eventRoomsPage.hasNext();
+
+        List<EventRoomSearchResponseDto> responseDtos = eventRoomsPage.stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
+
+        // 모든 정보를 포함한 응답 생성
+        return new EventRoomSearchResponseWrapper(responseDtos, currentPage, hasFirst, hasNext);
     }
 
     private EventRoomSearchResponseDto mapToResponseDto(EventRoomSearch eventRoomSearch) {
