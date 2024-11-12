@@ -6,18 +6,13 @@ import FancyCard from '@/components/home/FancyCard';
 import useEventsFetch from '@/hooks/useEventsFetch';
 import NormalBanner from '@/components/home/NormalBanner';
 import NavigateButton from '@/components/search/NavigateButton';
-import { useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import { fetchSearchResults } from '@/apis/searchAPI';
 
 export default function EventSearch() {
-  const searchParams = useSearchParams();
-  const [term, setTerm] = useState('');
-
-  useEffect(() => {
-    const searchTerm = searchParams.get('term') ?? '';
-    setTerm(searchTerm);
-  }, [searchParams]);
+  const params = useParams();
+  const { term: encodedTerm } = params as { term: string };
+  const term = decodeURIComponent(encodedTerm);
 
   const { eventList, fetchNextPage, hasNextPage, isFetchingNextPage } = useEventsFetch({
     query: term,

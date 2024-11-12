@@ -12,7 +12,6 @@ export const fetchSearchResults = async ({
     const response = await api.get(`${SEARCH_URL}/eventrooms`, {
       params: { keyword: query, page, size },
     });
-    console.log(response.data);
     const sliceDetails: SliceDetails = {
       currentPage: response.data.currentPage,
       hasFirst: response.data.hasFirst,
