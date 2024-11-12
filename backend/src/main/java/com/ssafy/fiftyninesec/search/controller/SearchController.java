@@ -2,6 +2,7 @@ package com.ssafy.fiftyninesec.search.controller;
 
 import com.ssafy.fiftyninesec.search.dto.EventRoomSearchRequestDto;
 import com.ssafy.fiftyninesec.search.dto.EventRoomSearchResponseDto;
+import com.ssafy.fiftyninesec.search.dto.EventRoomSearchResponseWrapper;
 import com.ssafy.fiftyninesec.search.entity.EventRoomSearch;
 import com.ssafy.fiftyninesec.search.service.LogService;
 import com.ssafy.fiftyninesec.search.service.SearchService;
@@ -20,19 +21,16 @@ public class SearchController {
     private final LogService logService;
 
     @GetMapping("/eventrooms")
-    public ResponseEntity<List<EventRoomSearchResponseDto>> searchEventRooms(
+    public ResponseEntity<EventRoomSearchResponseWrapper> searchEventRooms(
             @ModelAttribute EventRoomSearchRequestDto requestDto,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         logService.logSearch(requestDto.getKeyword(), requestDto.getMemberId()); // 검색 로그 기록
 
-        List<EventRoomSearchResponseDto> responseDtos = searchService.searchEventRooms(requestDto, page, size);
+        EventRoomSearchResponseWrapper responseWrapper = searchService.searchEventRooms(requestDto, page, size);
 
-        if (responseDtos.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 204 No Content 반환
-        }
-
-        return ResponseEntity.ok(responseDtos); // 검색 결과 반환
+        // 응답 반환
+        return ResponseEntity.ok(responseWrapper);
     }
 
     @GetMapping("/autocomplete")
