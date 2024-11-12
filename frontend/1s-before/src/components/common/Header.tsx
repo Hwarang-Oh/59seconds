@@ -11,7 +11,7 @@ export default function Header() {
           <Link href='/'>
             <MainLogo />
           </Link>
-          {/* <SearchComponent /> */}
+          <SearchComponent />
         </div>
         <HeaderInfo />
       </div>

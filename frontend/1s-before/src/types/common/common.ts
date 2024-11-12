@@ -6,11 +6,12 @@ export interface ToggleProps {
 }
 
 export interface PageParamsType {
+  query?: string;
   size: number;
   page: number;
 }
 
-interface SliceDetails {
+export interface SliceDetails {
   currentPage: number;
   hasFirst: boolean;
   hasNext: boolean;
@@ -23,6 +24,7 @@ export interface PageType {
 
 export interface ContentsFetchType<T extends PageType> {
   queryKey: string[];
-  fetchData: ({ size, page }: PageParamsType) => Promise<T>;
+  query?: string;
+  fetchData: ({ query, size, page }: PageParamsType) => Promise<T>;
   initialPage?: number;
 }

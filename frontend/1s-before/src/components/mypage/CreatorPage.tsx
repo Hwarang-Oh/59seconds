@@ -63,11 +63,14 @@ export default function EventCreatorPage() {
         <div className='mt-6 grid grid-cols-1 gap-6'>
           {filteredRooms.map((room) => (
             <div key={room.eventId} className='p-4 border border-gray-300 rounded-lg'>
-              <Image
-                src={room.bannerUrl ?? Banner}
-                alt='배너'
-                className='w-full h-56 rounded-lg object-cover'
-              />
+              <div className='relative'>
+                <Image
+                  src={room.bannerUrl ?? Banner}
+                  alt='배너'
+                  fill
+                  className='w-full h-56 rounded-lg object-cover'
+                />
+              </div>
               <div className='flex flex-row justify-between items-center mx-1 my-4'>
                 <span
                   className={`mr-3 rounded-2xl px-2 py-1 ${

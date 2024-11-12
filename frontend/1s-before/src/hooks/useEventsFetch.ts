@@ -3,13 +3,18 @@ import { PageType, ContentsFetchType } from '@/types/common/common';
 
 function useEventsFetch<T extends PageType>({
   queryKey,
+  query,
   fetchData,
   initialPage = 0,
 }: ContentsFetchType<T>) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error, isError } =
     useInfiniteQuery(
       queryKey,
-      ({ pageParam = initialPage }) => fetchData({ size: 10, page: pageParam }),
+      ({ pageParam = initialPage }) => {
+        const size = pageParam === 0 ? 5 : 10;
+        if (query) return fetchData({ query, size, page: pageParam });
+        else return fetchData({ size, page: pageParam });
+      },
       {
         getNextPageParam: (lastPage) => {
           if (lastPage.sliceDetails?.hasNext) return lastPage.sliceDetails.currentPage + 1;
@@ -19,8 +24,7 @@ function useEventsFetch<T extends PageType>({
     );
 
   const pages = data?.pages || [];
-  const sliceDetails =
-    pages.length > 0 ? pages[pages.length - 1].sliceDetails : {};
+  const sliceDetails = pages.length > 0 ? pages[pages.length - 1].sliceDetails : {};
   const eventList = pages.flatMap((page) => page.content || []).filter(Boolean);
 
   return {

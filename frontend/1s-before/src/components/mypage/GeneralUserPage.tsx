@@ -62,6 +62,7 @@ const GeneralUserPage = () => {
               <Image
                 src={room.bannerImage ?? Banner}
                 alt='배너'
+                fill
                 className='w-full h-56 rounded-lg object-cover'
               />
               <div className='flex flex-row justify-between items-center mx-1'>
