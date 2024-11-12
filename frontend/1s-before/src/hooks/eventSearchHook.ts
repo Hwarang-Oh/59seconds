@@ -63,7 +63,7 @@ export function useEventSearch() {
     setIsSearchResultVisible(false);
     setSelectedIndex(-1);
 
-    router?.push(`/event-search/${term}`);
+    router?.push(`/event-search/${encodeURIComponent(term)}`);
   };
 
   // IMP: 키보드 작동

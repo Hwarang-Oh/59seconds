@@ -14,7 +14,6 @@ api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
     const storedMember = sessionStorage.getItem('member-storage'); // member 정보 가져오기
     if (storedMember) {
-      console.log(JSON.parse(storedMember));
       const memberId = JSON.parse(storedMember).state.member.memberId; // JSON에서 memberId 추출
       if (memberId) {
         config.headers['memberId'] = memberId;
