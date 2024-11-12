@@ -11,7 +11,7 @@ export default function CreatorEventStatusButton({
         backgroundColor: '#B4F1B6',
         padding: '5px 7px',
         borderRadius: '40px',
-        color: '#000',
+        color: '#0A8706',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -21,7 +21,7 @@ export default function CreatorEventStatusButton({
       backgroundColor: '#E5E5E5',
       padding: '5px 13px 5px 14px',
       borderRadius: '40px',
-      color: '#000',
+      color: '#999',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -29,21 +29,35 @@ export default function CreatorEventStatusButton({
   };
   const renderButtons = () => {
     if (status === 'ONGOING') {
-      return <div style={getButtonStyle()}>진행중</div>;
+      return (
+        <div
+          style={getButtonStyle()}
+          className='flex justify-center items-center w-[60px] h-[28px] font-bold'>
+          진행중
+        </div>
+      );
     }
     if (status === 'COMPLETED') {
       return (
-        <div style={{ display: 'flex', gap: '5px' }}>
-          <div style={getButtonStyle()}>완료</div>
-          <div style={getButtonStyle()}>입력 완료</div>
+        <div className='flex justify-start items-center font-bold gap-1'>
+          <div className='w-[60px] h-[28px]' style={getButtonStyle()}>
+            완료
+          </div>
+          <div className='w-[90px] h-[28px]' style={getButtonStyle()}>
+            입력 완료
+          </div>
         </div>
       );
     }
     if (status === 'COMPLETED_NO_WINNER_INFO') {
       return (
-        <div style={{ display: 'flex', gap: '5px' }}>
-          <div style={getButtonStyle()}>완료</div>
-          <div style={getButtonStyle()}>입력 중</div>
+        <div className='flex justify-start items-center font-bold gap-1'>
+          <div className='w-[60px] h-[28px]' style={getButtonStyle()}>
+            완료
+          </div>
+          <div className='w-[80px] h-[28px]' style={getButtonStyle()}>
+            입력 중
+          </div>
         </div>
       );
     }

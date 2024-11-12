@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { LargeBannerProps } from '@/types/home';
 export default function LargeBanner({
   eventId,
@@ -12,13 +13,15 @@ export default function LargeBanner({
     <div className='relative w-full h-[460px] flex items-center justify-center overflow-hidden'>
       <Image src={bannerImage} alt={title} fill className='object-cover' quality={100} />
       <div className='absolute inset-0 bg-black opacity-5' />
-      <div className='absolute inset-y-10 left-[200px] flex'>
-        <div className='relative z-10 p-4 text-left text-black'>
-          <p className='text-[40px] font-bold whitespace-pre-line'>{title}</p>
-          <p className='mt-2 text-[20px] font-semibold whitespace-pre-line'>{description}</p>
-          <p className='mt-4 text-[20px] font-semibold'>{endTime}</p>
+      <Link href={`/event-detail/${eventId}`}>
+        <div className='absolute inset-y-10 left-[200px] flex'>
+          <div className='relative z-10 p-4 text-left text-black'>
+            <p className='text-[40px] font-bold whitespace-pre-line'>{title}</p>
+            <p className='mt-2 text-[20px] font-semibold whitespace-pre-line'>{description}</p>
+            <p className='mt-4 text-[20px] font-semibold'>{new Date(endTime).toLocaleString()}</p>
+          </div>
         </div>
-      </div>
+      </Link>
     </div>
   );
 }

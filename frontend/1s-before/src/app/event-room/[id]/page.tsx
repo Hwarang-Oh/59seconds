@@ -1,11 +1,21 @@
 'use client';
-import { useEventRoom } from '@/hooks/useEventRoomHook';
 import BannerHeader from '@/components/eventRoom/BannerHeader';
 import EventStatusArea from '@/components/eventRoom/EventStatusArea';
 import EventChatRoomArea from '@/components/eventRoom/EventChatRoomArea';
 import EventResultAllResult from '@/components/eventRoom/EventResultAllResult';
+import { useEffect } from 'react';
+import { useEventRoom } from '@/hooks/useEventRoomHook';
 
 export default function EventRoom() {
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const memberData = urlParams.get('memberData');
+    console.log(memberData);
+    if (memberData) {
+      sessionStorage.setItem('member-storage', decodeURIComponent(memberData));
+    }
+  }, []);
+
   const {
     eventInfo,
     messages,

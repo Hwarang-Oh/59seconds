@@ -45,11 +45,12 @@ export default function EventDetail() {
             <div>
               {typeof eventData.bannerImage === 'string' && (
                 <div
-                  className='w-full h-auto mb-16 rounded-lg overflow-hidden'
+                  className='relative w-full h-auto mb-16 rounded-lg overflow-hidden'
                   style={{ aspectRatio: '1920 / 460' }}>
                   <Image
                     src={eventData.bannerImage ?? Banner}
                     alt='배너'
+                    fill
                     className='w-full h-full object-cover rounded-lg'
                   />
                 </div>

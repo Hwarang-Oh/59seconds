@@ -58,14 +58,13 @@ const GeneralUserPage = () => {
           <p className='text-gray-500 text-center mt-10'>참여한 이벤트 없음</p>
         ) : (
           filteredRooms.map((room) => (
-            <div key={room.eventId} className='p-4 border border-gray-300 rounded-lg'>
-              <Image
-                src={room.bannerImage ?? Banner}
-                alt='배너'
-                fill
-                className='w-full h-56 rounded-lg object-cover'
-              />
-              <div className='flex flex-row justify-between items-center mx-1'>
+            <div
+              key={room.eventId}
+              className='flex flex-col border border-gray-300 rounded-lg overflow-hidden'>
+              <div className='w-full h-56 relative'>
+                <Image src={room.bannerImage ?? Banner} alt='배너' fill className='object-cover' />
+              </div>
+              <div className='flex flex-row justify-between items-center mx-1 px-3'>
                 <div
                   className={`mt-3 flex items-center ${
                     room.isWinner ? 'text-subColor5' : 'text-subColor3'
@@ -86,7 +85,7 @@ const GeneralUserPage = () => {
                   </button>
                 )}
               </div>
-              <p className='mt-2 ml-2 text-gray-600 font-bold text-lg'>{room.title}</p>
+              <p className='mt-2 ml-2 text-gray-600 font-bold text-lg pb-3 pl-3'>{room.title}</p>
             </div>
           ))
         )}

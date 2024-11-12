@@ -22,7 +22,7 @@ export interface PopularEventTypes {
 export interface DeadlineEventTypes {
   eventId: number;
   title: string;
-  leftTime: string; // Type: endTime이 있다면, 자체 가능
+  endTime: string; // Type: endTime이 있다면, 자체 가능
   mainPrize: string;
   prizeCount: number;
   rectangleImage: string;
@@ -76,7 +76,7 @@ export interface ParticipantButtonProps {
 export interface CardBannerProps {
   eventId: number;
   title: string;
-  leftTime: string; // Type: endTime이 있다면, 자체 가능
+  endTime: string; // Type: endTime이 있다면, 자체 가능
   mainPrize: string;
   prizeCount: number;
   rectangleImage: string;

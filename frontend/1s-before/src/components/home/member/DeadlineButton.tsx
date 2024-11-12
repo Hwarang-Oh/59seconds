@@ -1,7 +1,7 @@
 export default function DeadlineButton() {
   return (
     <div
-      className='flex justify-center items-center w-[62px] h-[24px] 
+      className='flex justify-center items-center min-w-[62px] h-[24px] 
       border-2 border-[#F26E68] border-solid rounded-[4px] px-[6px] py-[5px]'>
       <p
         className='text-center text-[12px] font-bold'
