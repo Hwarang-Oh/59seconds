@@ -87,7 +87,7 @@ export function useEventOwner() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleUserSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const formData = new FormData();
@@ -117,6 +117,6 @@ export function useEventOwner() {
     handleEditorChange,
     handleImageChange,
     handleSaveCreatorName,
-    handleSubmit,
+    handleUserSubmit,
   };
 }

@@ -5,13 +5,13 @@ import SearchComponent from '@/components/common/SearchComponent';
 
 export default function Header() {
   return (
-    <div className='h-[100px] flex justify-center items-center px-7'>
-      <div className='flex justify-between items-center max-w-screen-xl w-full h-[50px] '>
-        <div className='flex items-start gap-[30px]'>
-          <Link href='/'>
+    <div className="h-[100px] flex justify-center items-center px-7">
+      <div className="flex justify-between items-center max-w-screen-xl w-full h-[50px] ">
+        <div className="flex items-start gap-[30px]">
+          <Link href="/">
             <MainLogo />
           </Link>
-          {/* <SearchComponent /> */}
+          <SearchComponent />
         </div>
         <HeaderInfo />
       </div>

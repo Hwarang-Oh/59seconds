@@ -6,7 +6,7 @@ const MEMBER_URL = '/v1/members';
 // IMP: 개설자 정보 GET
 export const fetchCreatorInfo = async (): Promise<UserData> => {
   try {
-    const response = await api.get(MEMBER_URL, {});
+    const response = await api.get(MEMBER_URL);
     return response.data;
   } catch (error) {
     console.error('기존 정보 가져오기 오류:', error);
@@ -112,7 +112,9 @@ export const putProfileImage = async (profileImage: File): Promise<string> => {
 };
 
 // IMP: 개설자 소개 업데이트
-export const putCreatorIntroduce = async (creatorIntroduce: string): Promise<string> => {
+export const putCreatorIntroduce = async (
+  creatorIntroduce: string
+): Promise<string> => {
   try {
     const response = await api.put(`${MEMBER_URL}/creatorIntroduce`, null, {
       params: { creatorIntroduce },
@@ -138,11 +140,16 @@ export const putSnsLink = async (snsLink: string): Promise<string> => {
 };
 
 // IMP: 참여한 이벤트 호출
-export const fetchParticipatedRooms = async (memberId: number): Promise<ParticipatedRoom[]> => {
+export const fetchParticipatedRooms = async (
+  memberId: number
+): Promise<ParticipatedRoom[]> => {
   try {
-    const response = await api.get<ParticipatedRoom[]>(`${MEMBER_URL}/participatedroom`, {
-      params: { memberId },
-    });
+    const response = await api.get<ParticipatedRoom[]>(
+      `${MEMBER_URL}/participatedroom`,
+      {
+        params: { memberId },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error('참여한 방 가져오기 실패:', error);
@@ -151,7 +158,9 @@ export const fetchParticipatedRooms = async (memberId: number): Promise<Particip
 };
 
 // IMP: 생성한 이벤트 방 정보 호출
-export const fetchCreatedRooms = async (memberId: number): Promise<CreatedRoom[]> => {
+export const fetchCreatedRooms = async (
+  memberId: number
+): Promise<CreatedRoom[]> => {
   try {
     const response = await api.get<CreatedRoom[]>(`${MEMBER_URL}/createdroom`, {
       params: { memberId },

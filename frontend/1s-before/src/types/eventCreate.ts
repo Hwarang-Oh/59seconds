@@ -20,3 +20,10 @@ export interface EventFormData {
   };
   participationCode: string;
 }
+
+export interface EventStoreState {
+  formData: EventFormData;
+  setFormData: (
+    data: EventFormData | ((prev: EventFormData) => EventFormData)
+  ) => void;
+}

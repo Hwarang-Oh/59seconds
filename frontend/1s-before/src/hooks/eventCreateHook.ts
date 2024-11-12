@@ -1,23 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { EventFormData, ProductOrCoupon } from '../types/eventCreate';
+import { ProductOrCoupon } from '@/types/eventCreate';
+import { useEventCreateStore } from '@/store/eventCreateStore';
 import { createEvent } from '@/apis/eventAPI';
 
 export function useEventCreate() {
-  const [formData, setFormData] = useState<EventFormData>({
-    eventInfo: {
-      title: '',
-      description: '',
-      bannerImage: null,
-      rectImage: null,
-    },
-    productsOrCoupons: [{ id: uuidv4(), order: 1, type: '상품', name: '', recommendedPeople: 0 }],
-    eventPeriod: {
-      start: '',
-      end: '',
-    },
-    participationCode: '',
-  });
+  const { formData, setFormData } = useEventCreateStore();
   const [bannerZoom, setBannerZoom] = useState(1);
   const [rectangleZoom, setRectangleZoom] = useState(1);
   const [bannerCrop, setBannerCrop] = useState({ x: 0, y: 0 });
@@ -34,20 +22,24 @@ export function useEventCreate() {
     width: number;
     height: number;
   } | null>(null);
-  const [croppedBanner, setCroppedBanner] = useState<Blob | null>(null);
-  const [croppedRectangle, setCroppedRectangle] = useState<Blob | null>(null);
+  const [bannerImageUrl, setBannerImageUrl] = useState<string | undefined>(
+    undefined
+  );
+  const [rectImageUrl, setRectImageUrl] = useState<string | undefined>(
+    undefined
+  );
 
   // IMP: 제목 및 내용 생성 함수
   const handleInputChange = (e: { target: { name: string; value: any } }) => {
     const { name, value } = e.target;
 
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData({
+      ...formData,
       eventInfo: {
-        ...prevData.eventInfo,
+        ...formData.eventInfo,
         [name]: value,
       },
-    }));
+    });
   };
 
   // IMP: 내용 생성을 위한 텍스트 에디터로 내용 생성 함수
@@ -83,6 +75,17 @@ export function useEventCreate() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // 이전 URL을 해제하여 메모리 누수 방지
+      if (bannerImageUrl) URL.revokeObjectURL(bannerImageUrl);
+      if (rectImageUrl) URL.revokeObjectURL(rectImageUrl);
+
+      // 새로운 URL을 생성하고 상태에 저장
+      const newBannerUrl = URL.createObjectURL(file);
+      const newRectUrl = URL.createObjectURL(file);
+
+      setBannerImageUrl(newBannerUrl);
+      setRectImageUrl(newRectUrl);
+
       setFormData((prev) => ({
         ...prev,
         eventInfo: {
@@ -93,6 +96,14 @@ export function useEventCreate() {
       }));
     }
   };
+
+  // IMP: 컴포넌트가 언마운트될 때 URL 해제
+  useEffect(() => {
+    return () => {
+      if (bannerImageUrl) URL.revokeObjectURL(bannerImageUrl);
+      if (rectImageUrl) URL.revokeObjectURL(rectImageUrl);
+    };
+  }, [bannerImageUrl, rectImageUrl]);
 
   const handleAddProductOrCoupon = () => {
     setFormData((prev) => ({
@@ -113,7 +124,9 @@ export function useEventCreate() {
   const handleRemoveProductOrCoupon = (id: string) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      productsOrCoupons: prevFormData.productsOrCoupons.filter((item) => item.id !== id),
+      productsOrCoupons: prevFormData.productsOrCoupons.filter(
+        (item) => item.id !== id
+      ),
     }));
   };
 
@@ -130,20 +143,28 @@ export function useEventCreate() {
     });
   };
 
-  const handleBannerCropChange = (newCrop: { x: number; y: number }) => setBannerCrop(newCrop);
+  const handleBannerCropChange = (newCrop: { x: number; y: number }) =>
+    setBannerCrop(newCrop);
 
   const handleBannerZoomChange = (newZoom: number) => setBannerZoom(newZoom);
 
   const handleRectangleCropChange = (newCrop: { x: number; y: number }) =>
     setRectangleCrop(newCrop);
 
-  const handleRectangleZoomChange = (newZoom: number) => setRectangleZoom(newZoom);
+  const handleRectangleZoomChange = (newZoom: number) =>
+    setRectangleZoom(newZoom);
 
-  const handleBannerCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
+  const handleBannerCropComplete = (
+    croppedArea: any,
+    croppedAreaPixels: any
+  ) => {
     setCroppedBannerPixels(croppedAreaPixels);
   };
 
-  const handleRectangleCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
+  const handleRectangleCropComplete = (
+    croppedArea: any,
+    croppedAreaPixels: any
+  ) => {
     setCroppedRectanglePixels(croppedAreaPixels);
   };
 
@@ -196,6 +217,8 @@ export function useEventCreate() {
             type: 'image/jpeg',
           });
           resolve(file);
+        } else {
+          resolve(null);
         }
       }, 'image/jpeg');
     });
@@ -216,7 +239,13 @@ export function useEventCreate() {
       let rectangleBlob: File | null = null;
 
       if (croppedBannerPixels) {
-        bannerBlob = await getCroppedImg(fileURL, croppedBannerPixels, 1920, 460, 'banner-image');
+        bannerBlob = await getCroppedImg(
+          fileURL,
+          croppedBannerPixels,
+          1920,
+          460,
+          'banner-image'
+        );
       }
 
       if (croppedRectanglePixels) {
@@ -230,7 +259,6 @@ export function useEventCreate() {
       }
 
       if (bannerBlob && rectangleBlob) {
-        // 상태 업데이트를 한 번에 처리
         setFormData((prev) => ({
           ...prev,
           eventInfo: {
@@ -240,8 +268,13 @@ export function useEventCreate() {
           },
         }));
 
-        setCroppedBanner(bannerBlob);
-        setCroppedRectangle(rectangleBlob);
+        console.log(formData);
+
+        // 새로 생성된 Blob URL을 bannerImageUrl과 rectImageUrl로 업데이트
+        const newBannerImageUrl = URL.createObjectURL(bannerBlob);
+        const newRectImageUrl = URL.createObjectURL(rectangleBlob);
+        setBannerImageUrl(newBannerImageUrl);
+        setRectImageUrl(newRectImageUrl);
 
         window.alert('자르기 성공!');
       }
@@ -251,7 +284,7 @@ export function useEventCreate() {
   };
 
   // IMP: formData를 JSON 형식에 맞게 변환 후 서버로 POST 요청하는 함수
-  const handleSubmit = async (event: { preventDefault: () => void }) => {
+  const handleDetailSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
     if (!formData.eventInfo.bannerImage || !formData.eventInfo.rectImage) {
@@ -262,7 +295,7 @@ export function useEventCreate() {
     const formDataToSend = new FormData();
 
     const eventData = {
-      memberId: 1, // TODO
+      memberId: 1, // TODO: 나중에 memberId 변경
       eventInfo: {
         title: formData.eventInfo.title,
         description: formData.eventInfo.description,
@@ -299,27 +332,27 @@ export function useEventCreate() {
 
   return {
     formData,
-    handleInputChange,
-    handleDescriptionChange,
-    handleParticipationCodeChange,
-    handleDateChange,
-    handleFileChange,
-    handleAddProductOrCoupon,
-    handleRemoveProductOrCoupon,
-    handleProductOrCouponChange,
     bannerCrop,
     bannerZoom,
     rectangleCrop,
     rectangleZoom,
+    rectImageUrl,
+    bannerImageUrl,
+    handleCrop,
+    handleDetailSubmit,
+    handleDateChange,
+    handleFileChange,
+    handleInputChange,
+    handleDescriptionChange,
+    handleAddProductOrCoupon,
+    handleRemoveProductOrCoupon,
+    handleProductOrCouponChange,
     handleBannerCropChange,
     handleBannerZoomChange,
     handleRectangleCropChange,
     handleRectangleZoomChange,
     handleBannerCropComplete,
     handleRectangleCropComplete,
-    croppedBanner,
-    croppedRectangle,
-    handleCrop,
-    handleSubmit,
+    handleParticipationCodeChange,
   };
 }
