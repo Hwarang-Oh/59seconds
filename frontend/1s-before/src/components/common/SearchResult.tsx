@@ -24,37 +24,34 @@ export default function SearchResult({
   const {
     removeRecentSearch,
     clearAllRecentSearches,
-    loadMoreSuggestions,
+    // loadMoreSuggestions,
     isLoadingMoreSuggestions,
-    hasMoreSuggestions,
+    // hasMoreSuggestions,
   } = useEventSearch();
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  // const containerRef = useRef<HTMLDivElement | null>(null);
 
   // IMP: handleScroll을 useCallback으로 메모이제이션하여 중복 호출 방지
-  const handleScroll = useCallback(() => {
-    if (containerRef.current && suggestions.length > 0 && hasMoreSuggestions) {
-      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-      if (scrollTop + clientHeight >= scrollHeight - 5) {
-        loadMoreSuggestions();
-      }
-    }
-  }, [loadMoreSuggestions, suggestions.length, hasMoreSuggestions]);
+  // const handleScroll = useCallback(() => {
+  //   if (containerRef.current && suggestions.length > 0 && hasMoreSuggestions) {
+  //     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+  //     if (scrollTop + clientHeight >= scrollHeight - 5) {
+  //       loadMoreSuggestions();
+  //     }
+  //   }
+  // }, [loadMoreSuggestions, suggestions.length, hasMoreSuggestions]);
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener('scroll', handleScroll);
-      return () => {
-        container.removeEventListener('scroll', handleScroll);
-      };
-    }
-  }, [handleScroll]);
+  // useEffect(() => {
+  //   const container = containerRef.current;
+  //   if (container) {
+  //     container.addEventListener('scroll', handleScroll);
+  //     return () => {
+  //       container.removeEventListener('scroll', handleScroll);
+  //     };
+  //   }
+  // }, [handleScroll]);
 
   return (
-    <div
-      className="w-full bg-white rounded-xl shadow-lg border-[3px] border-search-border max-h-[350px] overflow-y-auto custom-scrollbar"
-      ref={containerRef}
-    >
+    <div className="w-full bg-white rounded-xl shadow-lg border-[3px] border-search-border max-h-[350px] overflow-y-auto custom-scrollbar">
       {/* 검색어가 없을 때: 최근 검색어 표시 */}
       {!searchTerm && recentSearches.length > 0 && (
         <div className="p-3">
@@ -131,12 +128,12 @@ export default function SearchResult({
         </div>
       )}
 
-      {/* 로딩 상태 표시 */}
+      {/* 로딩 상태 표시
       {isLoadingMoreSuggestions && (
         <div className="flex justify-center p-4">
           <Loader className="w-6 h-6 animate-spin text-gray-400" />
         </div>
-      )}
+      )} */}
 
       {/* 검색 결과가 없을 때 */}
       {(searchTerm && suggestions.length === 0) ||

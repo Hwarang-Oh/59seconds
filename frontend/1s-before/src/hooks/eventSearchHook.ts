@@ -12,9 +12,7 @@ import { fetchAutocompleteResults } from '@/apis/searchAPI';
 export function useEventSearch() {
   // IMP: 검색어 상태 정의
   const [searchTerm, setSearchTerm] = useState<string>('');
-  // IMP: 자동완성 기록 관리
-  const [autoCompletePage, setAutoCompletePage] = useState(0);
-  const autoCompletePageRef = useRef(0);
+  // const autoCompletePageRef = useRef(0);
   // IMP: 자동완성 리스트 상태 타입 정의
   const [suggestions, setSuggestions] = useState<string[]>([]);
   // IMP: 추가 결과 로딩 상태
@@ -43,7 +41,6 @@ export function useEventSearch() {
 
     setSearchTerm(value);
     setSelectedIndex(-1);
-    setAutoCompletePage(0);
     setSuggestions([]);
 
     if (value.trim()) {
@@ -64,26 +61,26 @@ export function useEventSearch() {
   };
 
   // IMP: 자동완성 무한 스크롤 기능
-  const loadMoreSuggestions = useCallback(async () => {
-    if (isLoadingMoreSuggestions || !hasMoreSuggestions) return;
+  // const loadMoreSuggestions = useCallback(async () => {
+  //   if (isLoadingMoreSuggestions || !hasMoreSuggestions) return;
 
-    setIsLoadingMoreSuggestions(true);
+  //   setIsLoadingMoreSuggestions(true);
 
-    try {
-      const newPage = autoCompletePageRef.current + 1;
-      const results = await fetchAutocompleteResults(searchTerm, newPage, 10);
-      if (results && results.length > 0) {
-        setSuggestions((prev) => [...prev, ...results]);
-        autoCompletePageRef.current = newPage;
-      } else {
-        setHasMoreSuggestions(false);
-      }
-    } catch (error) {
-      console.error('자동 검색어 가져오기 실패:', error);
-    } finally {
-      setIsLoadingMoreSuggestions(false);
-    }
-  }, [searchTerm, isLoadingMoreSuggestions, hasMoreSuggestions]);
+  //   try {
+  //     const newPage = autoCompletePageRef.current + 1;
+  //     const results = await fetchAutocompleteResults(searchTerm, newPage, 10);
+  //     if (results && results.length > 0) {
+  //       setSuggestions((prev) => [...prev, ...results]);
+  //       autoCompletePageRef.current = newPage;
+  //     } else {
+  //       setHasMoreSuggestions(false);
+  //     }
+  //   } catch (error) {
+  //     console.error('자동 검색어 가져오기 실패:', error);
+  //   } finally {
+  //     setIsLoadingMoreSuggestions(false);
+  //   }
+  // }, [searchTerm, isLoadingMoreSuggestions, hasMoreSuggestions]);
 
   // IMP: 검색하면 작동할 것들
   const handleSearch = (
@@ -101,7 +98,7 @@ export function useEventSearch() {
     setIsSearchResultVisible(false);
     setSelectedIndex(-1);
 
-    router?.push(`/event-search?term=${encodeURIComponent(term)}`);
+    router?.push(`/event-search/${term}`);
   };
 
   // IMP: 키보드 작동
@@ -183,7 +180,7 @@ export function useEventSearch() {
     handleClickTerm,
     handleInputChange,
     removeRecentSearch,
-    loadMoreSuggestions,
+    // loadMoreSuggestions,
     clearAllRecentSearches,
     setIsSearchResultVisible,
   };

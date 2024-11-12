@@ -16,7 +16,7 @@ function useEventsFetch<T extends PageType>({
     isError,
   } = useInfiniteQuery(
     queryKey,
-    ({ pageParam = initialPage }) => fetchData({ size: 5, page: pageParam }),
+    ({ pageParam = initialPage }) => fetchData({ size: 10, page: pageParam }),
     {
       getNextPageParam: (lastPage) => {
         if (lastPage.sliceDetails?.hasNext)

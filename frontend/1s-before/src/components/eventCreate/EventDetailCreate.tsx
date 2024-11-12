@@ -146,8 +146,9 @@ export default function EventDetailCreate() {
             + 추가
           </button>
         </div>
-        {formData.productsOrCoupons.map((item) => (
+        {formData.productsOrCoupons.map((item, index) => (
           <div key={item.id} className="flex items-center space-x-2">
+            <span className="w-8 text-center text-sm">{index + 1}등</span>
             <select
               value={item.type}
               onChange={(e) =>
