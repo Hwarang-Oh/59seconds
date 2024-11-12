@@ -21,6 +21,7 @@ import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
@@ -81,20 +82,18 @@ public class SearchService {
         Pageable pageable = PageRequest.of(page, size);
         Page<EventRoomSearch> eventRoomsPage = eventRoomSearchRepository.findByTitle(requestDto.getKeyword(), pageable);
 
-        // 페이지네이션 관련 정보 설정
         int currentPage = eventRoomsPage.getNumber();
         boolean hasFirst = eventRoomsPage.isFirst();
         boolean hasNext = eventRoomsPage.hasNext();
 
         List<EventRoomSearchResponseDto> responseDtos = eventRoomsPage.stream()
-                .map(this::mapToResponseDto)
+                .map(eventRoom -> mapToResponseDto(eventRoom, eventRoomsPage))
                 .collect(Collectors.toList());
 
-        // 모든 정보를 포함한 응답 생성
         return new EventRoomSearchResponseWrapper(responseDtos, currentPage, hasFirst, hasNext);
     }
 
-    private EventRoomSearchResponseDto mapToResponseDto(EventRoomSearch eventRoomSearch) {
+    private EventRoomSearchResponseDto mapToResponseDto(EventRoomSearch eventRoomSearch, Page<EventRoomSearch> eventRoomsPage) {
 
         Long eventId = eventRoomSearch.getRoomId();
         EventRoom eventRoom = eventRoomRepository.findById(eventId)
@@ -102,6 +101,9 @@ public class SearchService {
 
         String mainPrize = eventRoomUtils.getMainPrize(eventRoom);
         int prizeCount = eventRoomUtils.getPrizeCount(eventId);
+        int ranking = eventRoomUtils.calculateRanking(eventRoomSearch, eventRoomsPage);
+        int unlockCount = eventRoom.getUnlockCount() == null ? 0 : eventRoom.getUnlockCount();
+        boolean isDeadline = eventRoom.getEndTime().isBefore(LocalDateTime.now().plusHours(24));
 
         return EventRoomSearchResponseDto.builder()
                 .eventId(eventRoomSearch.getRoomId())
@@ -113,6 +115,9 @@ public class SearchService {
                 .rectangleImage(eventRoomSearch.getRectangleImage())
                 .mainPrize(mainPrize)
                 .prizeCount(prizeCount)
+                .ranking(ranking)
+                .unlockCount(unlockCount)
+                .isDeadline(isDeadline)
                 .build();
     }
 

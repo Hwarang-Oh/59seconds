@@ -17,4 +17,7 @@ public class EventRoomSearchResponseDto {
     private String rectangleImage;
     private String mainPrize;
     private Integer prizeCount;
+    private Integer ranking;
+    private Integer unlockCount;
+    private Boolean isDeadline;
 }
