@@ -1,8 +1,8 @@
 import api from '@/apis/commonAPI';
 import { isAxiosError } from 'axios';
-import { CreatorBannerProps, DeadlineEventTypes } from '@/types/home';
+import { DeadlineEventTypes } from '@/types/home';
 import { EventParticipation } from '@/types/eventRoom';
-import { PageParamsType, PageType } from '@/types/common/common';
+import { PageParamsType, PageType, SliceDetails } from '@/types/common/common';
 const EVENT_URL = 'v1/rooms';
 const EVENT_PARTICIPATION_URL = 'v1/participations';
 
@@ -52,7 +52,15 @@ export const getPopularEvents = async ({
     const response = await api.get(`${EVENT_URL}/popular`, {
       params: { size, page },
     });
-    return response.data;
+    const sliceDetails: SliceDetails = {
+      hasNext: !response.data.last,
+      currentPage: response.data.pageable.pageNumber,
+      hasFirst: response.data.first,
+    };
+    return {
+      ...response.data,
+      sliceDetails,
+    };
   } catch (error: unknown) {
     if (isAxiosError(error)) {
       if (error.response?.status === 404) throw new Error('Not Found');
