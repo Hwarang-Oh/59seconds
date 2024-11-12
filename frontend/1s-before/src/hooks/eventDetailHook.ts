@@ -67,8 +67,11 @@ export function useEventDetail(id: number) {
 
   // IMP: 새창으로 여는 코드
   const openWindow = () => {
+    const memberData = sessionStorage.getItem('member-storage');
+    console.log(memberData);
+    const encodedMemberData = encodeURIComponent(memberData ?? '');
     window.open(
-      `/event-room/${id}`,
+      `/event-room/${id}?memberData=${encodedMemberData}`,
       '_blank',
       'width=1280,height=700,noopener,noreferrer'
     );

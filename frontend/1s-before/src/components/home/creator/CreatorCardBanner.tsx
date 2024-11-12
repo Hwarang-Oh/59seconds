@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import CreatorEventStatusButton from '@/components/home/creator/CreatorEventStatusButton';
+import { useState, useEffect } from 'react';
 import { CreatorEventTypes } from '@/types/home';
+import { getRemainingTimeInSeconds, formatTimeRemaining } from '@/utils/timeUtils';
 export default function CreatorCardBanner({
   eventId,
   title,
@@ -10,6 +12,18 @@ export default function CreatorCardBanner({
   rectangleUrl,
 }: Readonly<CreatorEventTypes>) {
   const participantLabel = status === 'ONGOING' ? '예상 참여자' : '최종 참여자';
+
+  const [timeRemaining, setTimeRemaining] = useState('');
+  useEffect(() => {
+    const updateTimeRemaining = () => {
+      const remainingSeconds = getRemainingTimeInSeconds(endTime);
+      setTimeRemaining(formatTimeRemaining(remainingSeconds));
+    };
+    updateTimeRemaining();
+    const intervalId = setInterval(updateTimeRemaining, 1000);
+    return () => clearInterval(intervalId);
+  }, [endTime]);
+
   return (
     <div className='flex h-[185px] shadow-md'>
       <div className='relative w-[140px] overflow-hidden rounded-l-lg'>
@@ -18,7 +32,7 @@ export default function CreatorCardBanner({
       <div className='flex flex-col w-[280px] justify-center px-5 gap-1 border rounded-r'>
         <CreatorEventStatusButton status={status} />
         <p className='text-[16px] font-semibold' style={{ color: '#FF7262' }}>
-          {endTime} 후 이벤트 시작
+          {timeRemaining} 후 이벤트 시작
         </p>
         <p className='text-lg font-bold whitespace-pre-line'>{title}</p>
         <div className='flex gap-1.5 items-center text-base'>

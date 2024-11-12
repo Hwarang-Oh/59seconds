@@ -11,7 +11,7 @@ export default function CreatorCardGrid({ Banners }: Readonly<CreatorCardListPro
           <p className='text-3xl font-bold'>나의 이벤트</p>
         </div>
         <div className='grid grid-cols-2 md:grid-cols-3 gap-5'>
-          {Banners.map((banner) => (
+          {Banners.slice(0, 6).map((banner) => (
             <CreatorCardBanner
               key={banner.eventId}
               eventId={banner.eventId}

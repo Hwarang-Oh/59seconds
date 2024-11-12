@@ -62,16 +62,13 @@ export default function EventCreatorPage() {
       ) : (
         <div className='mt-6 grid grid-cols-1 gap-6'>
           {filteredRooms.map((room) => (
-            <div key={room.eventId} className='p-4 border border-gray-300 rounded-lg'>
-              <div className='relative'>
-                <Image
-                  src={room.bannerUrl ?? Banner}
-                  alt='배너'
-                  fill
-                  className='w-full h-56 rounded-lg object-cover'
-                />
+            <div
+              key={room.eventId}
+              className='flex flex-col border border-gray-300 rounded-lg overflow-hidden'>
+              <div className='w-full h-56 relative'>
+                <Image src={room.bannerUrl ?? Banner} alt='배너' fill className='object-cover' />
               </div>
-              <div className='flex flex-row justify-between items-center mx-1 my-4'>
+              <div className='flex flex-row justify-between items-center mx-1 my-4 px-3'>
                 <span
                   className={`mr-3 rounded-2xl px-2 py-1 ${
                     new Date(room.endTime) > currentTime
@@ -82,7 +79,7 @@ export default function EventCreatorPage() {
                 </span>
                 <div className='text-subColor3 font-bold'>참여자 {room.unlockCount}명</div>
               </div>
-              <p className='ml-2 text-gray-600 font-bold text-lg'>{room.title}</p>
+              <p className='ml-2 text-gray-600 font-bold text-lg pl-3'>{room.title}</p>
             </div>
           ))}
         </div>
