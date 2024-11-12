@@ -6,25 +6,17 @@ function useEventsFetch<T extends PageType>({
   fetchData,
   initialPage = 0,
 }: ContentsFetchType<T>) {
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    error,
-    isError,
-  } = useInfiniteQuery(
-    queryKey,
-    ({ pageParam = initialPage }) => fetchData({ size: 5, page: pageParam }),
-    {
-      getNextPageParam: (lastPage) => {
-        if (lastPage.sliceDetails?.hasNext)
-          return lastPage.sliceDetails.currentPage + 1;
-        return undefined;
-      },
-    }
-  );
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, error, isError } =
+    useInfiniteQuery(
+      queryKey,
+      ({ pageParam = initialPage }) => fetchData({ size: 10, page: pageParam }),
+      {
+        getNextPageParam: (lastPage) => {
+          if (lastPage.sliceDetails?.hasNext) return lastPage.sliceDetails.currentPage + 1;
+          return undefined;
+        },
+      }
+    );
 
   const pages = data?.pages || [];
   const sliceDetails =

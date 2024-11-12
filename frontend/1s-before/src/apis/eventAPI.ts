@@ -1,6 +1,6 @@
 import api from '@/apis/commonAPI';
 import { isAxiosError } from 'axios';
-import { DeadlineEventTypes } from '@/types/home';
+import { CreatorBannerProps, DeadlineEventTypes } from '@/types/home';
 import { EventParticipation } from '@/types/eventRoom';
 import { PageParamsType, PageType } from '@/types/common/common';
 const EVENT_URL = 'v1/rooms';
@@ -15,6 +15,21 @@ export const createEvent = async (eventData: FormData) => {
   } catch (error) {
     console.error('Error while creating event:', error);
     throw error;
+  }
+};
+
+export const getCreatorBanner = async (memberId: number): Promise<string> => {
+  try {
+    const response = await api.get(`${EVENT_URL}/my-latest-banner`, {
+      params: { memberId },
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      if (error.response?.status === 404) throw new Error('Not Found');
+      else throw error;
+    } else throw error;
   }
 };
 
