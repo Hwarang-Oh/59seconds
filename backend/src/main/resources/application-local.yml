@@ -3,3 +3,17 @@ minio:
   access-key: ${minio.file-manager-user}
   secret-key: ${minio.file-manager-password}
   bucket-name: "test-bucket"   
+
+otel:
+  metrics:
+    exporter: none  # Disable metrics exporter
+  logs:
+    exporter: none  # Disable logs exporter
+  traces:
+    exporter: otlp  # Use OTLP exporter for traces
+  exporter:
+    otlp:
+      endpoint: "http://localhost:16686"  # Include 'http://' to make it a valid URL
+      protocol: grpc  # Specify the protocol as 'grpc'
+  service:
+    name: dreamsolution  # Set your service name

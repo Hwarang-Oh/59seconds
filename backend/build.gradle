@@ -34,6 +34,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'io.minio:minio:8.3.4'
+	implementation("io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter")
+//	implementation("io.opentelemetry:opentelemetry-exporter-jaeger:1.34.1")
+
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -50,6 +53,11 @@ dependencies {
 	// Redis + Redisson
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.redisson:redisson-spring-boot-starter:3.23.5'
+}
+dependencyManagement {
+	imports {
+		mavenBom("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:2.6.0")
+	}
 }
 
 tasks.named('test') {
