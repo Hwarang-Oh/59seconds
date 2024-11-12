@@ -7,6 +7,7 @@ import com.ssafy.fiftyninesec.search.repository.EventRoomSearchRepository;
 import com.ssafy.fiftyninesec.solution.entity.EventRoom;
 import com.ssafy.fiftyninesec.solution.entity.Member;
 import com.ssafy.fiftyninesec.solution.repository.EventRoomRepository;
+import com.ssafy.fiftyninesec.solution.util.EventRoomUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class SearchService {
     private final EventRoomSearchRepository eventRoomSearchRepository; // Elasticsearch 레포지토리
     private final EventRoomRepository eventRoomRepository; // JPA 레포지토리
     private final ElasticsearchOperations elasticsearchOperations;
+    private final EventRoomUtils eventRoomUtils;
 
     // 애플리케이션 시작 시 데이터 동기화
     @PostConstruct
@@ -81,18 +83,24 @@ public class SearchService {
     }
 
     private EventRoomSearchResponseDto mapToResponseDto(EventRoomSearch eventRoomSearch) {
+
+        Long eventId = eventRoomSearch.getRoomId();
+        EventRoom eventRoom = eventRoomRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("EventRoom not found for ID: " + eventId));
+
+        String mainPrize = eventRoomUtils.getMainPrize(eventRoom);
+        int prizeCount = eventRoomUtils.getPrizeCount(eventId);
+
         return EventRoomSearchResponseDto.builder()
                 .eventId(eventRoomSearch.getRoomId())
                 .title(eventRoomSearch.getTitle())
                 .description(eventRoomSearch.getDescription())
-                .status(eventRoomSearch.getStatus())
-                .createdAt(eventRoomSearch.getCreatedAt())
-                .startTime(eventRoomSearch.getStartTime())
                 .endTime(eventRoomSearch.getEndTime())
                 .winnerNum(eventRoomSearch.getWinnerNum())
                 .bannerImage(eventRoomSearch.getBannerImage())
-                .squareImage(eventRoomSearch.getSquareImage())
                 .rectangleImage(eventRoomSearch.getRectangleImage())
+                .mainPrize(mainPrize)
+                .prizeCount(prizeCount)
                 .build();
     }
 

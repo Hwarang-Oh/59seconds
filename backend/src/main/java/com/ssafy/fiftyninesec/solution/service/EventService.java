@@ -335,13 +335,13 @@ public class EventService {
         }
     }
 
-    private String getMainPrize(EventRoom eventRoom) {
+    public String getMainPrize(EventRoom eventRoom) {
         return prizeRepository.findFirstByEventRoomAndRanking(eventRoom, 1)
                 .map(Prize::getPrizeName)
                 .orElse(null);
     }
 
-    private int getPrizeCount(Long eventRoomId) {
+    public int getPrizeCount(Long eventRoomId) {
         return prizeRepository.countByEventRoom_Id(eventRoomId);
     }
 
