@@ -3,7 +3,6 @@ import {
   useState,
   useRef,
   useEffect,
-  useCallback,
   KeyboardEvent as ReactKeyboardEvent,
 } from 'react';
 import { useSearchStore } from '@/store/searchStore';
@@ -15,10 +14,6 @@ export function useEventSearch() {
   // const autoCompletePageRef = useRef(0);
   // IMP: 자동완성 리스트 상태 타입 정의
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  // IMP: 추가 결과 로딩 상태
-  const [isLoadingMoreSuggestions, setIsLoadingMoreSuggestions] =
-    useState(false);
-  const [hasMoreSuggestions, setHasMoreSuggestions] = useState(true);
   const recentSearches = useSearchStore((state) => state.recentSearches);
   const addRecentSearch = useSearchStore((state) => state.addRecentSearch);
   const removeRecentSearch = useSearchStore(
@@ -60,28 +55,6 @@ export function useEventSearch() {
     }
   };
 
-  // IMP: 자동완성 무한 스크롤 기능
-  // const loadMoreSuggestions = useCallback(async () => {
-  //   if (isLoadingMoreSuggestions || !hasMoreSuggestions) return;
-
-  //   setIsLoadingMoreSuggestions(true);
-
-  //   try {
-  //     const newPage = autoCompletePageRef.current + 1;
-  //     const results = await fetchAutocompleteResults(searchTerm, newPage, 10);
-  //     if (results && results.length > 0) {
-  //       setSuggestions((prev) => [...prev, ...results]);
-  //       autoCompletePageRef.current = newPage;
-  //     } else {
-  //       setHasMoreSuggestions(false);
-  //     }
-  //   } catch (error) {
-  //     console.error('자동 검색어 가져오기 실패:', error);
-  //   } finally {
-  //     setIsLoadingMoreSuggestions(false);
-  //   }
-  // }, [searchTerm, isLoadingMoreSuggestions, hasMoreSuggestions]);
-
   // IMP: 검색하면 작동할 것들
   const handleSearch = (
     term: string = searchTerm,
@@ -98,7 +71,7 @@ export function useEventSearch() {
     setIsSearchResultVisible(false);
     setSelectedIndex(-1);
 
-    router?.push(`/event-search/${term}`);
+    router?.push(`/event-search?term=${encodeURIComponent(term)}`);
   };
 
   // IMP: 키보드 작동
@@ -167,12 +140,10 @@ export function useEventSearch() {
     suggestions,
     selectedIndex,
     recentSearches,
-    hasMoreSuggestions,
     searchContainerRef,
     isSuggestionsVisible,
     isSearchResultVisible,
     isRecentSearchesVisible,
-    isLoadingMoreSuggestions,
     handleFocus,
     handleSearch,
     handleKeyDown,
@@ -180,7 +151,6 @@ export function useEventSearch() {
     handleClickTerm,
     handleInputChange,
     removeRecentSearch,
-    // loadMoreSuggestions,
     clearAllRecentSearches,
     setIsSearchResultVisible,
   };

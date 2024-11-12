@@ -20,6 +20,8 @@ export default function EventDetailCreate() {
     bannerZoom,
     rectangleCrop,
     rectangleZoom,
+    rectImageUrl,
+    bannerImageUrl,
     handleBannerCropChange,
     handleBannerZoomChange,
     handleRectangleCropChange,
@@ -27,14 +29,10 @@ export default function EventDetailCreate() {
     handleBannerCropComplete,
     handleRectangleCropComplete,
     handleCrop,
-    handleSubmit,
   } = useEventCreate();
 
   return (
-    <form
-      className="p-6 max-w-screen-xl mx-auto space-y-4"
-      onSubmit={handleSubmit}
-    >
+    <>
       <div className="flex flex-row space-x-4">
         <span className="bg-mainColor1 px-[14px] py-[5px] rounded-full text-white">
           1
@@ -69,7 +67,7 @@ export default function EventDetailCreate() {
             {formData.eventInfo.bannerImage && (
               <div className="relative w-1/2 h-40 bg-mainColor2 rounded-md overflow-hidden">
                 <Cropper
-                  image={URL.createObjectURL(formData.eventInfo.bannerImage)}
+                  image={bannerImageUrl}
                   crop={bannerCrop}
                   zoom={bannerZoom}
                   aspect={1920 / 460}
@@ -85,7 +83,7 @@ export default function EventDetailCreate() {
             {formData.eventInfo.rectImage && (
               <div className="relative w-1/2 h-40 bg-mainColor2 rounded-md overflow-hidden">
                 <Cropper
-                  image={URL.createObjectURL(formData.eventInfo.rectImage)}
+                  image={rectImageUrl}
                   crop={rectangleCrop}
                   zoom={rectangleZoom}
                   aspect={240 / 320}
@@ -256,13 +254,6 @@ export default function EventDetailCreate() {
           className="w-full p-2 border rounded"
         />
       </div>
-
-      <button
-        type="submit"
-        className="py-2 px-4 bg-blue-500 text-white rounded"
-      >
-        이벤트 생성하기
-      </button>
-    </form>
+    </>
   );
 }

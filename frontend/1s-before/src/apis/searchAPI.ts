@@ -1,18 +1,27 @@
 import api from '@/apis/commonAPI';
 import { isAxiosError } from 'axios';
-import { PageType } from '@/types/common/common';
+import { PageType, SliceDetails, PageParamsType } from '@/types/common/common';
 const SEARCH_URL = 'v1/search';
 
-export const fetchSearchResults = async (
-  query: string,
-  page: number,
-  size: number
-): Promise<PageType> => {
+export const fetchSearchResults = async ({
+  query,
+  page,
+  size,
+}: PageParamsType): Promise<PageType> => {
   try {
     const response = await api.get(`${SEARCH_URL}/eventrooms`, {
       params: { keyword: query, page, size },
     });
-    return response.data;
+    console.log(response.data);
+    const sliceDetails: SliceDetails = {
+      currentPage: response.data.currentPage,
+      hasFirst: response.data.hasFirst,
+      hasNext: response.data.hasNext,
+    };
+    return {
+      sliceDetails,
+      content: response.data.results,
+    };
   } catch (error: unknown) {
     if (isAxiosError(error)) {
       if (error.response?.status === 404) throw new Error('Not Found');

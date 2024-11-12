@@ -11,14 +11,10 @@ export default function EventOwnerCreate() {
     handleInputChange,
     handleEditorChange,
     handleImageChange,
-    handleSubmit,
   } = useEventOwner();
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="p-6 mx-auto max-w-screen-xl space-y-6"
-    >
+    <>
       <div className="flex flex-row space-x-4">
         <span className="bg-mainColor1 px-[12px] py-[5px] rounded-full text-white">
           2
@@ -112,21 +108,6 @@ export default function EventOwnerCreate() {
           />
         </div>
       </div>
-
-      <div className="flex justify-between">
-        <button
-          type="button"
-          className="py-2 px-4 bg-gray-300 rounded text-gray-700"
-        >
-          이전
-        </button>
-        <button
-          type="submit"
-          className="py-2 px-4 bg-mainColor1 text-white rounded"
-        >
-          이벤트 생성하기
-        </button>
-      </div>
-    </form>
+    </>
   );
 }
