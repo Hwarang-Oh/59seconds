@@ -28,14 +28,19 @@ export interface DeadlineEventTypes {
 }
 
 /**
- * IMP : 인플루언서가 만든 Event를 받아오는 Type
+ * IMP : 크리에이터가 만든 Event를 받아오는 Type
  */
-export interface InfluencerEventTypes {
+export interface CreatorEventTypes {
   eventId: number;
   title: string;
   status: string;
-  participantCount: number;
-  leftTime: string; // Type: endTime이 있다면, 자체 가능
+  unlockCount: number;
+  endTime: string; // Type: endTime이 있다면, 자체 가능
+  rectangleUrl: string;
+}
+
+export interface CreatorCardListProps {
+  Banners: CreatorEventTypes[];
 }
 
 /**

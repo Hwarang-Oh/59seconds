@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { EventFormData, ProductOrCoupon } from '../types/eventCreate';
-import axios from 'axios';
 import { createEvent } from '@/apis/eventAPI';
 
 export function useEventCreate() {
@@ -12,9 +11,7 @@ export function useEventCreate() {
       bannerImage: null,
       rectImage: null,
     },
-    productsOrCoupons: [
-      { id: uuidv4(), order: 1, type: '상품', name: '', recommendedPeople: 0 },
-    ],
+    productsOrCoupons: [{ id: uuidv4(), order: 1, type: '상품', name: '', recommendedPeople: 0 }],
     eventPeriod: {
       start: '',
       end: '',
@@ -116,9 +113,7 @@ export function useEventCreate() {
   const handleRemoveProductOrCoupon = (id: string) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      productsOrCoupons: prevFormData.productsOrCoupons.filter(
-        (item) => item.id !== id
-      ),
+      productsOrCoupons: prevFormData.productsOrCoupons.filter((item) => item.id !== id),
     }));
   };
 
@@ -135,28 +130,20 @@ export function useEventCreate() {
     });
   };
 
-  const handleBannerCropChange = (newCrop: { x: number; y: number }) =>
-    setBannerCrop(newCrop);
+  const handleBannerCropChange = (newCrop: { x: number; y: number }) => setBannerCrop(newCrop);
 
   const handleBannerZoomChange = (newZoom: number) => setBannerZoom(newZoom);
 
   const handleRectangleCropChange = (newCrop: { x: number; y: number }) =>
     setRectangleCrop(newCrop);
 
-  const handleRectangleZoomChange = (newZoom: number) =>
-    setRectangleZoom(newZoom);
+  const handleRectangleZoomChange = (newZoom: number) => setRectangleZoom(newZoom);
 
-  const handleBannerCropComplete = (
-    croppedArea: any,
-    croppedAreaPixels: any
-  ) => {
+  const handleBannerCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
     setCroppedBannerPixels(croppedAreaPixels);
   };
 
-  const handleRectangleCropComplete = (
-    croppedArea: any,
-    croppedAreaPixels: any
-  ) => {
+  const handleRectangleCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
     setCroppedRectanglePixels(croppedAreaPixels);
   };
 
@@ -229,13 +216,7 @@ export function useEventCreate() {
       let rectangleBlob: File | null = null;
 
       if (croppedBannerPixels) {
-        bannerBlob = await getCroppedImg(
-          fileURL,
-          croppedBannerPixels,
-          1920,
-          460,
-          'banner-image'
-        );
+        bannerBlob = await getCroppedImg(fileURL, croppedBannerPixels, 1920, 460, 'banner-image');
       }
 
       if (croppedRectanglePixels) {
@@ -271,49 +252,49 @@ export function useEventCreate() {
 
   // IMP: formData를 JSON 형식에 맞게 변환 후 서버로 POST 요청하는 함수
   const handleSubmit = async (event: { preventDefault: () => void }) => {
-      event.preventDefault();
+    event.preventDefault();
 
-      if (!formData.eventInfo.bannerImage || !formData.eventInfo.rectImage) {
-          alert('이미지를 자르고 다시 시도해 주세요.');
-          return;
-      }
+    if (!formData.eventInfo.bannerImage || !formData.eventInfo.rectImage) {
+      alert('이미지를 자르고 다시 시도해 주세요.');
+      return;
+    }
 
-      const formDataToSend = new FormData();
-      
-      const eventData = {
-          memberId: 1, // TODO
-          eventInfo: {
-              title: formData.eventInfo.title,
-              description: formData.eventInfo.description,
-          },
-          productsOrCoupons: formData.productsOrCoupons.map((item, index) => ({
-              order: index + 1,
-              type: item.type,
-              name: item.name,
-              recommendedPeople: item.recommendedPeople,
-          })),
-          eventPeriod: {
-              start: new Date(formData.eventPeriod.start).toISOString(),
-              end: new Date(formData.eventPeriod.end).toISOString(),
-          },
-          participationCode: formData.participationCode,
-      };
+    const formDataToSend = new FormData();
 
-      const eventBlob = new Blob([JSON.stringify(eventData)], {
-        type: 'application/json'
-      });
-      
-      formDataToSend.append('data', eventBlob);
-      formDataToSend.append('bannerImage', formData.eventInfo.bannerImage);
-      formDataToSend.append('rectImage', formData.eventInfo.rectImage);
+    const eventData = {
+      memberId: 1, // TODO
+      eventInfo: {
+        title: formData.eventInfo.title,
+        description: formData.eventInfo.description,
+      },
+      productsOrCoupons: formData.productsOrCoupons.map((item, index) => ({
+        order: index + 1,
+        type: item.type,
+        name: item.name,
+        recommendedPeople: item.recommendedPeople,
+      })),
+      eventPeriod: {
+        start: new Date(formData.eventPeriod.start).toISOString(),
+        end: new Date(formData.eventPeriod.end).toISOString(),
+      },
+      participationCode: formData.participationCode,
+    };
 
-      try {
-        const response = await createEvent(formDataToSend);
-        console.log('Created room with ID:', response);
-      } catch (error) {
-        console.error('Error:', error);
-        alert('이벤트 룸 생성에 실패했습니다.');
-      }
+    const eventBlob = new Blob([JSON.stringify(eventData)], {
+      type: 'application/json',
+    });
+
+    formDataToSend.append('data', eventBlob);
+    formDataToSend.append('bannerImage', formData.eventInfo.bannerImage);
+    formDataToSend.append('rectImage', formData.eventInfo.rectImage);
+
+    try {
+      const response = await createEvent(formDataToSend);
+      console.log('Created room with ID:', response);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('이벤트 룸 생성에 실패했습니다.');
+    }
   };
 
   return {

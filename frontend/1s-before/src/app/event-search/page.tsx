@@ -2,7 +2,6 @@
 import { useSearchParams } from 'next/navigation';
 import { fetchSearchResults } from '@/apis/searchAPI';
 import { useEffect, useState } from 'react';
-import NormalBanner from '@/components/home/NormalBanner';
 
 interface SearchResult {
   eventId: number;
@@ -41,8 +40,8 @@ export default function EventSearch() {
 
   return (
     <div>
-      <p className="text-3xl font-bold">검색 결과</p>
-      <div className="flex items-center justify-center gap-5">
+      <p className='text-3xl font-bold'>검색 결과</p>
+      <div className='flex items-center justify-center gap-5'>
         {results.length > 0 ? (
           results.map((result) => (
             <p>{result.title}</p>

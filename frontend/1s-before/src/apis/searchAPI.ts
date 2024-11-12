@@ -1,19 +1,23 @@
 import api from '@/apis/commonAPI';
+import { isAxiosError } from 'axios';
+import { PageType } from '@/types/common/common';
 const SEARCH_URL = 'v1/search';
 
 export const fetchSearchResults = async (
   query: string,
   page: number,
   size: number
-): Promise<any> => {
+): Promise<PageType> => {
   try {
     const response = await api.get(`${SEARCH_URL}/eventrooms`, {
       params: { keyword: query, page, size },
     });
     return response.data;
-  } catch (error) {
-    console.error('Error fetching search results:', error);
-    throw new Error('검색 결과를 가져오는 중 오류가 발생했습니다.');
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      if (error.response?.status === 404) throw new Error('Not Found');
+      else throw error;
+    } else throw error;
   }
 };
 

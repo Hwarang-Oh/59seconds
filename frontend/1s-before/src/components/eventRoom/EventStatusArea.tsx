@@ -52,8 +52,10 @@ export default function EventStatusArea({
             <EventStatusActiveButton
               isDisabled={!isTimerCompleted}
               onClick={() => {
-                eventParticipate({ eventId: eventId, memberId: member.memberId });
-                goDrawView();
+                if (member) {
+                  eventParticipate({ eventId: eventId, memberId: member.memberId });
+                  goDrawView();
+                }
               }}
               text={isTimerCompleted ? '추첨 시작!' : '추첨 시작 전'}
             />

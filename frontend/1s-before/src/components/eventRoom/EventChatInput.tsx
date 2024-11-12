@@ -9,7 +9,7 @@ export default function EventChatInput({ eventId }: Readonly<{ eventId: number }
   const { member } = useMemberStore();
 
   const handleSendMessage = () => {
-    if (input.trim() !== '') {
+    if (input.trim() !== '' && member) {
       webSocket.sendEventRoomMessage(eventId, {
         eventId,
         sender: member.nickname,

@@ -1,14 +1,16 @@
 'use client';
-import CreatorBanner from './Creator/CreatorBanner';
 import NormalBannerList from '@/components/home/NormalBannerList';
+import CreatorBanner from '@/components/home/creator/CreatorBanner';
 import CardBannerGrid from '@/components/home/member/CardBannerGrid';
+import CreatorCardBannerGrid from '@/components/home/creator/CreatorCardBannerGrid';
 import LargeBannerCarousel from '@/components/home/member/LargeBannerCarousel';
-import { useState, useEffect } from 'react';
-import { CreatorBannerProps, HomeContentProps } from '@/types/home';
-import { fetchCreatedRooms } from '@/apis/memberAPI';
-import { getCreatorBanner } from '@/apis/eventAPI';
-import { useMemberStore } from '@/store/memberStore';
+import CreatorEventMakeBanner from '@/components/home/creator/CreatorEventMakeBanner';
 import { CreatedRoom } from '@/types/user';
+import { useState, useEffect } from 'react';
+import { HomeContentProps } from '@/types/home';
+import { getCreatorBanner } from '@/apis/eventAPI';
+import { fetchCreatedRooms } from '@/apis/memberAPI';
+import { useMemberStore } from '@/store/memberStore';
 
 export default function HomeContent({ popularEvents, deadlineEvents }: Readonly<HomeContentProps>) {
   const { member } = useMemberStore();
@@ -40,9 +42,10 @@ export default function HomeContent({ popularEvents, deadlineEvents }: Readonly<
         <>
           <CreatorBanner bannerImage={bannerImage} />
           <div className='flex flex-col gap-20 px-7 py-20'>
-            <CardBannerGrid Banners={deadlineEvents} />
+            <CreatorCardBannerGrid Banners={createdRooms} />
             <NormalBannerList Banners={popularEvents} />
           </div>
+          <CreatorEventMakeBanner />
         </>
       ) : (
         <>
