@@ -20,6 +20,7 @@ public class ChatController {
     public void sendMessage(@Payload ChatMessageDto chatMessage, @DestinationVariable Long eventId) {
         ChatMessageDto updatedMessage = ChatMessageDto.builder()
                 .eventId(chatMessage.getEventId())
+                .memberId(chatMessage.getMemberId())
                 .sender(chatMessage.getSender())
                 .content(chatMessage.getContent())
                 .sentAt(LocalDateTime.now())

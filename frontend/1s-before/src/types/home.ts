@@ -2,6 +2,7 @@
  * IMP : 인기 Event 받아오는 Type
  */
 export interface PopularEventTypes {
+  winnerNum: number;
   eventId: number;
   title: string;
   ranking: number; // Type: index로 자체 가능

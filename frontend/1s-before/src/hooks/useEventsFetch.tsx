@@ -19,7 +19,8 @@ function useEventsFetch<T extends PageType>({
     );
 
   const pages = data?.pages || [];
-  const sliceDetails = pages.length > 0 ? pages[pages.length - 1].sliceDetails : {};
+  const sliceDetails =
+    pages.length > 0 ? pages[pages.length - 1].sliceDetails : {};
   const eventList = pages.flatMap((page) => page.content || []).filter(Boolean);
 
   return {
