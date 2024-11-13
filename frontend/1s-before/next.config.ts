@@ -1,10 +1,7 @@
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
+// CommonJS 방식
+module.exports = {
   reactStrictMode: true,
   images: {
     domains: ['k11a404.p.ssafy.io'],
   },
 };
-
-export default nextConfig;
