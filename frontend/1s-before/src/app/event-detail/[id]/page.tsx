@@ -15,14 +15,14 @@ import { useEventDetail } from '@/hooks/eventDetailHook';
 export default function EventDetail() {
   const params = useParams();
   const { id } = params as { id: string };
-  const [activeTab, setActiveTab] = useState('event'); // 기본 탭 설정
+  const [activeTab, setActiveTab] = useState('event');
 
   const { eventData } = useEventDetail(Number(id));
 
   if (!eventData) {
     return (
-      <p className='flex flex-col justify-center items-center h-screen text-mainColor1'>
-        <FaRegSadTear className='mb-3' size={30} />
+      <p className="flex flex-col justify-center items-center h-screen text-mainColor1">
+        <FaRegSadTear className="mb-3" size={30} />
         이벤트를 찾을 수 없습니다.
       </p>
     );
@@ -38,10 +38,10 @@ export default function EventDetail() {
   return (
     <>
       <Header />
-      <div className='m-10'>
-        <div className='grid grid-cols-4 gap-8'>
+      <div className="m-10">
+        <div className="grid grid-cols-4 gap-8">
           {/* 입력 폼: 2/3 */}
-          <div className='col-span-3 border border-inherit p-10 rounded-lg shadow-lg'>
+          <div className="col-span-3 border border-inherit p-10 rounded-lg shadow-lg">
             <div>
               <div
                 className='relative w-full h-auto mb-16 rounded-lg overflow-hidden'
@@ -60,7 +60,8 @@ export default function EventDetail() {
                     activeTab === 'event'
                       ? 'text-mainColor1 font-bold border-b-2 border-mainColor1'
                       : 'text-gray-600'
-                  }`}>
+                  }`}
+                >
                   이벤트 소개
                 </button>
                 <button
@@ -69,7 +70,8 @@ export default function EventDetail() {
                     activeTab === 'creator'
                       ? 'text-mainColor1 font-bold border-b-2 border-mainColor1'
                       : 'text-gray-600'
-                  }`}>
+                  }`}
+                >
                   주최자 소개
                 </button>
                 <button
@@ -78,24 +80,35 @@ export default function EventDetail() {
                     activeTab === 'info'
                       ? 'text-mainColor1 font-bold border-b-2 border-mainColor1'
                       : 'text-gray-600'
-                  }`}>
+                  }`}
+                >
                   이용정보
                 </button>
               </div>
 
-              <div className='mt-6'>
+              <div className="mt-6">
                 {activeTab === 'event' && <EventIntroTab event={eventData} />}
-                {activeTab === 'creator' && <EventCreatorTab creator={creator} />}
+                {activeTab === 'creator' && (
+                  <EventCreatorTab creator={creator} />
+                )}
                 {activeTab === 'info' && <EventInfoTab />}
               </div>
             </div>
           </div>
 
           {/* 이벤트 참여 미리보기: 1/3 */}
-          <div className='col-span-1 relative max-w-sm'>
-            <EventRoomInfo event={eventData} creator={creator} id={Number(id)} />
-            <div className='sticky top-2 z-10'>
-              <EventRoomPart event={eventData} creator={creator} id={Number(id)} />
+          <div className="col-span-1 relative max-w-sm">
+            <EventRoomInfo
+              event={eventData}
+              creator={creator}
+              id={Number(id)}
+            />
+            <div className="sticky top-2 z-10">
+              <EventRoomPart
+                event={eventData}
+                creator={creator}
+                id={Number(id)}
+              />
             </div>
           </div>
         </div>

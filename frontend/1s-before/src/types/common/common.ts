@@ -28,3 +28,9 @@ export interface ContentsFetchType<T extends PageType> {
   fetchData: ({ query, size, page }: PageParamsType) => Promise<T>;
   initialPage?: number;
 }
+
+export interface RequestPopUpProps {
+  roomId: number;
+  prizeType: string;
+  onClose: () => void;
+}

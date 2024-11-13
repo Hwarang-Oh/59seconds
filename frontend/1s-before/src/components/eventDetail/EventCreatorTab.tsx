@@ -16,13 +16,13 @@ export default function EventCreatorTab({
             <img
               src={creator.profileImage || undefined}
               alt={creator.creatorName || '프로필'}
-              className="w-32 h-32 rounded-full object-cover mb-4 ml-2"
+              className="w-36 h-36 rounded-full object-cover mb-4 ml-2 border p-3"
             />
           ) : (
             <HiUserCircle className="text-mainColor2" size={150} />
           )}
           {creator?.creatorName ? (
-            <h2 className="text-lg">[{creator?.creatorName}]</h2>
+            <h2 className="text-lg font-bold">[{creator?.creatorName}]</h2>
           ) : (
             <span></span>
           )}
