@@ -4,7 +4,7 @@ module.exports = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https:',
+        protocol: 'https',
         hostname: 'k11a404.p.ssafy.io',
         port: '',
         pathname: '/event-image/*/*',
