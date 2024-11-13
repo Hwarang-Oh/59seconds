@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { fetchEventInfo } from '@/apis/eventDetailApi';
 import { EventData } from '@/types/eventDetail';
 import { useEventStore } from '@/store/eventStore';
+import { fetchEventInfo } from '@/apis/eventDetailApi';
 
 const defaultEventData: EventData = {
   memberResponseDto: {
