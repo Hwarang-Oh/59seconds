@@ -40,7 +40,10 @@ public enum ErrorCode {
     LOCK_ACQUISITION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "분산 락 획득에 실패했습니다."),
     LOCK_INTERRUPTED(HttpStatus.INTERNAL_SERVER_ERROR, "분산 락 처리 중 인터럽트가 발생했습니다."),
     EVENT_NOT_STARTED(HttpStatus.BAD_REQUEST, "아직 시작하지 않은 이벤트입니다."),
-    ALREADY_PARTICIPATED(HttpStatus.BAD_REQUEST, "이미 참여한 이벤트입니다.")
+    ALREADY_PARTICIPATED(HttpStatus.BAD_REQUEST, "이미 참여한 이벤트입니다."),
+
+    // 테스트 참여 실패 에러
+    PARTICIPATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "참여 처리 중 오류가 발생했습니다.")
     ;
     private final HttpStatus httpStatus;
     private final String message;
