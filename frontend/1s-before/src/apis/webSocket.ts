@@ -38,7 +38,7 @@ const connect = ({
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
       onConnect: () => {
-        console.log('Connected');
+        console.log('Connected to ' + eventId);
         addSubscription({
           eventId,
           onEventRoomResultReceived,
@@ -114,6 +114,7 @@ const addEventRoomInfoSubscription = ({
       `/chat/sub/room/${eventId}/count`,
       (message) => {
         onEventRoomInfoReceived(JSON.parse(message.body));
+        console.log(message.body);
       }
     );
     subscriptionMap.set(eventRoomKey, eventRoomInfoSubscription);
@@ -152,6 +153,12 @@ const sendEnterEventRoom = (eventId: number) => {
     stompClient.publish({
       destination: `/chat/pub/room/${eventId}/enter`,
       body: JSON.stringify({ eventId: eventId }),
+    });
+    sendEventRoomMessage(eventId, {
+      eventId: eventId,
+      sender: 'system',
+      content: 'Entered the room',
+      sentAt: new Date().toISOString(),
     });
   }
 };
