@@ -1,10 +1,12 @@
 import { SetStateAction, useState } from 'react';
 import { useUserEdit } from '@/hooks/userEditHook';
+import { useEventRoom } from '@/hooks/eventRoomHook';
 import { FaPhoneAlt, FaEdit, FaMapMarkerAlt } from 'react-icons/fa';
 
 export default function GeneralUserEdit() {
   const { userData, updateParticipateName, updateAddress, updatePhone } =
     useUserEdit();
+  const { totalWinsCount, totalParticipatedCount } = useEventRoom();
 
   // 각각의 필드를 위한 수정 상태 추가
   const [isEditingName, setIsEditingName] = useState(false);
@@ -84,7 +86,9 @@ export default function GeneralUserEdit() {
           )}
         </div>
         <p className="text-gray-500">
-          참여 10회 <span className="text-sm"> | </span> 당첨 1회{' '}
+          참여 {totalParticipatedCount ?? 0}회{' '}
+          <span className="text-sm"> | </span> 당첨
+          {totalWinsCount ?? 0}회{' '}
         </p>
       </header>
 

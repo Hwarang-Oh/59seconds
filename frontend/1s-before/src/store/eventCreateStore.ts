@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { EventFormData, EventStoreState } from '@/types/eventCreate';
 
@@ -59,7 +60,8 @@ export const useEventCreateStore = create<EventStoreState>((set) => ({
 
   setFormData: (data) => {
     set((state) => {
-      const updatedFormData = typeof data === 'function' ? data(state.formData) : data;
+      const updatedFormData =
+        typeof data === 'function' ? data(state.formData) : data;
 
       // 클라이언트 환경에서만 sessionStorage에 저장
       if (typeof window !== 'undefined') {
@@ -70,3 +72,17 @@ export const useEventCreateStore = create<EventStoreState>((set) => ({
     });
   },
 }));
+
+export const useClearFormDataOnUnload = () => {
+  useEffect(() => {
+    const handleUnload = () => {
+      sessionStorage.removeItem('formData');
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+    };
+  }, []);
+};

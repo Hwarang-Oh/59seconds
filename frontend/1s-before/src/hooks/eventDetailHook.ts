@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { EventData } from '@/types/eventDetail';
 import { useEventStore } from '@/store/eventStore';
-import { fetchEventInfo } from '@/apis/eventDetailApi';
+import { fetchEventInfo, postRoomUnlock } from '@/apis/eventDetailApi';
 
 const defaultEventData: EventData = {
   memberResponseDto: {
@@ -36,12 +36,12 @@ export function useEventDetail(id: number) {
 
   const isCodeValid = useEventStore((state) => state.isCodeValid);
   const setIsCodeValid = useEventStore((state) => state.setCodeValid);
+  const setAuthenticated = useEventStore((state) => state.setAuthenticated);
 
   const loadEventData = async () => {
     try {
       const data = await fetchEventInfo(id);
       setEventData(data);
-      console.log(data);
     } catch (error) {
       console.error('이벤트 정보 로드 오류:', error);
     }
@@ -77,11 +77,19 @@ export function useEventDetail(id: number) {
     );
   };
 
-  const handleCodeSubmit = () => {
-    if (inputCode === eventData.enterCode) {
-      setIsCodeValid(true);
-    } else {
-      alert('올바른 참여 코드를 입력하세요.');
+  const handleCodeSubmit = async () => {
+    try {
+      const response = await postRoomUnlock(id, inputCode);
+      if (response && response.success) {
+        setIsCodeValid(true);
+        setAuthenticated(true);
+        alert('방 잠금이 해제되었습니다.');
+      } else {
+        alert('올바른 참여 코드를 입력하세요.');
+      }
+    } catch (error) {
+      console.error('코드 제출 오류:', error);
+      alert('코드 제출 중 오류가 발생했습니다.');
     }
   };
 
@@ -113,16 +121,16 @@ export function useEventDetail(id: number) {
   return {
     eventData,
     inputCode,
-    setInputCode,
     isCodeValid,
+    lastUpdated,
+    isSharePopupOpen,
+    copyUrl,
     openWindow,
-    handleCodeSubmit,
+    setInputCode,
     handleKeyDown,
     openSharePopUp,
     closeSharePopUp,
-    isSharePopupOpen,
-    copyUrl,
-    lastUpdated,
+    handleCodeSubmit,
     refreshUnlockCount,
   };
 }

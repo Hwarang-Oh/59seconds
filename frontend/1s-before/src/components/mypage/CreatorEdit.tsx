@@ -162,7 +162,7 @@ export default function CreatorEdit() {
                   value={localSnsLink}
                   onChange={(e) => setLocalSnsLink(e.target.value)}
                   placeholder="https://"
-                  className="w-48 p-2 border rounded"
+                  className="max-w-48 p-2 border rounded"
                   autoFocus
                 />
                 <button
@@ -176,7 +176,9 @@ export default function CreatorEdit() {
                 </button>
               </div>
             ) : (
-              <p className="text-gray-700">{userData.snsLink}</p>
+              <p className="text-gray-700 inline-block max-w-sm overflow-hidden text-ellipsis whitespace-nowrap align-middle">
+                {userData.snsLink}
+              </p>
             )}
           </section>
 

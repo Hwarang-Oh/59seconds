@@ -38,3 +38,11 @@ export interface EventIntroTabProps {
   creator: CreatorData;
   id: number;
 }
+
+export interface UnlockRoomResponse {
+  success: boolean;
+  message: string;
+}
+export interface UnlockRoomRequest {
+  enterCode: string;
+}
