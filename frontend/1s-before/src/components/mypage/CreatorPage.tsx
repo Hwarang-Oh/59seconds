@@ -10,15 +10,14 @@ export default function EventCreatorPage() {
   // IMP: 필터 상태 ("전체", "진행중", "종료")
   const [filter, setFilter] = useState('전체');
 
-  // IMP: 현재 시간을 기준으로 진행중인지 종료인지 판단
-  const currentTime = new Date();
-
   // IMP: 필터링된 이벤트 목록
   const filteredRooms = createdRooms.filter((room) => {
-    const endTime = new Date(room.endTime);
+    const onGoing = room.status === 'ONGOING';
+    const completed =
+      room.status === 'COMPLETED' || room.status === 'COMPLETED_NO_WINNER_INFO';
     if (filter === '전체') return true;
-    if (filter === '진행중') return endTime > currentTime;
-    if (filter === '종료') return endTime <= currentTime;
+    if (filter === '진행중') return onGoing;
+    if (filter === '종료') return completed;
     return true;
   });
 
@@ -88,12 +87,12 @@ export default function EventCreatorPage() {
               <div className="flex flex-row justify-between items-center mx-1 my-4 px-3">
                 <span
                   className={`mr-3 rounded-2xl px-2 py-1 ${
-                    new Date(room.endTime) > currentTime
+                    room.status == 'ONGOING'
                       ? 'bg-subColor4 text-subColor5'
                       : 'bg-gray-200 text-subColor3'
                   }`}
                 >
-                  {new Date(room.endTime) > currentTime ? '진행중' : '종료'}
+                  {room.status == 'ONGOING' ? '진행중' : '종료'}
                 </span>
                 <div className="text-subColor3 font-bold">
                   참여자 {room.unlockCount}명

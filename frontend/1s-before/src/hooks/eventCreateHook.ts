@@ -3,8 +3,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { ProductOrCoupon } from '@/types/eventCreate';
 import { useEventCreateStore } from '@/store/eventCreateStore';
 import { createEvent } from '@/apis/eventAPI';
+import { useMemberStore } from '@/store/memberStore';
 
 export function useEventCreate() {
+  const { member } = useMemberStore();
   const { formData, setFormData } = useEventCreateStore();
   const [bannerZoom, setBannerZoom] = useState(1);
   const [rectangleZoom, setRectangleZoom] = useState(1);
@@ -295,7 +297,7 @@ export function useEventCreate() {
     const formDataToSend = new FormData();
 
     const eventData = {
-      memberId: 1, // TODO: 나중에 memberId 변경
+      memberId: member?.memberId ?? 0,
       eventInfo: {
         title: formData.eventInfo.title,
         description: formData.eventInfo.description,
@@ -323,7 +325,7 @@ export function useEventCreate() {
 
     try {
       const response = await createEvent(formDataToSend);
-      console.log('Created room with ID:', response);
+      console.log('이벤트 룸 생성:', response);
     } catch (error) {
       console.error('Error:', error);
       alert('이벤트 룸 생성에 실패했습니다.');
