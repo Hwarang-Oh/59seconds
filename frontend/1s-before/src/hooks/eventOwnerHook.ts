@@ -80,15 +80,15 @@ export function useEventOwner() {
     formData.append('creatorName', ownerData.creatorName);
 
     try {
-      const result = await putCreatorInfo(formData); // creatorName만 전송
+      const result = await putCreatorInfo(formData);
       console.log('이름 저장 성공:', result);
     } catch (error) {
       console.error('이름 저장 중 오류 발생:', error);
     }
   };
 
-  const handleUserSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleUserSubmit = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
 
     const formData = new FormData();
     Object.entries(ownerData).forEach(([key, value]) => {

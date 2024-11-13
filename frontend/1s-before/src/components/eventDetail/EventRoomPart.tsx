@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import Link from 'next/link';
+import { useState } from 'react';
 import { IoMdLock } from 'react-icons/io';
 import { IoEnterOutline } from 'react-icons/io5';
 import { MdOutlineRefresh } from 'react-icons/md';
@@ -108,7 +109,21 @@ export default function EventRoomPart({
               <p className="text-gray-700 font-semibold">주최자 정보</p>
             </div>
             <p className="ml-6 text-sm text-gray-600">
-              {creator?.snsLink ? creator.snsLink : '입력된 정보 없음'}
+              {creator?.snsLink
+                ? creator.snsLink.split(/[\s,]+/).map((link, index) => (
+                    <span key={link}>
+                      <Link
+                        href={
+                          link.startsWith('http') ? link : `https://${link}`
+                        }
+                      >
+                        <span className="text-blue-500">@ {link}</span>
+                      </Link>
+                      {index < creator.snsLink.split(/[\s,]+/).length - 1 &&
+                        ', '}
+                    </span>
+                  ))
+                : '입력된 정보 없음'}
             </p>
 
             {/* 요청 기한 */}

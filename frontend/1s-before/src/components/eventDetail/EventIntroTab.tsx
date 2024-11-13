@@ -9,6 +9,8 @@ interface EventIntroTabProps {
 export default function EventIntroTab({ event }: Readonly<EventIntroTabProps>) {
   const { title, description, startTime, endTime, prizes = [] } = event ?? {};
 
+  const sortedPrizes = prizes.toSorted((a, b) => a.ranking - b.ranking);
+
   return (
     <div className="p-8 max-w-screen-lg mx-auto">
       <h2 className="text-2xl font-bold mb-10 text-gray-800">
@@ -27,9 +29,15 @@ export default function EventIntroTab({ event }: Readonly<EventIntroTabProps>) {
 
       <div className="bg-white rounded-lg border p-4 mb-6">
         <h3 className="font-semibold text-lg mb-8">상품 소개</h3>
-        <div className="flex space-x-4 m-5">
-          {prizes.length > 0 ? (
-            prizes.map((item) => (
+        <div
+          className={`grid gap-4 m-5 ${
+            sortedPrizes.length <= 2
+              ? 'grid-cols-2 justify-center'
+              : 'grid-cols-1 md:grid-cols-3'
+          }`}
+        >
+          {sortedPrizes.length > 0 ? (
+            sortedPrizes.map((item) => (
               <div
                 key={item.prizeId}
                 className="flex-1 bg-white py-4 rounded-lg border text-center"
