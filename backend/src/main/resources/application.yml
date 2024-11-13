@@ -60,3 +60,13 @@ minio:
   secret-key: ${minio.secret-key}
   file-manager-user: ${minio.file-manager-user}
   file-manager-password: ${minio.file-manager-password}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus  # prometheus 엔드포인트 활성화
+  endpoint:
+    prometheus:
+      enabled: true  # prometheus 메트릭 활성화
+
