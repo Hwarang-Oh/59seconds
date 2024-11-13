@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Cacheable
 public class Member {
 
     @Id

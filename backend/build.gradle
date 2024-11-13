@@ -24,20 +24,25 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+
+
+//	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+//	implementation 'org.springframework.boot:spring-boot-starter-security'
+//	implementation("io.opentelemetry:opentelemetry-exporter-jaeger:1.34.1")
+
 	implementation 'io.minio:minio:8.3.4'
 	implementation("io.opentelemetry.instrumentation:opentelemetry-spring-boot-starter")
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-//	implementation("io.opentelemetry:opentelemetry-exporter-jaeger:1.34.1")
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 
 	compileOnly 'org.projectlombok:lombok'
@@ -53,9 +58,14 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5' // JSON 처리용 Jackson 사용
 
 	// Redis + Redisson
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.redisson:redisson-spring-boot-starter:3.23.5'
+
+	// jpa 2차 cache by redis
+	implementation 'org.hibernate:hibernate-core:6.5.3.Final' // Hibernate Core
+	implementation 'org.hibernate:hibernate-jcache:6.5.3.Final' // JCache 지원
+	implementation 'org.ehcache:ehcache:3.10.6' // Ehcache
 }
+
 dependencyManagement {
 	imports {
 		mavenBom("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:2.6.0")

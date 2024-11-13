@@ -25,6 +25,18 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         jdbc:
           time_zone: Asia/Seoul
+        cache:
+          use_second_level_cache: true #2차 캐시 활성화
+          use_query_cache: true
+          region:
+            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+        javax:
+          cache:
+            provider: org.ehcache.jsr107.EhcacheCachingProvider
+          persistence:
+            sharedCache:
+              mode: ENABLE_SELETIVE #@cachable Entity
+
   sql:
     init:
       mode: always
@@ -60,13 +72,3 @@ minio:
   secret-key: ${minio.secret-key}
   file-manager-user: ${minio.file-manager-user}
   file-manager-password: ${minio.file-manager-password}
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: prometheus  # prometheus 엔드포인트 활성화
-  endpoint:
-    prometheus:
-      enabled: true  # prometheus 메트릭 활성화
-
