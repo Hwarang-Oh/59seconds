@@ -2,6 +2,7 @@ import api from '@/apis/commonAPI';
 import { isAxiosError } from 'axios';
 import { DeadlineEventTypes } from '@/types/home';
 import { EventParticipation } from '@/types/eventRoom';
+import { WinnerUserInfo, WinnerInfo } from '@/types/user';
 import { PageParamsType, PageType, SliceDetails } from '@/types/common/common';
 const EVENT_URL = 'v1/rooms';
 const EVENT_PARTICIPATION_URL = 'v1/participations';
@@ -33,9 +34,15 @@ export const getCreatorBanner = async (memberId: number): Promise<string> => {
   }
 };
 
-export const eventParticipate = async ({ eventId, memberId }: Readonly<EventParticipation>) => {
+export const eventParticipate = async ({
+  eventId,
+  memberId,
+}: Readonly<EventParticipation>) => {
   try {
-    const response = await api.post(EVENT_PARTICIPATION_URL, { eventId, memberId });
+    const response = await api.post(EVENT_PARTICIPATION_URL, {
+      eventId,
+      memberId,
+    });
     return response.data;
   } catch (error) {
     if (isAxiosError(error)) {
@@ -78,5 +85,36 @@ export const getDeadlineEvents = async (): Promise<DeadlineEventTypes[]> => {
       if (error.response?.status === 404) throw new Error('Not Found');
       else throw error;
     } else throw error;
+  }
+};
+
+export const postWinnerUserInfo = async (
+  roomId: number,
+  userInfo: WinnerUserInfo
+) => {
+  try {
+    const response = await api.post(
+      `${EVENT_URL}/${roomId}/userInfo`,
+      userInfo
+    );
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      console.error(error.message);
+    }
+  }
+};
+
+export const getWinnerInfo = async (roomId: number, winnerInfo: WinnerInfo) => {
+  try {
+    const response = await api.post(
+      `${EVENT_URL}/${roomId}/winners`,
+      winnerInfo
+    );
+    return response.data;
+  } catch (error) {
+    if (isAxiosError(error)) {
+      console.error(error.message);
+    }
   }
 };

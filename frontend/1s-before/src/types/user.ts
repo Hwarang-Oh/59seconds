@@ -32,3 +32,24 @@ export interface CreatedRoom {
   rectangleUrl: string;
   createdAt: string;
 }
+
+interface Winner {
+  winnerName: string;
+  address: string;
+  phone: string;
+  ranking: number;
+}
+
+export interface WinnerUserInfo {
+  memberId: number;
+  winnerName: string;
+  address: string;
+  phone: string;
+  ranking: number;
+}
+
+export interface WinnerInfo {
+  winners: Winner[];
+  message: string;
+  success: boolean;
+}

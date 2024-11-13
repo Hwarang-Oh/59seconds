@@ -1,14 +1,6 @@
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
+module.exports = {
+  reactStrictMode: true,
   images: {
-    remotePatterns: [
-      {
-        protocol: 'http',
-        hostname: 'k11a404.p.ssafy.io',
-      },
-    ],
+    domains: ['k11a404.p.ssafy.io'],
   },
 };
-
-export default nextConfig;
