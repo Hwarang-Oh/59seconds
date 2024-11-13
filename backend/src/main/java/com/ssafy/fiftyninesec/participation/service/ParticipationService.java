@@ -1,5 +1,6 @@
 package com.ssafy.fiftyninesec.participation.service;
 
+import com.esotericsoftware.minlog.Log;
 import com.ssafy.fiftyninesec.global.exception.CustomException;
 import com.ssafy.fiftyninesec.participation.dto.ParticipationResponseDto;
 import com.ssafy.fiftyninesec.participation.entity.Participation;
@@ -15,10 +16,11 @@ import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import static com.ssafy.fiftyninesec.global.constants.RedisConstants.*;
 import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
 
 @Service
@@ -34,18 +37,12 @@ import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
 public class ParticipationService {
 
     private final ParticipationRepository participationRepository;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final RedissonClient redissonClient;
     private final SimpMessagingTemplate messagingTemplate;
     private final EventRoomRepository eventRoomRepository;
     private final MemberRepository memberRepository;
-
-    private static final String RANKING_KEY_PREFIX = "event:ranking:";
-    private static final String PARTICIPATION_LOCK_PREFIX = "event:lock:";
-    private static final long LOCK_WAIT_TIME = 1000L; // 1초
-    private static final long LOCK_LEASE_TIME = 500L; // 500ms
     private final AtomicLong rankingCounter = new AtomicLong(0);
-
     // 기존 참여자들을 조회
     @Transactional(readOnly = true)
     public List<ParticipationResponseDto> getParticipationsByRoomId(Long roomId) {
@@ -72,34 +69,26 @@ public class ParticipationService {
     // 새로운 참여자를 저장하고 WebSocket으로 알림 전송
     @Transactional
     public ParticipationResponseDto saveParticipation(Long roomId, Long memberId) {
-        // 1. Redis에서 사용할 키 생성
-        String rankingKey = RANKING_KEY_PREFIX + roomId;
         String lockKey = PARTICIPATION_LOCK_PREFIX + roomId;
-
-        // 2. Redisson 분산 락 획득
         RLock lock = redissonClient.getLock(lockKey);
 
         try {
-            // 3. 락 획득 시도 (최대 1초 대기, 500ms 후 자동 해제)
             boolean isLocked = lock.tryLock(LOCK_WAIT_TIME, LOCK_LEASE_TIME, TimeUnit.MILLISECONDS);
             if (!isLocked) {
                 throw new CustomException(LOCK_ACQUISITION_FAILED);
             }
 
-            // 4. 기본 유효성 검사
             Member member = memberRepository.findById(memberId)
                     .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-
             EventRoom room = eventRoomRepository.findById(roomId)
                     .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
             validateEventTiming(room);
             validateDuplicateParticipation(roomId, memberId);
 
-            // 5. Redis Increment를 사용하여 순위 생성
+            String rankingKey = RANKING_KEY_PREFIX + roomId;
             Long currentRanking = redisTemplate.opsForValue().increment(rankingKey);
 
-            // 6. 참가자 정보 생성 및 저장
             Participation participation = Participation.builder()
                     .room(room)
                     .member(member)
@@ -110,9 +99,9 @@ public class ParticipationService {
 
             Participation savedParticipation = participationRepository.save(participation);
 
-            // 7. WebSocket을 통한 실시간 알림
+            String queueKey = PARTICIPATION_QUEUE_PREFIX + roomId;
             ParticipationResponseDto responseDto = convertToDto(savedParticipation);
-            messagingTemplate.convertAndSend("/result/sub/participations/" + roomId, responseDto);
+            redisTemplate.opsForList().rightPush(queueKey, responseDto);
 
             return responseDto;
 
@@ -120,12 +109,100 @@ public class ParticipationService {
             Thread.currentThread().interrupt();
             throw new CustomException(LOCK_INTERRUPTED);
         } finally {
-            // 8. 락 해제 (다른 스레드가 락을 획득한 경우에만)
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }
     }
+
+    @Scheduled(fixedRate = 10000)
+    public void processParticipationQueue() {
+        log.info("10초마다 메세지 보내고 잇어요!!!!!!!!!!!!!!!!");
+        Set<String> queueKeys = redisTemplate.keys(PARTICIPATION_QUEUE_PREFIX + "*");
+
+        if (queueKeys == null || queueKeys.isEmpty()) {
+            return;
+        }
+
+        for (String queueKey : queueKeys) {
+            Long roomId = extractRoomId(queueKey);
+            String lastProcessedKey = LAST_PROCESSED_ID_PREFIX + roomId; // 표시된 마지막 등수에 대한 키
+
+            Integer lastProcessedRanking = (Integer) redisTemplate.opsForValue().get(lastProcessedKey);
+            if (lastProcessedRanking == null) {
+                lastProcessedRanking = 0;
+            }
+
+            List<ParticipationResponseDto> participations = new ArrayList<>();
+            Object dto;
+
+            while ((dto = redisTemplate.opsForList().leftPop(queueKey)) != null) { //redis에 쌓인 정보 모두
+                try {
+                    if (dto instanceof LinkedHashMap) {
+                        @SuppressWarnings("unchecked")
+                        LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) dto;
+
+                        // ArrayList를 LocalDateTime으로 변환
+                        LocalDateTime joinedAt;
+                        if (map.get("joinedAt") instanceof ArrayList) {
+                            @SuppressWarnings("unchecked")
+                            ArrayList<Integer> dateList = (ArrayList<Integer>) map.get("joinedAt");
+                            joinedAt = LocalDateTime.of(
+                                    dateList.get(0), // year
+                                    dateList.get(1), // month
+                                    dateList.get(2), // day
+                                    dateList.get(3), // hour
+                                    dateList.get(4), // minute
+                                    dateList.get(5), // second
+                                    dateList.get(6)  // nanosecond
+                            );
+                        } else {
+                            joinedAt = LocalDateTime.parse((String) map.get("joinedAt"));
+                        }
+
+                        ParticipationResponseDto participationDto = ParticipationResponseDto.builder()
+                                .eventId(((Number) map.get("eventId")).longValue())
+                                .memberId(((Number) map.get("memberId")).longValue())
+                                .joinedAt(joinedAt)
+                                .ranking(((Number) map.get("ranking")).intValue())
+                                .isWinner((Boolean) map.get("isWinner"))
+                                .winnerName((String) map.get("winnerName"))
+                                .build();
+
+                        if (participationDto.getRanking() > lastProcessedRanking) { //표시된 마지막 랭킹보다 뒤에만 전송
+                            participations.add(participationDto);
+                            log.info("Added participation: {}", participationDto);
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("Error converting participation data: {} - Error: {}", dto, e.getMessage());
+                }
+            }
+
+            log.info("Participations to send: {}", participations);
+            if (!participations.isEmpty()) {
+                participations.sort(Comparator.comparing(ParticipationResponseDto::getRanking));
+
+                messagingTemplate.convertAndSend(
+                        "/result/sub/participations/" + roomId,
+                        participations
+                );
+
+                redisTemplate.opsForValue().set(
+                        lastProcessedKey, //몇등까지 표시했는지 갱신해줌
+                        participations.get(participations.size() - 1).getRanking()
+                );
+
+                log.info("Sent {} participations for room {}", participations.size(), roomId);
+            }
+        }
+    }
+
+    private Long extractRoomId(String queueKey) {
+        return Long.parseLong(queueKey.substring(queueKey.lastIndexOf(':') + 1));
+    }
+
+
     private void validateEventTiming(EventRoom room) {
         LocalDateTime now = LocalDateTime.now();
         if (now.isBefore(room.getStartTime())) {

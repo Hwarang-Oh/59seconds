@@ -1,9 +1,3 @@
-minio:
-  endpoint: "http://localhost:9000"
-  access-key: ${minio.file-manager-user}
-  secret-key: ${minio.file-manager-password}
-  bucket-name: "test-bucket"   
-
 otel:
   metrics:
     exporter: none  # Disable metrics exporter
