@@ -9,7 +9,7 @@ interface MemberState {
 
 interface MemberStore {
   member: MemberState | null;
-  setMember: (memberId: number, nickname: string, isCreatorMode: boolean) => void;
+  setMember: (memberId: number, nickname: string, isCreatorMode?: boolean) => void;
   clearMember: () => void;
   toggleCreatorMode: () => void;
 }
