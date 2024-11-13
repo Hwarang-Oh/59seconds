@@ -28,7 +28,7 @@ export default function EventDetail() {
     );
   }
 
-  // eventData에서 memberResponseDto를 creator로 설정
+  // IMP: eventData에서 memberResponseDto를 creator로 설정
   const creator = eventData.memberResponseDto;
 
   const handleTabClick = (tab: string) => {
@@ -44,16 +44,18 @@ export default function EventDetail() {
           <div className="col-span-3 border border-inherit p-10 rounded-lg shadow-lg">
             <div>
               <div
-                className='relative w-full h-auto mb-16 rounded-lg overflow-hidden'
-                style={{ aspectRatio: '1920 / 460' }}>
+                className="relative w-full h-auto mb-16 rounded-lg overflow-hidden"
+                style={{ aspectRatio: '1920 / 460' }}
+              >
                 <Image
                   src={eventData?.bannerImage || Banner}
-                  alt='배너'
+                  alt="배너"
                   fill
-                  className='w-full h-full object-cover rounded-lg'
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="w-full h-full object-cover rounded-lg"
                 />
               </div>
-              <div className='flex justify-around border-b mb-4'>
+              <div className="flex justify-around border-b mb-4">
                 <button
                   onClick={() => handleTabClick('event')}
                   className={`pb-2 ${

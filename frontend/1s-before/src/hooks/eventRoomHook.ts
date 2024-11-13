@@ -13,10 +13,18 @@ export function useEventRoom() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  // 참여한 이벤트 총 횟수와 우승 횟수 상태 정의
+  const [totalParticipatedCount, setTotalParticipatedCount] =
+    useState<number>(0);
+  const [totalWinsCount, setTotalWinsCount] = useState<number>(0);
+
   const fetchParticipatedRoomData = async () => {
     try {
       const partRoomsData = await fetchParticipatedRooms(member?.memberId ?? 0);
       setParticipatedRooms(partRoomsData);
+
+      setTotalParticipatedCount(partRoomsData.length);
+      setTotalWinsCount(partRoomsData.filter((room) => room.isWinner).length);
     } catch (err) {
       setError('참여한 방 데이터를 가져오는 중 오류가 발생했습니다.');
     }
@@ -41,9 +49,11 @@ export function useEventRoom() {
   }, [member]);
 
   return {
-    participatedRooms,
-    createdRooms,
-    loading,
     error,
+    loading,
+    createdRooms,
+    totalWinsCount,
+    participatedRooms,
+    totalParticipatedCount,
   };
 }

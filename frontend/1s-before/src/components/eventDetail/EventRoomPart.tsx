@@ -111,11 +111,15 @@ export default function EventRoomPart({
             <p className="ml-6 text-sm text-gray-600">
               {creator?.snsLink
                 ? creator.snsLink.split(/[\s,]+/).map((link, index) => (
-                    <span key={link}>
+                    <span
+                      key={link}
+                      className="inline-block max-w-sm overflow-hidden text-ellipsis whitespace-nowrap align-middle"
+                    >
                       <Link
                         href={
                           link.startsWith('http') ? link : `https://${link}`
                         }
+                        target="_blank"
                       >
                         <span className="text-blue-500">@ {link}</span>
                       </Link>
