@@ -9,15 +9,10 @@ export default function LargeBanner({
   bannerImage,
   rectangleImage,
 }: Readonly<LargeBannerProps>) {
+  const a = 'https://inflearn-nextjs.vercel.app/example.jpg';
   return (
-    <div className="relative w-full h-[460px] flex items-center justify-center overflow-hidden">
-      <Image
-        src={bannerImage}
-        alt={title}
-        fill
-        className="object-cover"
-        quality={100}
-      />
+    <div className='relative w-full h-[460px] flex items-center justify-center overflow-hidden'>
+      <Image src={a} alt={title} fill className='object-cover' quality={100} />
       {/* <img src={bannerImage} alt={title} className='object-cover h-full' /> */}
       <div className="absolute inset-0 bg-black opacity-5" />
       <Link href={`/event-detail/${eventId}`}>
