@@ -32,7 +32,17 @@ public class ParticipationController {
         ParticipationResponseDto responseDto = participationService.saveParticipation(request.getEventId(), request.getMemberId());
         return ResponseEntity.ok(responseDto);
     }
-
+    // db 개입 없이 ws 테스트
+    @PostMapping("/test")
+    public ResponseEntity<ParticipationResponseDto> createParticipationTest(@Valid @RequestBody ParticipationRequestDto request){
+        ParticipationResponseDto responseDto = participationService.saveParticipationTest(request.getEventId(), request.getMemberId());
+        return ResponseEntity.ok(responseDto);
+    }
+    @PostMapping("/test/reset-counter")
+    public ResponseEntity<String> resetTestCounter() {
+        participationService.resetTestRanking();
+        return ResponseEntity.ok("Test ranking counter has been reset.");
+    }
 
     private static final String RANKING_KEY_PREFIX = "event:ranking:";
 

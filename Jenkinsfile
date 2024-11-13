@@ -40,10 +40,11 @@ pipeline {
                         stage('Build Frontend') {
                             steps {
                                 dir('frontend/1s-before') {
-                                    // 환경변수 설정 추가
-                                    withCredentials([string(credentialsId: 'frontend-env-vars', variable: 'ENV_VARS')]) {
-                                        sh 'echo "$ENV_VARS" > .env'
-                                    }
+                                    // 환경변수 직접 설정
+                                    sh '''
+                                        echo "NEXT_PUBLIC_BASE_URL=https://k11a404.p.ssafy.io/api" > .env
+                                        echo "NEXT_PUBLIC_WEBSOCKET_URL=wss://k11a404.p.ssafy.io/api/v1/ws" >> .env
+                                    '''
                                     sh 'npm install'
                                     sh 'npm run build'
                                 }

@@ -43,20 +43,17 @@ export default function EventDetail() {
           {/* 입력 폼: 2/3 */}
           <div className="col-span-3 border border-inherit p-10 rounded-lg shadow-lg">
             <div>
-              {typeof eventData.bannerImage === 'string' && (
-                <div
-                  className="relative w-full h-auto mb-16 rounded-lg overflow-hidden"
-                  style={{ aspectRatio: '1920 / 460' }}
-                >
-                  <Image
-                    src={eventData.bannerImage ?? Banner}
-                    alt="배너"
-                    fill
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                </div>
-              )}
-              <div className="flex justify-around border-b mb-4">
+              <div
+                className='relative w-full h-auto mb-16 rounded-lg overflow-hidden'
+                style={{ aspectRatio: '1920 / 460' }}>
+                <Image
+                  src={eventData?.bannerImage || Banner}
+                  alt='배너'
+                  fill
+                  className='w-full h-full object-cover rounded-lg'
+                />
+              </div>
+              <div className='flex justify-around border-b mb-4'>
                 <button
                   onClick={() => handleTabClick('event')}
                   className={`pb-2 ${

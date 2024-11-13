@@ -13,8 +13,8 @@ import {
 
 export const useEventRoom = () => {
   const params = useParams();
-  const { member } = useMemberStore();
-
+  const member = useMemberStore((state) => state.member);
+  const setMember = useMemberStore((state) => state.setMember);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
   const [myResult, setMyResult] = useState<EventRoomResultViewInfo>({
@@ -25,7 +25,6 @@ export const useEventRoom = () => {
     isWinner: false,
     isMine: false,
   });
-
   const [eventInfo, setEventInfo] = useState<EventRoomInfo | null>(null);
   const [messages, setMessages] = useState<EventRoomMessageInfo[]>([]);
   const [eventStatus, setEventStatus] = useState<EventRoomCurrentInfo | null>(null);
@@ -33,17 +32,16 @@ export const useEventRoom = () => {
 
   // URL 파라미터 처리를 위한 useEffect
   useEffect(() => {
-    // eventId 파라미터 처리
-    const { id: eventId } = params as { id: string };
-
-    // memberData 파라미터 처리
     const urlParams = new URLSearchParams(window.location.search);
+    const { id: eventId } = params as { id: string };
     const memberData = urlParams.get('memberData');
+
     if (memberData) {
-      sessionStorage.setItem('member-storage', decodeURIComponent(memberData));
+      const parsedMemberData = JSON.parse(decodeURIComponent(memberData));
+      const { memberId, nickname, isCreatorMode } = parsedMemberData.state.member;
+      setMember(memberId, nickname, isCreatorMode);
     }
 
-    // eventId가 있을 경우 이벤트 정보 fetch 및 웹소켓 연결
     if (eventId) {
       fetchEventInfo(Number(eventId)).then((eventInfo) => {
         console.log(eventInfo);
@@ -66,13 +64,12 @@ export const useEventRoom = () => {
         subscriptions: ['eventRoomInfo', 'eventRoomMessage', 'eventRoomResult'],
       });
 
-      // Cleanup 함수
       return () => {
         console.log('Cleaning up WebSocket connection for event:', eventId);
         WebsocketAPI.disconnectFromEvent(Number(eventId));
       };
     }
-  }, [params]); // params를 의존성 배열에 추가
+  }, [params]);
 
   const toggleChatSize = () => setIsChatExpanded(!isChatExpanded);
 
