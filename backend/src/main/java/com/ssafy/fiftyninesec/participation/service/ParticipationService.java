@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +44,7 @@ public class ParticipationService {
     private static final String PARTICIPATION_LOCK_PREFIX = "event:lock:";
     private static final long LOCK_WAIT_TIME = 1000L; // 1초
     private static final long LOCK_LEASE_TIME = 500L; // 500ms
+    private final AtomicLong rankingCounter = new AtomicLong(0);
 
     // 기존 참여자들을 조회
     @Transactional(readOnly = true)
@@ -135,5 +137,42 @@ public class ParticipationService {
         if (participationRepository.existsByRoomIdAndMemberId(roomId, memberId)) {
             throw new CustomException(ALREADY_PARTICIPATED);
         }
+    }
+
+    // db 개입 없이 ws 테스트
+    // 새로운 참여자를 저장하고 WebSocket으로 알림 전송
+    @Transactional
+    public ParticipationResponseDto saveParticipationTest(Long roomId, Long memberId) {
+        try {
+            // 1. 순위 생성 (AtomicLong 사용)
+            long currentRanking = rankingCounter.incrementAndGet();
+
+            // 2. 더미 데이터로 응답 DTO 생성
+            ParticipationResponseDto responseDto = ParticipationResponseDto.builder()
+                    .eventId(roomId)
+                    .memberId(memberId)
+                    .joinedAt(LocalDateTime.now())
+                    .ranking((int) currentRanking)
+                    .isWinner(currentRanking <= 100) // 테스트용 당첨자 수 100으로 고정
+                    .winnerName("Tester_" + memberId) // 테스트용 이름
+                    .build();
+
+            // 3. WebSocket으로 실시간 알림 전송
+            messagingTemplate.convertAndSend("/result/sub/participations/" + roomId, responseDto);
+
+            log.info("Test participation processed - Room: {}, Member: {}, Ranking: {}",
+                    roomId, memberId, currentRanking);
+
+            return responseDto;
+
+        } catch (Exception e) {
+            log.error("Error in test participation: ", e);
+            throw new CustomException(PARTICIPATION_FAILED);
+        }
+    }
+
+    // rankingCounter 초기화를 위한 메서드 추가
+    public void resetTestRanking() {
+        rankingCounter.set(0);
     }
 }
