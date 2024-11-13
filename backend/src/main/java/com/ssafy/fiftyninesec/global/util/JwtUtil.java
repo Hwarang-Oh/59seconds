@@ -29,7 +29,7 @@ public class JwtUtil {
     @Value("${jwt.refresh.expiration}")
     private long refreshExpiration;
 
-    public static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public String generateAccessToken(Long memberId, String kakaoSub) {
         if (kakaoSub == null) {

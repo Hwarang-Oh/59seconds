@@ -1,6 +1,5 @@
 package com.ssafy.fiftyninesec.participation.service;
 
-import com.esotericsoftware.minlog.Log;
 import com.ssafy.fiftyninesec.global.exception.CustomException;
 import com.ssafy.fiftyninesec.participation.dto.ParticipationResponseDto;
 import com.ssafy.fiftyninesec.participation.entity.Participation;
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import static com.ssafy.fiftyninesec.global.constants.RedisConstants.*;
 import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
@@ -115,7 +112,7 @@ public class ParticipationService {
         }
     }
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 5000)
     public void processParticipationQueue() {
         log.info("10초마다 메세지 보내고 잇어요!!!!!!!!!!!!!!!!");
         Set<String> queueKeys = redisTemplate.keys(PARTICIPATION_QUEUE_PREFIX + "*");
