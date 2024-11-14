@@ -112,7 +112,7 @@ public class EventService {
                 .member(member)
                 .title(eventRoomRequestDto.getEventInfo().getTitle())
                 .description(eventRoomRequestDto.getEventInfo().getDescription())
-                .status(EventStatus.NOT_STARTED)
+                .status(EventStatus.ONGOING)
                 .startTime(eventRoomRequestDto.getEventPeriod().getStart())
                 .endTime(eventRoomRequestDto.getEventPeriod().getEnd())
                 .enterCode(eventRoomRequestDto.getParticipationCode())
