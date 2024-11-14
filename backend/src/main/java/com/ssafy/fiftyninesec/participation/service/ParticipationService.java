@@ -33,18 +33,15 @@ import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
 @Slf4j
 public class ParticipationService {
 
-    private static final String RANKING_KEY_PREFIX = "event:ranking:";
-
     private final AtomicLong rankingCounter = new AtomicLong(0);
 
-    private final ParticipationRepository participationRepository;
-    private final EventRoomRepository eventRoomRepository;
     private final MemberRepository memberRepository;
+    private final EventRoomRepository eventRoomRepository;
+    private final ParticipationRepository participationRepository;
 
     private final RedissonClient redissonClient;
-    private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
-
+    private final RedisTemplate<String, Object> redisTemplate;
 
     // 기존 참여자들을 조회
     @Transactional(readOnly = true)
@@ -55,18 +52,6 @@ public class ParticipationService {
         return participations.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
-    }
-
-    // 엔티티를 DTO로 변환하는 메서드
-    private ParticipationResponseDto convertToDto(Participation participation) {
-        return ParticipationResponseDto.builder()
-                .eventId(participation.getRoom().getId())
-                .memberId(participation.getMember().getId())
-                .joinedAt(participation.getJoinedAt())
-                .ranking(participation.getRanking())
-                .isWinner(participation.getIsWinner())
-                .winnerName(participation.getMember().getCreatorName())
-                .build();
     }
 
     // 새로운 참여자를 저장하고 WebSocket으로 알림 전송
@@ -89,9 +74,11 @@ public class ParticipationService {
             validateEventTiming(room);
             validateDuplicateParticipation(roomId, memberId);
 
+            // 랭킹 생성
             String rankingKey = RANKING_KEY_PREFIX + roomId;
             Long currentRanking = redisTemplate.opsForValue().increment(rankingKey);
 
+            // Participation 객체 생성 및 저장
             Participation participation = Participation.builder()
                     .room(room)
                     .member(member)
@@ -102,6 +89,7 @@ public class ParticipationService {
 
             Participation savedParticipation = participationRepository.save(participation);
 
+            // Redis 큐에 참여 정보 저장
             String queueKey = PARTICIPATION_QUEUE_PREFIX + roomId;
             ParticipationResponseDto responseDto = convertToDto(savedParticipation);
             redisTemplate.opsForList().rightPush(queueKey, responseDto);
@@ -139,40 +127,12 @@ public class ParticipationService {
             List<ParticipationResponseDto> participations = new ArrayList<>();
             Object dto;
 
-            while ((dto = redisTemplate.opsForList().leftPop(queueKey)) != null) { //redis에 쌓인 정보 모두
+            //redis에 쌓인 정보 모두
+            while ((dto = redisTemplate.opsForList().leftPop(queueKey)) != null) {
                 try {
                     if (dto instanceof LinkedHashMap) {
-                        @SuppressWarnings("unchecked")
-                        LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) dto;
-
-                        // ArrayList를 LocalDateTime으로 변환
-                        LocalDateTime joinedAt;
-                        if (map.get("joinedAt") instanceof ArrayList) {
-                            @SuppressWarnings("unchecked")
-                            ArrayList<Integer> dateList = (ArrayList<Integer>) map.get("joinedAt");
-                            joinedAt = LocalDateTime.of(
-                                    dateList.get(0), // year
-                                    dateList.get(1), // month
-                                    dateList.get(2), // day
-                                    dateList.get(3), // hour
-                                    dateList.get(4), // minute
-                                    dateList.get(5), // second
-                                    dateList.get(6)  // nanosecond
-                            );
-                        } else {
-                            joinedAt = LocalDateTime.parse((String) map.get("joinedAt"));
-                        }
-
-                        ParticipationResponseDto participationDto = ParticipationResponseDto.builder()
-                                .eventId(((Number) map.get("eventId")).longValue())
-                                .memberId(((Number) map.get("memberId")).longValue())
-                                .joinedAt(joinedAt)
-                                .ranking(((Number) map.get("ranking")).intValue())
-                                .isWinner((Boolean) map.get("isWinner"))
-                                .winnerName((String) map.get("winnerName"))
-                                .build();
-
-                        if (participationDto.getRanking() > lastProcessedRanking) { //표시된 마지막 랭킹보다 뒤에만 전송
+                        ParticipationResponseDto participationDto = convertToParticipationDto((LinkedHashMap<String, Object>) dto);
+                        if (participationDto.getRanking() > lastProcessedRanking) {
                             participations.add(participationDto);
                             log.info("Added participation: {}", participationDto);
                         }
@@ -182,40 +142,8 @@ public class ParticipationService {
                 }
             }
 
-            log.info("Participations to send: {}", participations);
-            if (!participations.isEmpty()) {
-                participations.sort(Comparator.comparing(ParticipationResponseDto::getRanking));
-
-                messagingTemplate.convertAndSend(
-                        "/result/sub/participations/" + roomId,
-                        participations
-                );
-
-                redisTemplate.opsForValue().set(
-                        lastProcessedKey, //몇등까지 표시했는지 갱신해줌
-                        participations.get(participations.size() - 1).getRanking()
-                );
-
-                log.info("Sent {} participations for room {}", participations.size(), roomId);
-            }
-        }
-    }
-
-    private Long extractRoomId(String queueKey) {
-        return Long.parseLong(queueKey.substring(queueKey.lastIndexOf(':') + 1));
-    }
-
-
-    private void validateEventTiming(EventRoom room) {
-        LocalDateTime now = LocalDateTime.now();
-        if (now.isBefore(room.getStartTime())) {
-            throw new CustomException(EVENT_NOT_STARTED);
-        }
-    }
-
-    private void validateDuplicateParticipation(Long roomId, Long memberId) {
-        if (participationRepository.existsByRoomIdAndMemberId(roomId, memberId)) {
-            throw new CustomException(ALREADY_PARTICIPATED);
+            // 웹소켓으로 참여 정보 전송
+            sendParticipations(roomId, participations, lastProcessedKey);
         }
     }
 
@@ -251,14 +179,97 @@ public class ParticipationService {
         }
     }
 
+
+    // ------------------------------------------------------------
+
+    private void sendParticipations(Long roomId, List<ParticipationResponseDto> participations, String lastProcessedKey) {
+        if (!participations.isEmpty()) {
+            participations.sort(Comparator.comparing(ParticipationResponseDto::getRanking));
+
+            messagingTemplate.convertAndSend(
+                    "/result/sub/participations/" + roomId,
+                    participations
+            );
+
+            redisTemplate.opsForValue().set(
+                    lastProcessedKey,
+                    participations.get(participations.size() - 1).getRanking()
+            );
+
+            log.info("Sent {} participations for room {}", participations.size(), roomId);
+        }
+    }
+
+    private void validateEventTiming(EventRoom room) {
+        LocalDateTime now = LocalDateTime.now();
+        if (now.isBefore(room.getStartTime())) {
+            throw new CustomException(EVENT_NOT_STARTED);
+        }
+    }
+
+    private void validateDuplicateParticipation(Long roomId, Long memberId) {
+        if (participationRepository.existsByRoomIdAndMemberId(roomId, memberId)) {
+            throw new CustomException(ALREADY_PARTICIPATED);
+        }
+    }
+
+    private Long extractRoomId(String queueKey) {
+        return Long.parseLong(queueKey.substring(queueKey.lastIndexOf(':') + 1));
+    }
+
     // rankingCounter 초기화를 위한 메서드 추가
     public void resetTestRanking() {
         rankingCounter.set(0);
     }
 
+    // Redis에서 해당 rankingKey 삭제
     public void deleteEventRanking(Long roomId){
         String rankingKey = RANKING_KEY_PREFIX + roomId;
-        // Redis에서 해당 rankingKey 삭제
         redisTemplate.delete(rankingKey);
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+
+    // 엔티티를 DTO로 변환하는 메서드
+    private ParticipationResponseDto convertToDto(Participation participation) {
+        return ParticipationResponseDto.builder()
+                .eventId(participation.getRoom().getId())
+                .memberId(participation.getMember().getId())
+                .joinedAt(participation.getJoinedAt())
+                .ranking(participation.getRanking())
+                .isWinner(participation.getIsWinner())
+                .winnerName(participation.getMember().getCreatorName())
+                .build();
+    }
+
+    private ParticipationResponseDto convertToParticipationDto(LinkedHashMap<String, Object> map) {
+        LocalDateTime joinedAt = convertToLocalDateTime(map.get("joinedAt"));
+
+        return ParticipationResponseDto.builder()
+                .eventId(((Number) map.get("eventId")).longValue())
+                .memberId(((Number) map.get("memberId")).longValue())
+                .joinedAt(joinedAt)
+                .ranking(((Number) map.get("ranking")).intValue())
+                .isWinner((Boolean) map.get("isWinner"))
+                .winnerName((String) map.get("winnerName"))
+                .build();
+    }
+
+    private LocalDateTime convertToLocalDateTime(Object joinedAt) {
+        if (joinedAt instanceof ArrayList) {
+            @SuppressWarnings("unchecked")
+            ArrayList<Integer> dateList = (ArrayList<Integer>) joinedAt;
+            return LocalDateTime.of(
+                    dateList.get(0), // year
+                    dateList.get(1), // month
+                    dateList.get(2), // day
+                    dateList.get(3), // hour
+                    dateList.get(4), // minute
+                    dateList.get(5), // second
+                    dateList.get(6)  // nanosecond
+            );
+        } else {
+            return LocalDateTime.parse((String) joinedAt);
+        }
     }
 }
