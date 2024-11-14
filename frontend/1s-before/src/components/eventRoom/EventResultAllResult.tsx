@@ -1,76 +1,32 @@
 import EventEachResult from '@/components/eventRoom/EventResultEachResult';
 import { useState, useEffect, useCallback } from 'react';
-import { EventRoomResultViewInfo } from '@/types/eventRoom';
-// import RankingDummy from '@/mocks/RankingDummy.json';
-
-interface SplitResults {
-  beforeMine: EventRoomResultViewInfo[];
-  afterMine: EventRoomResultViewInfo[];
-}
+import { EventRoomResultViewInfo, EventRoomAllResultProps } from '@/types/eventRoom';
 
 export default function EventResultAllResult({
   list,
-}: Readonly<{ list: EventRoomResultViewInfo[] }>) {
+  myResult,
+}: Readonly<EventRoomAllResultProps>) {
   const [expandedSection, setExpandedSection] = useState<'before' | 'after' | null>(null);
   const [displayData, setDisplayData] = useState<EventRoomResultViewInfo[]>([]);
-  // const [currentIndex, setCurrentIndex] = useState(5);
-  const [foundMyResult, setFoundMyResult] = useState(false);
 
-  // 새로운 데이터가 들어올 때마다 처리하는 함수
-  const processNewData = useCallback((newItem: EventRoomResultViewInfo) => {
-    setDisplayData((prev) => {
-      const newData = [...prev, newItem];
-
-      // 새로 들어온 항목이 내 결과인 경우
-      if (newItem.isMine) {
-        setFoundMyResult(true);
-      }
-
-      return newData;
-    });
-  }, []);
-
-  // list prop이 변경될 때마다 새로운 데이터 처리
-  useEffect(() => {
-    if (list.length > displayData.length) {
-      processNewData(list[list.length - 1]);
-    }
-  }, [list, processNewData, displayData.length]);
-
-  // 초기 데이터 로드
+  // 초기 데이터 로드, myResult와 같은 memberId는 제외
   useEffect(() => {
     if (list.length > 0) {
-      const initialData = list;
-      initialData.forEach((item) => {
-        if (item.isMine) setFoundMyResult(true);
-      });
-      setDisplayData(initialData);
+      const filteredList = list.filter((item) => item.memberId !== myResult?.memberId);
+      setDisplayData(filteredList);
     }
-  }, []);
-
-  /* Socket 시뮬레이션 주석 처리
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (currentIndex < RankingDummy.length) {
-        processNewData(RankingDummy[currentIndex]);
-        setCurrentIndex((prev) => prev + 1);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [currentIndex, processNewData]);
-  */
+  }, [list, myResult]);
 
   // 현재까지의 데이터를 기반으로 표시할 항목 분류
   const getDisplaySections = useCallback(() => {
-    const myResult = displayData.find((item) => item.isMine);
-    const myRank = myResult?.ranking ?? 0;
+    const myIndex = displayData.findIndex((item) => item.memberId === myResult?.memberId);
+    const myRank = myIndex >= 0 ? myIndex + 1 : null;
 
     // 상위 10개는 항상 표시
     const top10 = displayData.slice(0, 10);
 
     // 내 결과가 없거나 상위 10등 안에 있는 경우
-    if (!foundMyResult || myRank <= 10) {
+    if (myRank === null || myRank <= 10) {
       return {
         top: top10,
         middle: displayData.slice(10),
@@ -86,7 +42,7 @@ export default function EventResultAllResult({
       myResult,
       bottom: displayData.slice(myRank),
     };
-  }, [displayData, foundMyResult]);
+  }, [displayData, myResult]);
 
   const renderCollapsedSection = (count: number, onClick: () => void, label: string) => {
     if (count === 0) return null;
@@ -109,7 +65,7 @@ export default function EventResultAllResult({
     );
   };
 
-  const { top, middle, myResult, bottom } = getDisplaySections();
+  const { top, middle, myResult: myResultInList, bottom } = getDisplaySections();
 
   return (
     <div className='flex flex-col gap-3'>
@@ -149,9 +105,9 @@ export default function EventResultAllResult({
         ))}
 
       {/* 내 결과 (10등 밖일 경우) */}
-      {myResult && (
+      {myResultInList && (
         <div className='animate-slideIn'>
-          <EventEachResult {...myResult} />
+          <EventEachResult {...myResultInList} />
         </div>
       )}
 

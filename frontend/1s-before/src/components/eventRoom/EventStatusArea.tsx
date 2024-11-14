@@ -5,7 +5,6 @@ import EventStatusCountdownTimer from '@/components/eventRoom/EventStatusCountdo
 import EventStatusHeader from '@/components/eventRoom/EventStatusHeader';
 import { useState } from 'react';
 import { useMemberStore } from '@/store/memberStore';
-import { eventParticipate } from '@/apis/eventAPI';
 import { EventStatusAreaProps } from '@/types/eventRoom';
 
 export default function EventStatusArea({
@@ -17,6 +16,7 @@ export default function EventStatusArea({
   eventTime,
   myResult,
   goDrawView,
+  getMyEventResult,
 }: Readonly<EventStatusAreaProps>) {
   const [isTimerCompleted, setIsTimerCompleted] = useState(false);
   const member = useMemberStore((state) => state.member);
@@ -53,7 +53,7 @@ export default function EventStatusArea({
               isDisabled={!isTimerCompleted}
               onClick={() => {
                 if (member) {
-                  eventParticipate({ eventId: eventId, memberId: member.memberId });
+                  getMyEventResult(eventId);
                   goDrawView();
                 }
               }}

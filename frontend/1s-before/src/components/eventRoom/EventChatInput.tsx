@@ -8,7 +8,6 @@ import { EventRoomMessageInfo } from '@/types/eventRoom';
 export default function EventChatInput({ eventId }: Readonly<{ eventId: number }>) {
   const [input, setInput] = useState('');
   const { member } = useMemberStore();
-  console.log(member);
 
   const handleSendMessage = () => {
     if (input.trim() !== '' && member) {
