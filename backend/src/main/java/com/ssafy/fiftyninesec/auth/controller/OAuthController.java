@@ -1,5 +1,6 @@
 package com.ssafy.fiftyninesec.auth.controller;
 
+import com.ssafy.fiftyninesec.auth.dto.OAuthResponseDto;
 import com.ssafy.fiftyninesec.auth.service.OAuthService;
 import com.ssafy.fiftyninesec.global.util.JwtUtil;
 import com.ssafy.fiftyninesec.solution.entity.Member;
@@ -21,14 +22,14 @@ public class OAuthController {
     private final JwtUtil jwtUtil;
 
     @GetMapping("/kakao/callback")
-    public ResponseEntity<?> kakaoCallback(@RequestParam("code") String code, HttpServletResponse response) {
+    public ResponseEntity<OAuthResponseDto> kakaoCallback(@RequestParam("code") String code, HttpServletResponse response) {
         ArrayList<String> tokens = oAuthService.getKakaoTokens(code);
         String idToken = tokens.get(2);
         
         String kakaoSub = jwtUtil.getSubFromIdToken(idToken);
     
         Member member = memberRepository.findByKakaoSub(kakaoSub);
-        oAuthService.loginOrRegister(member, kakaoSub, response);
-        return ResponseEntity.ok().build();
+
+        return ResponseEntity.ok(oAuthService.loginOrRegister(member, kakaoSub, response));
     }
 }
