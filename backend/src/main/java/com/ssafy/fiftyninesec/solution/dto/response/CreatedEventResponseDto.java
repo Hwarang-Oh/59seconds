@@ -21,7 +21,7 @@ public class CreatedEventResponseDto {
     private LocalDateTime endTime;
 
     private String enterCode;
-    private Integer unlockCount = 0;
+    private int unlockCount = 0;
 
     private String bannerUrl;
     private String rectangleUrl;
@@ -35,7 +35,7 @@ public class CreatedEventResponseDto {
         this.startTime = eventRoom.getStartTime();
         this.endTime = eventRoom.getEndTime();
         this.enterCode = eventRoom.getEnterCode();
-        this.unlockCount = (eventRoom.getUnlockCount() == null ? 0 : eventRoom.getUnlockCount());
+        this.unlockCount = (eventRoom.getUnlockCount());
         this.bannerUrl = eventRoom.getBannerImage();
         this.rectangleUrl = eventRoom.getRectangleImage();
         this.createdAt = eventRoom.getCreatedAt();

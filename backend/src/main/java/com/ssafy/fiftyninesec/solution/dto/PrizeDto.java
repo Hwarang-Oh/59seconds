@@ -14,11 +14,11 @@ public class PrizeDto {
     private Long prizeId;
     private Long roomId;
     private String prizeType;
-    private Integer winnerCount;
+    private int winnerCount;
     private String prizeName;
-    private Integer ranking;
+    private int ranking;
 
-    public PrizeDto of(Prize prize) {
+    public static PrizeDto of(Prize prize) {
         return PrizeDto.builder()
                 .prizeId(prize.getId())
                 .prizeType(prize.getPrizeType())

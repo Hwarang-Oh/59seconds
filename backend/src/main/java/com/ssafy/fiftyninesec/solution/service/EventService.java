@@ -276,14 +276,7 @@ public class EventService {
 
         List<Prize> prizes = prizeRepository.findByEventRoom_Id(roomId);
         List<PrizeDto> prizeDtos = prizes.stream()
-                .map(prize -> PrizeDto.builder()
-                        .prizeId(prize.getId())
-                        .prizeType(prize.getPrizeType())
-                        .winnerCount(prize.getWinnerCount())
-                        .prizeName(prize.getPrizeName())
-                        .ranking(prize.getRanking())
-                        .build()
-                )
+                .map(PrizeDto::of)
                 .collect(Collectors.toList());
 
         EventRoomResponseDto responseDto = EventRoomResponseDto.builder()
