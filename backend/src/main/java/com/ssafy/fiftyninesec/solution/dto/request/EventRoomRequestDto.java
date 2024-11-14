@@ -72,7 +72,7 @@ public class EventRoomRequestDto {
         @Schema(description = "상품 또는 쿠폰의 이름", example = "맥북 에어")
         private String name;
 
-        @Schema(description = "추천할 인원 수", example = "2")
+        @Schema(description = "추첨할 인원 수", example = "2")
         private int recommendedPeople;
     }
 

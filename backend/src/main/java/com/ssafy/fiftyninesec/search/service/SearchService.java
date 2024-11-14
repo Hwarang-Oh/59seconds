@@ -102,7 +102,7 @@ public class SearchService {
         String mainPrize = eventRoomUtils.getMainPrize(eventRoom);
         int prizeCount = eventRoomUtils.getPrizeCount(eventId);
         int ranking = eventRoomUtils.calculateRanking(eventRoomSearch, eventRoomsPage);
-        int unlockCount = eventRoom.getUnlockCount() == null ? 0 : eventRoom.getUnlockCount();
+        int unlockCount = eventRoom.getUnlockCount();
         boolean isDeadline = eventRoom.getEndTime().isBefore(LocalDateTime.now().plusHours(24));
 
         return EventRoomSearchResponseDto.builder()

@@ -37,11 +37,11 @@ public class EventRoomSearch {
     @Field(type = FieldType.Date, format = {}, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endTime;
 
-    private Integer winnerNum;
+    private int winnerNum;
 
     private String enterCode;
 
-    private Integer unlockCount;
+    private int unlockCount;
 
     private String bannerImage;
 

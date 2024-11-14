@@ -75,8 +75,8 @@ public class EventController {
             @ApiResponse(responseCode = "200", description = "우승자 정보가 성공적으로 조회되었습니다.")
     })
     @GetMapping("/{roomId}/winners")
-    public ResponseEntity<WinnerResponseDto> getWinners(
-            @Parameter(description = "우승자 정보를 조회할 이벤트 룸 ID") @PathVariable Long roomId) {
+    public ResponseEntity<WinnerInfoListResponseDto> getWinners(
+            @Parameter(description = "우승자 정보를 조회할 이벤트 룸 ID") @PathVariable long roomId) {
         return ResponseEntity.ok(eventService.getWinners(roomId));
     }
 
