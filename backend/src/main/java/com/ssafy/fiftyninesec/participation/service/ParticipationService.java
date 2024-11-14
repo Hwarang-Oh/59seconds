@@ -33,7 +33,7 @@ import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
 @Slf4j
 public class ParticipationService {
 
-    private static final long PARTICIPATION_QUEUE_RATE = 5000; // 5초
+    private static final long PARTICIPATION_QUEUE_RATE = 3000; // 5초
 
     private final AtomicLong rankingCounter = new AtomicLong(0);
 
@@ -68,6 +68,7 @@ public class ParticipationService {
                 throw new CustomException(LOCK_ACQUISITION_FAILED);
             }
 
+            // 유효성 검사
             Member member = memberRepository.findById(memberId)
                     .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
             EventRoom room = eventRoomRepository.findById(roomId)
@@ -76,11 +77,11 @@ public class ParticipationService {
             validateEventTiming(room);
             validateDuplicateParticipation(roomId, memberId);
 
-            // 랭킹 생성
+            // 1. 랭킹 생성
             String rankingKey = RANKING_KEY_PREFIX + roomId;
             Long currentRanking = redisTemplate.opsForValue().increment(rankingKey);
 
-            // Participation 객체 생성 및 저장
+            // 2. Participation 객체 생성 및 저장
             Participation participation = Participation.builder()
                     .room(room)
                     .member(member)
@@ -96,8 +97,22 @@ public class ParticipationService {
             ParticipationResponseDto responseDto = convertToDto(savedParticipation);
             redisTemplate.opsForList().rightPush(queueKey, responseDto);
 
-            return responseDto;
+            // 자신의 랭킹보다 낮은 참여자 정보 가져오기
+            List<Object> participants = redisTemplate.opsForList().range(queueKey, 0, -1);
+            List<ParticipationResponseDto> lowerRankedParticipants = new ArrayList<>();
 
+            for (Object obj : participants) {
+                if (obj instanceof ParticipationResponseDto) {
+                    ParticipationResponseDto dto = (ParticipationResponseDto) obj;
+                    if (dto.getRanking() < currentRanking.intValue()) { // 내 랭킹보다 낮은 경우
+                        lowerRankedParticipants.add(dto);
+                    }
+                }
+            }
+
+            messagingTemplate.convertAndSend("/result/sub/participations/" + roomId, lowerRankedParticipants);
+
+            return responseDto;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new CustomException(LOCK_INTERRUPTED);
@@ -110,15 +125,17 @@ public class ParticipationService {
 
     @Scheduled(fixedRate = PARTICIPATION_QUEUE_RATE)
     public void processParticipationQueue() {
-        log.info("10초마다 메세지 보내고 잇어요!!!!!!!!!!!!!!!!");
+
+        log.debug("processParticipationQueue: 매 {} ms", PARTICIPATION_QUEUE_RATE);
         Set<String> queueKeys = redisTemplate.keys(PARTICIPATION_QUEUE_PREFIX + "*");
 
         if (queueKeys == null || queueKeys.isEmpty()) {
+            log.info("참여 큐가 없습니다.");
             return;
         }
 
         for (String queueKey : queueKeys) {
-            Long roomId = extractRoomId(queueKey);
+            Long roomId = Long.parseLong(queueKey.substring(queueKey.lastIndexOf(':') + 1));
             String lastProcessedKey = LAST_PROCESSED_ID_PREFIX + roomId; // 표시된 마지막 등수에 대한 키
 
             Integer lastProcessedRanking = (Integer) redisTemplate.opsForValue().get(lastProcessedKey);
@@ -149,40 +166,7 @@ public class ParticipationService {
         }
     }
 
-    // db 개입 없이 ws 테스트
-    // 새로운 참여자를 저장하고 WebSocket으로 알림 전송
-    @Transactional
-    public ParticipationResponseDto saveParticipationTest(Long roomId, Long memberId) {
-        try {
-            // 1. 순위 생성 (AtomicLong 사용)
-            long currentRanking = rankingCounter.incrementAndGet();
-
-            // 2. 더미 데이터로 응답 DTO 생성
-            ParticipationResponseDto responseDto = ParticipationResponseDto.builder()
-                    .eventId(roomId)
-                    .memberId(memberId)
-                    .joinedAt(LocalDateTime.now())
-                    .ranking((int) currentRanking)
-                    .isWinner(currentRanking <= 100) // 테스트용 당첨자 수 100으로 고정
-                    .winnerName("Tester_" + memberId) // 테스트용 이름
-                    .build();
-
-            // 3. WebSocket으로 실시간 알림 전송
-            messagingTemplate.convertAndSend("/result/sub/participations/" + roomId, responseDto);
-
-            log.info("Test participation processed - Room: {}, Member: {}, Ranking: {}",
-                    roomId, memberId, currentRanking);
-
-            return responseDto;
-
-        } catch (Exception e) {
-            log.error("Error in test participation: ", e);
-            throw new CustomException(PARTICIPATION_FAILED);
-        }
-    }
-
-
-    // ------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------
 
     private void sendParticipations(Long roomId, List<ParticipationResponseDto> participations, String lastProcessedKey) {
         if (!participations.isEmpty()) {
@@ -215,10 +199,6 @@ public class ParticipationService {
         }
     }
 
-    private Long extractRoomId(String queueKey) {
-        return Long.parseLong(queueKey.substring(queueKey.lastIndexOf(':') + 1));
-    }
-
     // rankingCounter 초기화를 위한 메서드 추가
     public void resetTestRanking() {
         rankingCounter.set(0);
@@ -230,7 +210,7 @@ public class ParticipationService {
         redisTemplate.delete(rankingKey);
     }
 
-    // -----------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------
 
     // 엔티티를 DTO로 변환하는 메서드
     private ParticipationResponseDto convertToDto(Participation participation) {
@@ -274,4 +254,39 @@ public class ParticipationService {
             return LocalDateTime.parse((String) joinedAt);
         }
     }
+
+// TEST -----------------------------------------------------------------------------------------------------
+
+    // db 개입 없이 ws 테스트
+    // 새로운 참여자를 저장하고 WebSocket으로 알림 전송
+    @Transactional
+    public ParticipationResponseDto saveParticipationTest(Long roomId, Long memberId) {
+        try {
+            // 1. 순위 생성 (AtomicLong 사용)
+            long currentRanking = rankingCounter.incrementAndGet();
+
+            // 2. 더미 데이터로 응답 DTO 생성
+            ParticipationResponseDto responseDto = ParticipationResponseDto.builder()
+                    .eventId(roomId)
+                    .memberId(memberId)
+                    .joinedAt(LocalDateTime.now())
+                    .ranking((int) currentRanking)
+                    .isWinner(currentRanking <= 100) // 테스트용 당첨자 수 100으로 고정
+                    .winnerName("Tester_" + memberId) // 테스트용 이름
+                    .build();
+
+            // 3. WebSocket으로 실시간 알림 전송
+            messagingTemplate.convertAndSend("/result/sub/participations/" + roomId, responseDto);
+
+            log.info("Test participation processed - Room: {}, Member: {}, Ranking: {}",
+                    roomId, memberId, currentRanking);
+
+            return responseDto;
+
+        } catch (Exception e) {
+            log.error("Error in test participation: ", e);
+            throw new CustomException(PARTICIPATION_FAILED);
+        }
+    }
+
 }
