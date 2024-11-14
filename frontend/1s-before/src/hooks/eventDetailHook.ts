@@ -80,7 +80,7 @@ export function useEventDetail(id: number) {
   const handleCodeSubmit = async () => {
     try {
       const response = await postRoomUnlock(id, inputCode);
-      if (response && response.success) {
+      if (response?.success) {
         setIsCodeValid(true);
         setAuthenticated(true);
         alert('방 잠금이 해제되었습니다.');

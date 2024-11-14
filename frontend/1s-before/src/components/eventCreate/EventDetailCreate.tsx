@@ -8,28 +8,31 @@ import { useEventCreate } from '@/hooks/eventCreateHook';
 export default function EventDetailCreate() {
   const {
     formData,
-    handleInputChange,
-    handleDescriptionChange,
-    handleParticipationCodeChange,
-    handleDateChange,
-    handleFileChange,
-    handleAddProductOrCoupon,
-    handleRemoveProductOrCoupon,
-    handleProductOrCouponChange,
     bannerCrop,
     bannerZoom,
+    rectImageUrl,
     rectangleCrop,
     rectangleZoom,
-    rectImageUrl,
     bannerImageUrl,
+    handleCrop,
+    handleDateChange,
+    handleFileChange,
+    handleInputChange,
+    handleStartDateChange,
     handleBannerCropChange,
     handleBannerZoomChange,
+    handleDescriptionChange,
+    handleAddProductOrCoupon,
+    handleBannerCropComplete,
     handleRectangleCropChange,
     handleRectangleZoomChange,
-    handleBannerCropComplete,
+    handleRemoveProductOrCoupon,
+    handleProductOrCouponChange,
     handleRectangleCropComplete,
-    handleCrop,
+    handleParticipationCodeChange,
   } = useEventCreate();
+
+  const today = new Date();
 
   return (
     <>
@@ -178,15 +181,18 @@ export default function EventDetailCreate() {
                   handleProductOrCouponChange(
                     item.id,
                     'recommendedPeople',
-                    Math.max(0, Number(e.target.value))
+                    Math.max(1, Number(e.target.value))
                   )
                 }
                 className="p-2 border rounded w-16 text-start"
+                min="1"
               />
               <button
                 type="button"
                 onClick={() => handleRemoveProductOrCoupon(item.id)}
-                className="text-red-500 pl-2 text-sm"
+                className={`text-red-500 pl-2 text-sm ${
+                  index === 0 ? 'invisible' : ''
+                }`}
               >
                 삭제
               </button>
@@ -212,10 +218,13 @@ export default function EventDetailCreate() {
                   : null
               }
               placeholderText="시작 날짜를 지정해주세요"
-              onChange={(date) => handleDateChange('start', date)}
+              onChange={handleStartDateChange}
               showTimeSelect
               dateFormat="Pp"
               className="p-2 border rounded w-full"
+              minDate={today}
+              minTime={new Date(today.setHours(0, 0, 0, 0))}
+              maxTime={new Date(today.setHours(23, 59, 59, 999))}
             />
           </div>
           <span>~</span>
@@ -232,6 +241,20 @@ export default function EventDetailCreate() {
               showTimeSelect
               dateFormat="Pp"
               className="p-2 border rounded w-full"
+              minDate={
+                formData.eventPeriod.start
+                  ? new Date(formData.eventPeriod.start)
+                  : today
+              }
+              minTime={
+                formData.eventPeriod.start &&
+                formData.eventPeriod.end &&
+                new Date(formData.eventPeriod.start).toDateString() ===
+                  new Date(formData.eventPeriod.end).toDateString()
+                  ? new Date(formData.eventPeriod.start)
+                  : new Date(today.setHours(0, 0, 0, 0))
+              }
+              maxTime={new Date(today.setHours(23, 59, 59, 999))}
             />
           </div>
         </div>
