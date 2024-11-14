@@ -1,10 +1,10 @@
 package com.ssafy.fiftyninesec.auth.service;
 
+import com.ssafy.fiftyninesec.auth.dto.OAuthResponseDto;
 import com.ssafy.fiftyninesec.global.exception.CustomException;
 import com.ssafy.fiftyninesec.global.exception.ErrorCode;
 import com.ssafy.fiftyninesec.global.util.JwtUtil;
 import com.ssafy.fiftyninesec.solution.entity.Member;
-import com.ssafy.fiftyninesec.solution.repository.MemberRepository;
 import com.ssafy.fiftyninesec.solution.service.MemberService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +14,18 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 @Slf4j
 @Service
@@ -54,18 +60,33 @@ public class OAuthService {
 
     public ArrayList<String> getKakaoTokens(String code) {
         try {
-            String tokenRequestUrl = UriComponentsBuilder.fromHttpUrl(tokenUrl)
-                    .queryParam("grant_type", "authorization_code")
-                    .queryParam("client_id", clientId)
-                    .queryParam("redirect_uri", redirectUri)
-                    .queryParam("code", code)
-                    .queryParam("client_secret", clientSecret)
-                    .queryParam("scope", scope)
-                    .toUriString();
+            // Header 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-            Map<String, String> response = restTemplate.postForObject(tokenRequestUrl, null, Map.class);
+            // 요청 파라미터 설정
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("grant_type", "authorization_code");
+            params.add("client_id", clientId);
+            params.add("redirect_uri", redirectUri);
+            params.add("code", code);
+            params.add("client_secret", clientSecret);
+            params.add("scope", scope);
+
+            // HttpEntity 생성
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+            // 요청 보내기
+            ResponseEntity<Map> responseEntity = restTemplate.postForEntity(tokenUrl, request, Map.class);
+
+            // 응답 상태와 바디 로그 출력
+
+            // 응답 처리
+            Map<String, String> response = responseEntity.getBody();
             ArrayList<String> tokens = new ArrayList<>();
+
             if (response != null) {
+
                 if (response.containsKey("access_token")) {
                     tokens.add(response.get("access_token"));
                 } else {
@@ -73,6 +94,7 @@ public class OAuthService {
                 }
 
                 tokens.add(response.getOrDefault("refresh_token", ""));
+
                 tokens.add(response.getOrDefault("id_token", ""));
             } else {
                 throw new CustomException(ErrorCode.OAUTH_AUTHENTICATION_FAILED);
@@ -94,7 +116,7 @@ public class OAuthService {
         return tokensMap;
     }
 
-    public void loginOrRegister(Member member,String kakaoSub, HttpServletResponse response) {
+    public OAuthResponseDto loginOrRegister(Member member, String kakaoSub, HttpServletResponse response) {
         ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
         // 회원가입
         if (member == null) {
@@ -116,5 +138,6 @@ public class OAuthService {
         log.info("토큰 저장 성공");
         // 로그인
         jwtUtil.addAccessTokenToCookie(response, accessToken);
+        return new OAuthResponseDto(member.getId());
     }
 }
