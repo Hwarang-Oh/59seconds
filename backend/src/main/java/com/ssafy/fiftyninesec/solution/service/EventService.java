@@ -4,6 +4,7 @@ import com.ssafy.fiftyninesec.global.exception.CustomException;
 import com.ssafy.fiftyninesec.search.repository.EventRoomSearchRepository;
 import com.ssafy.fiftyninesec.search.service.SearchService;
 import com.ssafy.fiftyninesec.solution.dto.PrizeDto;
+import com.ssafy.fiftyninesec.solution.dto.WinnerInfoDto;
 import com.ssafy.fiftyninesec.solution.dto.request.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.global.util.MinioUtil;
 import com.ssafy.fiftyninesec.solution.dto.response.*;
@@ -15,7 +16,6 @@ import com.ssafy.fiftyninesec.solution.repository.PrizeRepository;
 import com.ssafy.fiftyninesec.solution.repository.WinnerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.time.ZoneId;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
@@ -113,7 +112,7 @@ public class EventService {
                 .member(member)
                 .title(eventRoomRequestDto.getEventInfo().getTitle())
                 .description(eventRoomRequestDto.getEventInfo().getDescription())
-                .status(EventStatus.NOT_STARTED)
+                .status(EventStatus.ONGOING)
                 .startTime(eventRoomRequestDto.getEventPeriod().getStart())
                 .endTime(eventRoomRequestDto.getEventPeriod().getEnd())
                 .enterCode(eventRoomRequestDto.getParticipationCode())
@@ -190,31 +189,25 @@ public class EventService {
     }
 
     @Transactional(readOnly = true)
-    public WinnerResponseDto getWinners(Long roomId) {
-        List<Winner> winners = winnerRepository.findByRoom_IdOrderByRanking(roomId);
+    public WinnerInfoListResponseDto getWinners(long roomId) {
+        EventRoom eventRoom = eventRoomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
+        List<Winner> winners = winnerRepository.findByRoom_IdOrderByRanking(roomId);
         if (winners.isEmpty()) {
-            return WinnerResponseDto.builder()
-                    .winners(Collections.emptyList())
-                    .message("해당 방의 당첨자가 없습니다.")
-                    .success(true)
-                    .build();
+            return WinnerInfoListResponseDto.of(Collections.emptyList());
         }
 
-        List<WinnerResponseDto.WinnerInfo> winnerInfos = winners.stream()
-                .map(winner -> WinnerResponseDto.WinnerInfo.builder()
-                        .winnerName(winner.getWinnerName())
-                        .address(winner.getAddress())
-                        .phone(winner.getPhone())
-                        .ranking(winner.getRanking())
-                        .build())
+        List<WinnerInfoDto> winnerInfos = winners.stream()
+                .map(winner -> WinnerInfoDto.of(
+                        winner.getWinnerName(),
+                        winner.getAddress(),
+                        getPrizeByRanking(eventRoom, winner.getRanking()),
+                        winner.getPhone(),
+                        winner.getRanking()))
                 .collect(Collectors.toList());
 
-        return WinnerResponseDto.builder()
-                .winners(winnerInfos)
-                .message("당첨자 목록을 성공적으로 조회했습니다.")
-                .success(true)
-                .build();
+        return WinnerInfoListResponseDto.of(winnerInfos);
     }
 
     @Transactional(readOnly = true)
@@ -225,8 +218,7 @@ public class EventService {
         Page<EventRoom> eventRooms = eventRoomRepository.findAllByOrderByUnlockCountDesc(PageRequest.of(page, size));
 
         return eventRooms.map(eventRoom -> {
-
-            String mainPrize = getMainPrize(eventRoom);
+            String mainPrize = getPrizeByRanking(eventRoom, 1);
             int prizeCount = getPrizeCount(eventRoom.getId());
             int ranking = calculateRanking(eventRoom, eventRooms);
 
@@ -249,7 +241,7 @@ public class EventService {
         return events.stream()
                 .map(eventRoom -> DeadlineEventResponseDto.of(
                         eventRoom,
-                        getMainPrize(eventRoom),
+                        getPrizeByRanking(eventRoom, 1),
                         getPrizeCount(eventRoom.getId())
                 ))
                 .collect(Collectors.toList());
@@ -284,14 +276,7 @@ public class EventService {
 
         List<Prize> prizes = prizeRepository.findByEventRoom_Id(roomId);
         List<PrizeDto> prizeDtos = prizes.stream()
-                .map(prize -> PrizeDto.builder()
-                        .prizeId(prize.getId())
-                        .prizeType(prize.getPrizeType())
-                        .winnerCount(prize.getWinnerCount())
-                        .prizeName(prize.getPrizeName())
-                        .ranking(prize.getRanking())
-                        .build()
-                )
+                .map(PrizeDto::of)
                 .collect(Collectors.toList());
 
         EventRoomResponseDto responseDto = EventRoomResponseDto.builder()
@@ -335,8 +320,8 @@ public class EventService {
         }
     }
 
-    public String getMainPrize(EventRoom eventRoom) {
-        return prizeRepository.findFirstByEventRoomAndRanking(eventRoom, 1)
+    public String getPrizeByRanking(EventRoom eventRoom, int ranking) {
+        return prizeRepository.findFirstByEventRoomAndRanking(eventRoom, ranking)
                 .map(Prize::getPrizeName)
                 .orElse(null);
     }

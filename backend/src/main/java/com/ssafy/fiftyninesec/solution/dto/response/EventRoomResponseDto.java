@@ -36,13 +36,13 @@ public class EventRoomResponseDto {
     private LocalDateTime endTime;
 
     @Schema(description = "우승자 수", example = "3")
-    private Integer winnerNum;
+    private int winnerNum;
 
     @Schema(description = "참여 코드", example = "ABC123")
     private String enterCode;
 
     @Schema(description = "잠금 해제 카운트", example = "5")
-    private Integer unlockCount;
+    private int unlockCount;
 
     @Schema(description = "배너 이미지 URL", example = "banner.jpg")
     private String bannerImage;

@@ -46,17 +46,15 @@ public class EventRoom {
     private LocalDateTime endTime;
 
     @Column(nullable = false)
-    private Integer winnerNum;
+    private int winnerNum = 0;
 
     private String enterCode;
 
     @Column(nullable = false)
-    private Integer unlockCount = 0;
+    private int unlockCount = 0;
 
     private String bannerImage;
-
     private String squareImage;
-
     private String rectangleImage;
 
     @Column(nullable = false)

@@ -14,12 +14,12 @@ import java.time.LocalDateTime;
 public class PopularEventResponseDto {
     private Long eventId;
     private String title;
-    private int ranking;
+    private int ranking = 0;
     private String description;
     private LocalDateTime endTime;
     private String mainPrize;
-    private int prizeCount;
-    private int unlockCount;
+    private int prizeCount = 0;
+    private int unlockCount = 0;
     private Boolean isDeadline;
     private String bannerImage;
     private String rectangleImage;
@@ -33,7 +33,7 @@ public class PopularEventResponseDto {
                 .description(eventRoom.getDescription())
                 .endTime(eventRoom.getEndTime())
                 .prizeCount(prizeCount)
-                .unlockCount(eventRoom.getUnlockCount() == null ? 0 : eventRoom.getUnlockCount())
+                .unlockCount(eventRoom.getUnlockCount())
                 .isDeadline(isDeadline)
                 .mainPrize(mainPrize)
                 .bannerImage(eventRoom.getBannerImage())
