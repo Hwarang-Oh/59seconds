@@ -33,6 +33,8 @@ import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
 @Slf4j
 public class ParticipationService {
 
+    private static final long PARTICIPATION_QUEUE_RATE = 5000; // 5초
+
     private final AtomicLong rankingCounter = new AtomicLong(0);
 
     private final MemberRepository memberRepository;
@@ -106,7 +108,7 @@ public class ParticipationService {
         }
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = PARTICIPATION_QUEUE_RATE)
     public void processParticipationQueue() {
         log.info("10초마다 메세지 보내고 잇어요!!!!!!!!!!!!!!!!");
         Set<String> queueKeys = redisTemplate.keys(PARTICIPATION_QUEUE_PREFIX + "*");
