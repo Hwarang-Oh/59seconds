@@ -73,6 +73,17 @@ export function useEventCreate() {
     }));
   };
 
+  // IMP: 시작 날짜를 넣어서 끝날짜 자동으로 그 이후로 설정되도록 만드는 함수
+  const handleStartDateChange = (date: Date | null) => {
+    handleDateChange('start', date);
+    if (
+      date &&
+      (!formData.eventPeriod.end || new Date(formData.eventPeriod.end) < date)
+    ) {
+      handleDateChange('end', date); // 종료 날짜가 시작 날짜보다 이전인 경우 자동 설정
+    }
+  };
+
   // IMP: 파일 변경 함수
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -328,7 +339,6 @@ export function useEventCreate() {
       console.log('이벤트 룸 생성:', response);
     } catch (error) {
       console.error('Error:', error);
-      alert('이벤트 룸 생성에 실패했습니다.');
     }
   };
 
@@ -341,20 +351,21 @@ export function useEventCreate() {
     rectImageUrl,
     bannerImageUrl,
     handleCrop,
-    handleDetailSubmit,
     handleDateChange,
     handleFileChange,
     handleInputChange,
-    handleDescriptionChange,
-    handleAddProductOrCoupon,
-    handleRemoveProductOrCoupon,
-    handleProductOrCouponChange,
+    handleDetailSubmit,
+    handleStartDateChange,
     handleBannerCropChange,
     handleBannerZoomChange,
+    handleDescriptionChange,
+    handleAddProductOrCoupon,
+    handleBannerCropComplete,
     handleRectangleCropChange,
     handleRectangleZoomChange,
-    handleBannerCropComplete,
     handleRectangleCropComplete,
+    handleRemoveProductOrCoupon,
+    handleProductOrCouponChange,
     handleParticipationCodeChange,
   };
 }

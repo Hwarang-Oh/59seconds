@@ -8,28 +8,31 @@ import { useEventCreate } from '@/hooks/eventCreateHook';
 export default function EventDetailCreate() {
   const {
     formData,
-    handleInputChange,
-    handleDescriptionChange,
-    handleParticipationCodeChange,
-    handleDateChange,
-    handleFileChange,
-    handleAddProductOrCoupon,
-    handleRemoveProductOrCoupon,
-    handleProductOrCouponChange,
     bannerCrop,
     bannerZoom,
+    rectImageUrl,
     rectangleCrop,
     rectangleZoom,
-    rectImageUrl,
     bannerImageUrl,
+    handleCrop,
+    handleDateChange,
+    handleFileChange,
+    handleInputChange,
+    handleStartDateChange,
     handleBannerCropChange,
     handleBannerZoomChange,
+    handleDescriptionChange,
+    handleAddProductOrCoupon,
+    handleBannerCropComplete,
     handleRectangleCropChange,
     handleRectangleZoomChange,
-    handleBannerCropComplete,
+    handleRemoveProductOrCoupon,
+    handleProductOrCouponChange,
     handleRectangleCropComplete,
-    handleCrop,
+    handleParticipationCodeChange,
   } = useEventCreate();
+
+  const today = new Date();
 
   return (
     <>
@@ -212,10 +215,13 @@ export default function EventDetailCreate() {
                   : null
               }
               placeholderText="시작 날짜를 지정해주세요"
-              onChange={(date) => handleDateChange('start', date)}
+              onChange={handleStartDateChange}
               showTimeSelect
               dateFormat="Pp"
               className="p-2 border rounded w-full"
+              minDate={today}
+              minTime={new Date(today.setHours(0, 0, 0, 0))} // 기본 시간 범위: 자정
+              maxTime={new Date(today.setHours(23, 59, 59, 999))} // 기본 시간 범위: 하루의 끝
             />
           </div>
           <span>~</span>
@@ -232,6 +238,20 @@ export default function EventDetailCreate() {
               showTimeSelect
               dateFormat="Pp"
               className="p-2 border rounded w-full"
+              minDate={
+                formData.eventPeriod.start
+                  ? new Date(formData.eventPeriod.start)
+                  : today
+              }
+              minTime={
+                formData.eventPeriod.start &&
+                formData.eventPeriod.end &&
+                new Date(formData.eventPeriod.start).toDateString() ===
+                  new Date(formData.eventPeriod.end).toDateString()
+                  ? new Date(formData.eventPeriod.start) // 시작 날짜와 종료 날짜가 같으면 시작 시간 이후만 선택 가능
+                  : new Date(today.setHours(0, 0, 0, 0)) // 기본값: 자정
+              }
+              maxTime={new Date(today.setHours(23, 59, 59, 999))}
             />
           </div>
         </div>

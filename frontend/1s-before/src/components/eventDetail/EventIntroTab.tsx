@@ -18,7 +18,7 @@ export default function EventIntroTab({ event }: Readonly<EventIntroTabProps>) {
       </h2>
 
       <div className="bg-white rounded-lg border p-4 mb-6">
-        <h3 className="font-semibold text-lg mb-2">이벤트 설명</h3>
+        <h3 className="font-semibold text-lg mb-4">이벤트 설명</h3>
         <p
           className="text-gray-700"
           dangerouslySetInnerHTML={{
@@ -28,16 +28,16 @@ export default function EventIntroTab({ event }: Readonly<EventIntroTabProps>) {
       </div>
 
       <div className="bg-white rounded-lg border p-4 mb-6">
-        <h3 className="font-semibold text-lg mb-8">상품 소개</h3>
-        <div
-          className={`grid gap-4 m-5 ${
-            sortedPrizes.length <= 2
-              ? 'grid-cols-2 justify-center'
-              : 'grid-cols-1 md:grid-cols-3'
-          }`}
-        >
-          {sortedPrizes.length > 0 ? (
-            sortedPrizes.map((item) => (
+        <h3 className="font-semibold text-lg mb-4">상품 소개</h3>
+        {sortedPrizes.length > 0 ? (
+          <div
+            className={`grid gap-4 m-5 ${
+              sortedPrizes.length <= 2
+                ? 'grid-cols-2 justify-center'
+                : 'grid-cols-1 md:grid-cols-3'
+            }`}
+          >
+            {sortedPrizes.map((item) => (
               <div
                 key={item.prizeId}
                 className="flex-1 bg-white py-4 rounded-lg border text-center"
@@ -57,11 +57,11 @@ export default function EventIntroTab({ event }: Readonly<EventIntroTabProps>) {
                   {item.winnerCount ?? 0}명
                 </p>
               </div>
-            ))
-          ) : (
-            <p className="text-gray-600">등록된 상품이 없습니다.</p>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-600">등록된 상품이 없습니다.</p>
+        )}
       </div>
 
       <div className="p-4 bg-white rounded-lg border">
