@@ -181,15 +181,18 @@ export default function EventDetailCreate() {
                   handleProductOrCouponChange(
                     item.id,
                     'recommendedPeople',
-                    Math.max(0, Number(e.target.value))
+                    Math.max(1, Number(e.target.value))
                   )
                 }
                 className="p-2 border rounded w-16 text-start"
+                min="1"
               />
               <button
                 type="button"
                 onClick={() => handleRemoveProductOrCoupon(item.id)}
-                className="text-red-500 pl-2 text-sm"
+                className={`text-red-500 pl-2 text-sm ${
+                  index === 0 ? 'invisible' : ''
+                }`}
               >
                 삭제
               </button>
@@ -220,8 +223,8 @@ export default function EventDetailCreate() {
               dateFormat="Pp"
               className="p-2 border rounded w-full"
               minDate={today}
-              minTime={new Date(today.setHours(0, 0, 0, 0))} // 기본 시간 범위: 자정
-              maxTime={new Date(today.setHours(23, 59, 59, 999))} // 기본 시간 범위: 하루의 끝
+              minTime={new Date(today.setHours(0, 0, 0, 0))}
+              maxTime={new Date(today.setHours(23, 59, 59, 999))}
             />
           </div>
           <span>~</span>
@@ -248,8 +251,8 @@ export default function EventDetailCreate() {
                 formData.eventPeriod.end &&
                 new Date(formData.eventPeriod.start).toDateString() ===
                   new Date(formData.eventPeriod.end).toDateString()
-                  ? new Date(formData.eventPeriod.start) // 시작 날짜와 종료 날짜가 같으면 시작 시간 이후만 선택 가능
-                  : new Date(today.setHours(0, 0, 0, 0)) // 기본값: 자정
+                  ? new Date(formData.eventPeriod.start)
+                  : new Date(today.setHours(0, 0, 0, 0))
               }
               maxTime={new Date(today.setHours(23, 59, 59, 999))}
             />

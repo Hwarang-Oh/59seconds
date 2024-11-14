@@ -128,19 +128,24 @@ export function useEventCreate() {
           order: prev.productsOrCoupons.length + 1,
           type: '상품',
           name: '',
-          recommendedPeople: 0,
+          recommendedPeople: 1,
         },
       ],
     }));
   };
 
   const handleRemoveProductOrCoupon = (id: string) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      productsOrCoupons: prevFormData.productsOrCoupons.filter(
-        (item) => item.id !== id
-      ),
-    }));
+    setFormData((prevFormData) => {
+      if (prevFormData.productsOrCoupons.length > 1) {
+        return {
+          ...prevFormData,
+          productsOrCoupons: prevFormData.productsOrCoupons.filter(
+            (item) => item.id !== id
+          ),
+        };
+      }
+      return prevFormData;
+    });
   };
 
   const handleProductOrCouponChange = <T extends keyof ProductOrCoupon>(

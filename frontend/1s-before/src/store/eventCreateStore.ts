@@ -22,7 +22,7 @@ export const useEventCreateStore = create<EventStoreState>((set) => ({
                 order: 1,
                 type: '상품',
                 name: '',
-                recommendedPeople: 0,
+                recommendedPeople: 1,
               },
             ],
             eventPeriod: {
