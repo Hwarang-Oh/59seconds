@@ -12,20 +12,23 @@ export default function HeaderInfo() {
     handleToggle,
     openLoginPopUp,
     closeLoginPopUp,
+    handleKakaoLogin,
     handleLogout,
   } = useMemberLogin();
 
   return (
     <>
       <div className='flex justify-center items-start gap-[26px]'>
-        {member ? (
+        {member.isLoggedIn ? (
           <>
-            <Link href='/my-page'>
-              <p className='text-[15px] font-normal leading-[18px] text-[#474972]'>마이페이지</p>
+            <Link href='/my-page' className='text-[15px] font-normal leading-[18px] text-[#474972]'>
+              마이페이지
             </Link>
-            {member.isCreatorMode && (
-              <Link href='/event-create'>
-                <p className='text-[15px] font-normal leading-[18px] text-[#474972]'>이벤트 생성</p>
+            {isCreatorMode && (
+              <Link
+                href='/event-create'
+                className='text-[15px] font-normal leading-[18px] text-[#474972]'>
+                이벤트 생성
               </Link>
             )}
             <button
@@ -43,7 +46,10 @@ export default function HeaderInfo() {
         )}
         <ToggleIcon toggle={isCreatorMode} handleToggle={handleToggle} />
       </div>
-      {isLoginPopUpOpen && <LoginPopUp closePopUp={closeLoginPopUp} />}
+      {isLoginPopUpOpen && (
+        // <LoginPopUp closePopUp={closeLoginPopUp} />
+        <LoginPopUp handleKakaoLogin={handleKakaoLogin} closePopUp={closeLoginPopUp} />
+      )}
     </>
   );
 }

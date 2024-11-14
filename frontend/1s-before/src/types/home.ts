@@ -104,6 +104,11 @@ export interface CreatorBannerProps {
 /**
  * IMP : 공통 Mode Page Type 정의
  */
+export interface LoginPopupProps {
+  handleKakaoLogin: () => void;
+  closePopUp: () => void;
+}
+
 export interface HomeContentProps {
   popularEvents: PopularEventTypes[];
   deadlineEvents: CardBannerProps[];
