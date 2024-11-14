@@ -33,13 +33,19 @@ import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
 @Slf4j
 public class ParticipationService {
 
+    private static final String RANKING_KEY_PREFIX = "event:ranking:";
+
+    private final AtomicLong rankingCounter = new AtomicLong(0);
+
     private final ParticipationRepository participationRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final RedissonClient redissonClient;
-    private final SimpMessagingTemplate messagingTemplate;
     private final EventRoomRepository eventRoomRepository;
     private final MemberRepository memberRepository;
-    private final AtomicLong rankingCounter = new AtomicLong(0);
+
+    private final RedissonClient redissonClient;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final SimpMessagingTemplate messagingTemplate;
+
+
     // 기존 참여자들을 조회
     @Transactional(readOnly = true)
     public List<ParticipationResponseDto> getParticipationsByRoomId(Long roomId) {
@@ -248,5 +254,11 @@ public class ParticipationService {
     // rankingCounter 초기화를 위한 메서드 추가
     public void resetTestRanking() {
         rankingCounter.set(0);
+    }
+
+    public void deleteEventRanking(Long roomId){
+        String rankingKey = RANKING_KEY_PREFIX + roomId;
+        // Redis에서 해당 rankingKey 삭제
+        redisTemplate.delete(rankingKey);
     }
 }
