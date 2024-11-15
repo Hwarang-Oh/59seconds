@@ -3,28 +3,32 @@ import EventResultArea from '@/components/eventRoom/EventResultArea';
 import EventStatusActiveButton from '@/components/eventRoom/EventStatusActiveButton';
 import EventStatusCountdownTimer from '@/components/eventRoom/EventStatusCountdownTimer';
 import EventStatusHeader from '@/components/eventRoom/EventStatusHeader';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMemberStore } from '@/store/memberStore';
 import { EventStatusAreaProps } from '@/types/eventRoom';
 
 export default function EventStatusArea({
-  isDrawing,
   eventId,
-  totalParticipants,
-  currentProccessed,
-  competitionRate,
-  eventTime,
   myResult,
+  eventTime,
+  isDrawing,
+  competitionRate,
+  currentProccessed,
+  totalParticipants,
   goDrawView,
   getMyEventResult,
 }: Readonly<EventStatusAreaProps>) {
   const [isTimerCompleted, setIsTimerCompleted] = useState(false);
   const member = useMemberStore((state) => state.member);
   const getBackgroundColor = () => {
-    if (myResult.isMine) {
+    if (myResult?.isMine) {
       return myResult.isWinner ? 'bg-[#FFF9D5]' : 'bg-blue-200';
     }
   };
+
+  useEffect(() => {
+    console.log(myResult);
+  }, [myResult]);
 
   return (
     <div
@@ -32,7 +36,7 @@ export default function EventStatusArea({
       {isDrawing && (
         <EventResultArea
           isPending={!myResult.isMine}
-          eventId={myResult.eventId}
+          eventId={eventId}
           joinedAt={myResult.joinedAt}
           ranking={myResult.ranking}
           isWinner={myResult.isWinner}

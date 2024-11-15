@@ -5,134 +5,87 @@ import { EventRoomResultViewInfo, EventRoomAllResultProps } from '@/types/eventR
 export default function EventResultAllResult({
   list,
   myResult,
+  untilMyResult,
 }: Readonly<EventRoomAllResultProps>) {
-  const [expandedSection, setExpandedSection] = useState<'before' | 'after' | null>(null);
-  const [displayData, setDisplayData] = useState<EventRoomResultViewInfo[]>([]);
+  const [expandedSection, setExpandedSection] = useState<'after' | null>(null);
 
-  // 초기 데이터 로드, myResult와 같은 memberId는 제외
-  useEffect(() => {
-    if (list.length > 0) {
-      const filteredList = list.filter((item) => item.memberId !== myResult?.memberId);
-      setDisplayData(filteredList);
-    }
-  }, [list, myResult]);
+  // 섹션 계산 로직
+  const getSections = useCallback(() => {
+    // 초기값(ranking === 0)일 경우 빈 섹션 반환
+    if (myResult?.ranking === 0) return { front: [], after: [] };
 
-  // 현재까지의 데이터를 기반으로 표시할 항목 분류
-  const getDisplaySections = useCallback(() => {
-    const myIndex = displayData.findIndex((item) => item.memberId === myResult?.memberId);
-    const myRank = myIndex >= 0 ? myIndex + 1 : null;
+    const myRank = myResult.ranking;
 
-    // 상위 10개는 항상 표시
-    const top10 = displayData.slice(0, 10);
+    // untilMyResult는 그대로 사용
+    const front = untilMyResult;
 
-    // 내 결과가 없거나 상위 10등 안에 있는 경우
-    if (myRank === null || myRank <= 10) {
-      return {
-        top: top10,
-        middle: displayData.slice(10),
-        myResult: null,
-        bottom: [],
-      };
-    }
+    // list에서 내 순위 이후 데이터만 필터링
+    const after = list.filter((item) => item.ranking > myRank);
 
-    // 내 결과가 있고 10등 밖인 경우
-    return {
-      top: top10,
-      middle: displayData.slice(10, myRank - 1),
-      myResult,
-      bottom: displayData.slice(myRank),
-    };
-  }, [displayData, myResult]);
+    return { front, after };
+  }, [untilMyResult, list, myResult]);
 
+  const { front, after } = getSections();
+
+  // 접힌 섹션 렌더링
   const renderCollapsedSection = (count: number, onClick: () => void, label: string) => {
     if (count === 0) return null;
-
     return (
       <div
         onClick={onClick}
         className='cursor-pointer transition-all hover:bg-gray-100 rounded-lg p-4 flex items-center justify-center gap-2'>
-        <div
-          className='w-2 h-2 bg-gray-400 rounded-full animate-bounce'
-          style={{ animationDelay: '0s' }}></div>
-        <div
-          className='w-2 h-2 bg-gray-400 rounded-full animate-bounce'
-          style={{ animationDelay: '0.2s' }}></div>
-        <div
-          className='w-2 h-2 bg-gray-400 rounded-full animate-bounce'
-          style={{ animationDelay: '0.4s' }}></div>
+        {[0, 0.2, 0.4].map((delay) => (
+          <div
+            key={delay}
+            className='w-2 h-2 bg-gray-400 rounded-full animate-bounce'
+            style={{ animationDelay: `${delay}s` }}
+          />
+        ))}
         <span className='ml-2 text-gray-600'>{`${count}개의 ${label}`}</span>
       </div>
     );
   };
 
-  const { top, middle, myResult: myResultInList, bottom } = getDisplaySections();
+  // 섹션 렌더링
+  const renderSection = (data: EventRoomResultViewInfo[], expandedKey: 'after') => {
+    return expandedSection === expandedKey ? (
+      <div className='animate-fadeIn space-y-3'>
+        {data.map((item) => (
+          <div key={item.memberId} className='animate-slideIn'>
+            <EventEachResult {...item} />
+          </div>
+        ))}
+        <div
+          onClick={() => setExpandedSection(null)}
+          className='cursor-pointer text-center py-4 text-gray-600 hover:text-gray-800 transition-colors'>
+          접기
+        </div>
+      </div>
+    ) : (
+      renderCollapsedSection(
+        data.length,
+        () => setExpandedSection(expandedKey),
+        '다음 결과 더 보기'
+      )
+    );
+  };
 
   return (
     <div className='flex flex-col gap-3'>
       {/* 실시간 업데이트 상태 표시 */}
-      <div className='text-sm text-gray-500 text-center'>
-        <div className='animate-pulse'>실시간 순위 업데이트 중...</div>
+      <div className='text-sm text-gray-500 text-center animate-pulse'>
+        실시간 순위 업데이트 중...
       </div>
 
-      {/* 상위 10개 결과 */}
-      {top.map((item) => (
+      {/* untilMyResult 결과 */}
+      {front.map((item) => (
         <div key={item.memberId} className='animate-slideIn'>
           <EventEachResult {...item} />
         </div>
       ))}
 
-      {/* 중간 섹션 (접힌 결과들) */}
-      {middle.length > 0 &&
-        (expandedSection === 'before' ? (
-          <div className='animate-fadeIn space-y-3'>
-            {middle.map((item) => (
-              <div key={item.memberId}>
-                <EventEachResult {...item} />
-              </div>
-            ))}
-            <div
-              onClick={() => setExpandedSection(null)}
-              className='cursor-pointer text-center py-4 text-gray-600 hover:text-gray-800 transition-colors'>
-              접기
-            </div>
-          </div>
-        ) : (
-          renderCollapsedSection(
-            middle.length,
-            () => setExpandedSection('before'),
-            '이전 결과 더 보기'
-          )
-        ))}
-
-      {/* 내 결과 (10등 밖일 경우) */}
-      {myResultInList && (
-        <div className='animate-slideIn'>
-          <EventEachResult {...myResultInList} />
-        </div>
-      )}
-
-      {/* 하단 섹션 */}
-      {bottom.length > 0 &&
-        (expandedSection === 'after' ? (
-          <div className='animate-fadeIn space-y-3'>
-            {bottom.map((item) => (
-              <div key={item.memberId}>
-                <EventEachResult {...item} />
-              </div>
-            ))}
-            <div
-              onClick={() => setExpandedSection(null)}
-              className='cursor-pointer text-center py-4 text-gray-600 hover:text-gray-800 transition-colors'>
-              접기
-            </div>
-          </div>
-        ) : (
-          renderCollapsedSection(
-            bottom.length,
-            () => setExpandedSection('after'),
-            '다음 결과 더 보기'
-          )
-        ))}
+      {/* 내 순위 이후 데이터 */}
+      {renderSection(after, 'after')}
 
       <style jsx>{`
         @keyframes slideIn {

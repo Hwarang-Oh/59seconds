@@ -18,14 +18,14 @@ export interface BannerHeaderProps {
 
 export interface EventStatusAreaProps {
   eventId: number;
+  eventTime: string;
   isDrawing: boolean;
+  competitionRate: number;
   totalParticipants: number;
   currentProccessed: number;
-  competitionRate: number;
-  eventTime: string;
   myResult: EventRoomResultViewInfo;
-  getMyEventResult: (eventId: number) => void;
   goDrawView: () => void;
+  getMyEventResult: (eventId: number) => void;
 }
 
 export interface EventStatusStatsProps {
@@ -44,8 +44,8 @@ export interface EventStatusView {
 }
 
 export interface EventWinOrLoseStateView {
-  isWinner: boolean;
   eventId: number;
+  isWinner: boolean;
   joinedAt: string;
   ranking: number;
 }
@@ -126,6 +126,7 @@ export interface EventRoomResultViewInfo extends EventRoomResultInfo {
 
 export interface EventRoomAllResultProps {
   list: EventRoomResultViewInfo[];
+  untilMyResult: EventRoomResultViewInfo[];
   myResult: EventRoomResultViewInfo;
 }
 

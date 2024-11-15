@@ -5,8 +5,8 @@ import Animation_Tada from '@/assets/Animation_Tada.json';
 import Animation_Crying from '@/assets/Animation_Crying.json';
 
 export default function EventResultWinOrLoseState({
-  isWinner,
   eventId,
+  isWinner,
   joinedAt,
   ranking,
 }: Readonly<EventWinOrLoseStateView>) {

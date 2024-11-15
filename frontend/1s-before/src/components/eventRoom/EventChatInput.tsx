@@ -22,18 +22,22 @@ export default function EventChatInput({ eventId }: Readonly<{ eventId: number }
   };
 
   return (
-    <div
-      className='flex items-center px-4 gap-1 mb-5 border rounded-2xl border-gray-300 cursor-pointer'
-      onClick={(e) => e.stopPropagation()}>
+    <div className='flex items-center px-4 gap-1 mb-5 border rounded-2xl border-gray-300 cursor-pointer'>
       <input
         className='w-full py-4 text-base font-normal leading-6
       focus:outline-none focus:border-transparent'
         type='text'
         value={input}
+        onClick={(e) => e.stopPropagation()}
         onChange={(e) => setInput(e.target.value)}
         onKeyUp={(e) => e.key === 'Enter' && handleSendMessage()}
       />
-      <button onClick={handleSendMessage}>
+      <button
+        className='p-2 rounded-full hover:bg-gray-200 focus:outline-none'
+        onClick={(e) => {
+          e.stopPropagation();
+          handleSendMessage();
+        }}>
         <SendIcon />
       </button>
     </div>

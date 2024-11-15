@@ -25,15 +25,16 @@ export const useEventRoom = () => {
   const [prizeList, setPrizeList] = useState<PrizeInfo[]>([]);
   const [messages, setMessages] = useState<EventRoomMessageInfo[]>([]);
   const [eventStatus, setEventStatus] = useState<EventRoomCurrentInfo>();
+  const [untilMyResult, setUntilMyResult] = useState<EventRoomResultViewInfo[]>([]);
   const [eventResult, setEventResult] = useState<EventRoomResultViewInfo[]>([]);
   const [myResult, setMyResult] = useState<EventRoomResultViewInfo>({
     eventId: 0,
     memberId: 0,
-    joinedAt: '',
     ranking: 0,
     isWinner: false,
-    winnerName: '',
+    joinedAt: '',
     isMine: false,
+    winnerName: '',
     prize: undefined,
   });
 
@@ -110,23 +111,23 @@ export const useEventRoom = () => {
     return prizeList.find((prize) => prize.ranking === ranking);
   };
 
-  const getFrontEventResult = () => {
-    getFrontEventParticipationInfo(Number(eventId)).then((frontResults) => {
-      const processedResults = frontResults.map((result) => ({
-        ...result,
-        isMine: false,
-      }));
-      setEventResult((prevResult) => [...prevResult, ...processedResults]);
-    });
-  };
-
-  const getMyEventResult = (eventId: number) => {
-    eventParticipate({ eventId: eventId, memberId: member.memberId }).then((myResult) => {
+  const getUntilMyResult = async (eventId: number) => {
+    try {
+      const myResult = await eventParticipate({ eventId, memberId: member.memberId });
       const prize = findPrizeByRanking(myResult.ranking);
-      const processedResult = { ...myResult, isMine: true, prize };
-      setEventResult((prevResult) => [...prevResult, processedResult]);
-      setMyResult(processedResult);
-    });
+      const processedMyResult = { ...myResult, isMine: true, prize };
+      const frontResults = await getFrontEventParticipationInfo(Number(eventId));
+      const processedFrontResults = frontResults
+        .filter((result) => result.ranking < myResult.ranking) // 내 순위 이전 데이터만 포함
+        .map((result) => ({
+          ...result,
+          isMine: false,
+        }));
+      setUntilMyResult([...processedFrontResults, processedMyResult]);
+      setMyResult(processedMyResult);
+    } catch (error) {
+      console.error('Error fetching event results:', error);
+    }
   };
 
   const getEventResult = (receivedEachEventResult: EventRoomResultInfo[]) => {
@@ -155,13 +156,13 @@ export const useEventRoom = () => {
     eventInfo,
     eventStatus,
     eventResult,
+    untilMyResult,
     competitionRate,
     currentProcessed,
     toggleChatSize,
     getStatusAreaWidth,
     getChatRoomAreaWidth,
-    getFrontEventResult,
-    getMyEventResult,
+    getUntilMyResult,
     setIsDrawing,
   };
 };

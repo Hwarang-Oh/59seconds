@@ -57,7 +57,7 @@ export const getFrontEventParticipationInfo = async (
   eventId: number
 ): Promise<EventRoomResultInfo[]> => {
   try {
-    const response = await api.post(`${EVENT_URL}/${eventId}/result`);
+    const response = await api.get(`${EVENT_PARTICIPATION_URL}/${eventId}/result`);
     console.log('MyFrontResult', response.data);
     return response.data;
   } catch (error: unknown) {
