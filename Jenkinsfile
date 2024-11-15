@@ -98,7 +98,7 @@ pipeline {
                     docker pull ${PARTICIPATION_DOCKERHUB_REPO}:latest && \
                     echo "Running new container..." && \
                     docker run -d --name participation \
-                        -p 9090:8080 \
+                        -p 9091:8080 \
                         --network 404_dream_solutions_network \
                         -e SPRING_PROFILES_ACTIVE=prod \
                         ${PARTICIPATION_DOCKERHUB_REPO}:latest && \
