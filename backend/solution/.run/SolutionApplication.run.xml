@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="SolutionApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <envs>
+      <env name="MYSQL_USER" value="solution" />
+      <env name="MYSQL_PASSWORD" value="onesecondbefore" />
+      <env name="FILE_MANAGER_USER" value="tSZKGTfv32VqlbKFREYB" />
+      <env name="FILE_MANAGER_PASSWORD" value="5V3IMI5u0mijbHWk3D4y8e4KafENOWZg7eK67awZ" />
+    </envs>
+    <module name="fiftyninesec.main" />
+    <option name="SHORTEN_COMMAND_LINE" value="MANIFEST" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.ssafy.fiftyninesec.SolutionApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
