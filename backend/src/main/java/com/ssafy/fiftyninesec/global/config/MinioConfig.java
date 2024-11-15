@@ -24,13 +24,11 @@ public class MinioConfig {
     private String secretKey;
 
     @Bean
-    public MinioClient minioClient()
-            throws MinioException, NoSuchAlgorithmException, KeyManagementException {
+    public MinioClient minioClient() {
         MinioClient minioClient = MinioClient.builder()
                 .endpoint(endpoint)
                 .credentials(accessKey, secretKey)
                 .build();
-        minioClient.ignoreCertCheck(); // 이슈번호 #79
         return minioClient;
     }
 }
