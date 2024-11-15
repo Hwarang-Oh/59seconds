@@ -20,13 +20,13 @@ public class ChatController {
 
     @MessageMapping("/sendMessage/{eventId}")
     public void sendMessage(@Payload ChatMessageDto chatMessage, @DestinationVariable Long eventId) {
-        ChatMessageDto updatedMessage = ChatMessageDto.builder()
-                .eventId(chatMessage.getEventId())
-                .memberId(chatMessage.getMemberId())
-                .sender(chatMessage.getSender())
-                .content(chatMessage.getContent())
-                .sentAt(LocalDateTime.now())
-                .build();
+
+        ChatMessageDto updatedMessage = ChatMessageDto.of(
+                chatMessage.getEventId(),
+                chatMessage.getMemberId(),
+                chatMessage.getSender(),
+                chatMessage.getContent()
+        );
 
         messagingTemplate.convertAndSend("/chat/sub/room/" + eventId, updatedMessage);
     }

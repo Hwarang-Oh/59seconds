@@ -17,4 +17,14 @@ public class ChatMessageDto {
     private String sender;         // 메시지 전송자
     private String content;        // 메시지 내용
     private LocalDateTime sentAt;  // 메시지 전송 시각
+
+    public static ChatMessageDto of(Long eventId, Long memberId, String sender, String content) {
+        return ChatMessageDto.builder()
+                .eventId(eventId)
+                .memberId(memberId)
+                .sender(sender)
+                .content(content)
+                .sentAt(LocalDateTime.now())
+                .build();
+    }
 }
