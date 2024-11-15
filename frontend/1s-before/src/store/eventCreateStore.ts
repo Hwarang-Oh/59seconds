@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { EventFormData, EventStoreState } from '@/types/eventCreate';
 
@@ -23,7 +22,7 @@ export const useEventCreateStore = create<EventStoreState>((set) => ({
                 order: 1,
                 type: '상품',
                 name: '',
-                recommendedPeople: 0,
+                recommendedPeople: 1,
               },
             ],
             eventPeriod: {
@@ -72,17 +71,3 @@ export const useEventCreateStore = create<EventStoreState>((set) => ({
     });
   },
 }));
-
-export const useClearFormDataOnUnload = () => {
-  useEffect(() => {
-    const handleUnload = () => {
-      sessionStorage.removeItem('formData');
-    };
-
-    window.addEventListener('beforeunload', handleUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleUnload);
-    };
-  }, []);
-};
