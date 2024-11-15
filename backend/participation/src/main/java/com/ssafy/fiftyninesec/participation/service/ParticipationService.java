@@ -127,12 +127,9 @@ public class ParticipationService {
 
     @Scheduled(fixedRate = PARTICIPATION_QUEUE_RATE)
     public void processParticipationQueue() {
-
-        log.debug("processParticipationQueue: 매 {} ms", PARTICIPATION_QUEUE_RATE);
         Set<String> queueKeys = redisTemplate.keys(PARTICIPATION_QUEUE_PREFIX + "*");
 
         if (queueKeys == null || queueKeys.isEmpty()) {
-            log.info("참여 큐가 없습니다.");
             return;
         }
 
