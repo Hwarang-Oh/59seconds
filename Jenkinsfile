@@ -82,19 +82,26 @@ pipeline {
                                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}",
                                         usernameVariable: 'DOCKER_USERNAME',
                                         passwordVariable: 'DOCKER_PASSWORD')]) {
-                                        sh """
+                sh """
                     ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
+                    echo "Logging into Docker Hub..." && \
                     docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
+                    echo "Checking Docker network..." && \
                     docker network inspect 404_dream_solutions_network >/dev/null 2>&1 || docker network create 404_dream_solutions_network && \
+                    echo "Stopping existing container..." && \
                     docker stop participation || true && \
                     docker rm participation || true && \
+                    echo "Pruning unused images..." && \
                     docker image prune -f && \
+                    echo "Pulling latest image..." && \
                     docker pull ${PARTICIPATION_DOCKERHUB_REPO}:latest && \
+                    echo "Running new container..." && \
                     docker run -d --name participation \
                         -p 9090:8080 \
                         --network 404_dream_solutions_network \
                         -e SPRING_PROFILES_ACTIVE=prod \
                         ${PARTICIPATION_DOCKERHUB_REPO}:latest && \
+                    echo "Logging out from Docker Hub..." && \
                     docker logout'
                 """
                                     }
