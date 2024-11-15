@@ -1,7 +1,7 @@
 import api from '@/apis/commonAPI';
 import { isAxiosError } from 'axios';
 import { DeadlineEventTypes } from '@/types/home';
-import { EventParticipation } from '@/types/eventRoom';
+import { EventParticipation, EventRoomResultInfo } from '@/types/eventRoom';
 import { WinnerUserInfo, WinnerInfo } from '@/types/user';
 import { PageParamsType, PageType, SliceDetails } from '@/types/common/common';
 const EVENT_URL = 'v1/rooms';
@@ -37,17 +37,34 @@ export const getCreatorBanner = async (memberId: number): Promise<string> => {
 export const eventParticipate = async ({
   eventId,
   memberId,
-}: Readonly<EventParticipation>) => {
+}: Readonly<EventParticipation>): Promise<EventRoomResultInfo> => {
   try {
     const response = await api.post(EVENT_PARTICIPATION_URL, {
       eventId,
       memberId,
     });
+    console.log('myResult', response.data);
     return response.data;
-  } catch (error) {
+  } catch (error: unknown) {
     if (isAxiosError(error)) {
-      console.error(error.message);
-    }
+      if (error.response?.status === 404) throw new Error('Not Found');
+      else throw error;
+    } else throw error;
+  }
+};
+
+export const getFrontEventParticipationInfo = async (
+  eventId: number
+): Promise<EventRoomResultInfo[]> => {
+  try {
+    const response = await api.get(`${EVENT_PARTICIPATION_URL}/${eventId}/result`);
+    console.log('MyFrontResult', response.data);
+    return response.data;
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      if (error.response?.status === 404) throw new Error('Not Found');
+      else throw error;
+    } else throw error;
   }
 };
 
@@ -88,15 +105,9 @@ export const getDeadlineEvents = async (): Promise<DeadlineEventTypes[]> => {
   }
 };
 
-export const postWinnerUserInfo = async (
-  roomId: number,
-  userInfo: WinnerUserInfo
-) => {
+export const postWinnerUserInfo = async (roomId: number, userInfo: WinnerUserInfo) => {
   try {
-    const response = await api.post(
-      `${EVENT_URL}/${roomId}/userInfo`,
-      userInfo
-    );
+    const response = await api.post(`${EVENT_URL}/${roomId}/userInfo`, userInfo);
     return response.data;
   } catch (error) {
     if (isAxiosError(error)) {
@@ -107,7 +118,7 @@ export const postWinnerUserInfo = async (
 
 export const getWinnerInfo = async (roomId: number) => {
   try {
-    const response = await api.get(`${EVENT_URL}/${roomId}/winners`);
+    const response = await api.post(`${EVENT_URL}/${roomId}/winners`, winnerInfo);
     return response.data;
   } catch (error) {
     if (isAxiosError(error)) {

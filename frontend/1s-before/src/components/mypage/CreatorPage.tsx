@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Image from 'next/image';
 import Banner from '@/assets/defaultBanner.png';
 import CreatorEdit from '@/components/mypage/CreatorEdit';
@@ -84,14 +85,16 @@ export default function EventCreatorPage() {
               key={room.eventId}
               className="flex flex-col border border-gray-300 rounded-lg overflow-hidden"
             >
-              <div className="w-full h-56 relative">
-                <Image
-                  src={room.bannerUrl ?? Banner}
-                  alt="배너"
-                  fill
-                  className="object-cover"
-                />
-              </div>
+              <Link href={`/event-detail/${room.eventId}`}>
+                <div className="w-full h-56 relative">
+                  <Image
+                    src={room.bannerUrl ?? Banner}
+                    alt="배너"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </Link>
               <div className="flex flex-row justify-between items-center mx-1 my-4 px-3">
                 <span
                   className={`mr-3 rounded-2xl px-2 py-1 ${
@@ -107,9 +110,11 @@ export default function EventCreatorPage() {
                 </div>
               </div>
               <div className="flex justify-between items-center mx-3 mb-4">
-                <p className="text-gray-600 font-bold text-lg ml-2">
-                  {room.title}
-                </p>
+                <Link href={`/event-detail/${room.eventId}`}>
+                  <p className="mt-2 ml-2 text-gray-600 font-bold text-lg pb-3 pl-3 cursor-pointer">
+                    {room.title}
+                  </p>
+                </Link>
                 {(room.status === 'COMPLETED' ||
                   room.status === 'COMPLETED_NO_WINNER_INFO') && (
                   <button

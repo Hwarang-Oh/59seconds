@@ -30,10 +30,10 @@ export default function EventResultArea({
         <EventResultPendingState />
       ) : (
         <EventResultWinOrLoseState
-          isWinner={isWinner}
           eventId={eventId}
-          joinedAt={joinedAt}
           ranking={ranking}
+          joinedAt={joinedAt}
+          isWinner={isWinner}
         />
       )}
     </div>

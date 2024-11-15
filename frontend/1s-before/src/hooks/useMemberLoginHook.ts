@@ -1,33 +1,45 @@
-import { useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { fetchTokens } from '@/apis/memberAPI';
 import { useMemberStore } from '@/store/memberStore';
 
 export const useMemberLogin = () => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const code = searchParams.get('code');
   const { member, setMember, clearMember, toggleCreatorMode } = useMemberStore();
   const [isLoginPopUpOpen, setIsLoginPopUpOpen] = useState(false);
+  const openLoginPopUp = () => setIsLoginPopUpOpen(true);
+  const closeLoginPopUp = () => setIsLoginPopUpOpen(false);
+  const handleKakaoLogin = () => {
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}&redirect_uri=${process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URL}&response_type=code`;
+    window.location.href = KAKAO_AUTH_URL;
+  };
 
-  const handleToggle = () => {
-    if (member) {
-      toggleCreatorMode(); // Member가 존재할 때만 CreatorMode를 토글합니다.
-    } else {
-      openLoginPopUp();
+  useEffect(() => {
+    if (code) {
+      console.log(code);
+      handleKakaoLoginCallBack(code);
+    }
+  }, [code]);
+
+  const handleKakaoLoginCallBack = async (authCode: string) => {
+    try {
+      const tokenData = await fetchTokens(authCode);
+      console.log(tokenData);
+      router.replace(window.location.pathname);
+    } catch (error) {
+      console.error('Error while fetching tokens:', error);
     }
   };
 
-  const openLoginPopUp = () => {
-    setIsLoginPopUpOpen(true);
-  };
-
-  const closeLoginPopUp = () => {
-    setIsLoginPopUpOpen(false);
-  };
-
-  const handleLogin = (memberId: number, nickname: string) => {
-    setMember(memberId, nickname); // Member 정보 설정
-    setIsLoginPopUpOpen(false); // 로그인 후 팝업 닫기
-  };
-
   const handleLogout = () => {
-    clearMember(); // 로그아웃 시 Member 정보 초기화
+    clearMember();
+  };
+
+  const handleToggle = () => {
+    if (member.isLoggedIn) toggleCreatorMode(); // Member가 존재할 때만 CreatorMode를 토글합니다.
+    else openLoginPopUp();
   };
 
   return {
@@ -37,7 +49,7 @@ export const useMemberLogin = () => {
     handleToggle,
     openLoginPopUp,
     closeLoginPopUp,
-    handleLogin,
+    handleKakaoLogin,
     handleLogout,
   };
 };
