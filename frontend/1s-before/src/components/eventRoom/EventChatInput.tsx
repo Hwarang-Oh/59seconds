@@ -13,6 +13,7 @@ export default function EventChatInput({ eventId }: Readonly<{ eventId: number }
     if (input.trim() !== '' && member) {
       webSocket.sendEventRoomMessage(eventId, {
         eventId,
+        memberId: member.memberId,
         sender: member.nickname,
         content: input,
         sentAt: new Date().toISOString(),

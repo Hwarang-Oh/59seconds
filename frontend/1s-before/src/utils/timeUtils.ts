@@ -46,6 +46,19 @@ export function formatTimeBasic(dateString: string): string {
 }
 
 /**
+ * IMP: 날짜 문자열을 기본 형식 (HH:MM:SS)으로 포맷팅합니다.
+ * @param dateString
+ * @returns
+ */
+export function formatTimeBasic2(dateString: string): string {
+  const date = new Date(dateString);
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
+}
+
+/**
  * IMP : 날짜 문자열을 밀리초 포함 형식으로 (yyyy-MM-ddTHH:mm:ss.SSSZ) 변환한다.
  * @param dateString
  * @returns

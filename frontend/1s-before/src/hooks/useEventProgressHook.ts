@@ -1,10 +1,10 @@
 import WebsocketAPI from '@/apis/webSocket';
-import { Prize } from '@/types/eventDetail';
+import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useMemberStore } from '@/store/memberStore';
-import { eventParticipate, getFrontEventParticipationInfo } from '@/apis/eventAPI';
 import { fetchEventInfo } from '@/apis/eventDetailApi';
-import { useParams } from 'next/navigation';
+import { createPrizeRankingList } from '@/utils/prizeUtils';
+import { eventParticipate, getFrontEventParticipationInfo } from '@/apis/eventAPI';
 import {
   PrizeInfo,
   EventRoomInfo,
@@ -14,7 +14,7 @@ import {
   EventRoomResultViewInfo,
 } from '@/types/eventRoom';
 
-export const useEventRoom = () => {
+export const useEventProgress = () => {
   const params = useParams();
   let memberData;
   let eventId: string;
@@ -89,22 +89,6 @@ export const useEventRoom = () => {
   const getChatRoomAreaWidth = () => {
     if (isDrawing) return 'w-1/3';
     return isChatExpanded ? 'w-1/2' : 'w-1/3';
-  };
-
-  const createPrizeRankingList = (prizes: Prize[]) => {
-    const list: PrizeInfo[] = [];
-    prizes.forEach((prize) => {
-      for (let i = 0; i < prize.winnerCount; i++) {
-        list.push({
-          ranking: list.length + 1,
-          eventId: prize.roomId,
-          prizeId: prize.prizeId,
-          prizeType: prize.prizeType,
-          prizeName: prize.prizeName,
-        });
-      }
-    });
-    return list;
   };
 
   const findPrizeByRanking = (ranking: number) => {

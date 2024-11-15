@@ -40,6 +40,7 @@ export default function EventStatusArea({
           joinedAt={myResult.joinedAt}
           ranking={myResult.ranking}
           isWinner={myResult.isWinner}
+          prize={myResult.prize}
           totalParticipants={totalParticipants}
           currentProccessed={currentProccessed}
         />
