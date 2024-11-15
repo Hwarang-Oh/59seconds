@@ -24,6 +24,8 @@ public enum ErrorCode {
 
     KAKAOSUB_NOT_FOUND(HttpStatus.NOT_FOUND, "kakaoSub가 없습니다."),
     TOKEN_CANNOT_CREATE(HttpStatus.BAD_REQUEST, "토큰을 만들 수 없습니다."),
+    TOKEN_INVALID(HttpStatus.BAD_REQUEST, "토큰이 유효하지 않습니다."),
+    TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "토큰이 만료되었습니다."),
 
     // 필드 유효성 검사 관련 에러
     INVALID_FIELD_NAME(HttpStatus.BAD_REQUEST, "잘못된 형식의 필드 이름입니다."),

@@ -5,6 +5,7 @@ import com.ssafy.fiftyninesec.auth.service.OAuthService;
 import com.ssafy.fiftyninesec.global.util.JwtUtil;
 import com.ssafy.fiftyninesec.solution.entity.Member;
 import com.ssafy.fiftyninesec.solution.repository.MemberRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,5 +32,11 @@ public class OAuthController {
         Member member = memberRepository.findByKakaoSub(kakaoSub);
 
         return ResponseEntity.ok(oAuthService.loginOrRegister(member, kakaoSub, response));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        oAuthService.logout(request, response);
+        return ResponseEntity.ok().build();
     }
 }

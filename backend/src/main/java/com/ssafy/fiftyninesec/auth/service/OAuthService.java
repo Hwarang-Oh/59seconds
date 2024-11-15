@@ -6,6 +6,8 @@ import com.ssafy.fiftyninesec.global.exception.ErrorCode;
 import com.ssafy.fiftyninesec.global.util.JwtUtil;
 import com.ssafy.fiftyninesec.solution.entity.Member;
 import com.ssafy.fiftyninesec.solution.service.MemberService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +17,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.http.HttpEntity;
@@ -126,18 +126,41 @@ public class OAuthService {
         String accessToken = tokensMap.get("accessToken");
         String refreshToken = tokensMap.get("refreshToken");
 
-        // Redis에 AccessToken과 RefreshToken 저장
-        String accessTokenKey = "accessToken:" + member.getId();
-        String refreshTokenKey = "refreshToken:" + member.getId();
+        String refreshTokenId = UUID.randomUUID().toString(); // 리프레시 토큰 식별자 생성
         try{
-            valueOps.set(accessTokenKey, accessToken, 1, TimeUnit.HOURS);         // AccessToken TTL: 1시간
-            valueOps.set(refreshTokenKey, refreshToken, 12, TimeUnit.HOURS);         // RefreshToken TTL: 12시간
+            valueOps.set("refreshTokenId:" + refreshTokenId, refreshToken, 12, TimeUnit.HOURS); // TTL 12시간
         } catch (Exception e) {
             throw new CustomException(ErrorCode.REDIS_CANNOT_SAVE);
         }
-        log.info("토큰 저장 성공");
+        log.info("리프레시 토큰 저장 성공");
         // 로그인
+        // 액세스 토큰과 레디스용 리프레시토큰아이디를 쿠키로 저장
         jwtUtil.addAccessTokenToCookie(response, accessToken);
-        return new OAuthResponseDto(member.getId());
+        jwtUtil.addRefreshTokenIdToCookie(response, refreshTokenId);
+
+        return new OAuthResponseDto(member.getId(), member.getParticipateName(), member.getCreatorName());
     }
+
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        Optional<Cookie> refreshTokenIdCookie = Arrays.stream(Optional.ofNullable(request.getCookies()).orElse(new Cookie[0]))
+                .filter(cookie -> "refreshTokenId".equals(cookie.getName()))
+                .findFirst();
+
+        if (refreshTokenIdCookie.isPresent()) {
+            String refreshTokenId = refreshTokenIdCookie.get().getValue();
+
+            // Redis에서 리프레시 토큰 삭제
+            redisTemplate.delete("refreshTokenId:" + refreshTokenId);
+
+            // 쿠키 삭제
+            jwtUtil.deleteCookie(response, "accessToken");
+            jwtUtil.deleteCookie(response, "refreshTokenId");
+
+            log.info("로그아웃 완료");
+        } else {
+            log.warn("로그아웃 요청에서 refreshTokenId 쿠키를 찾을 수 없습니다.");
+            throw new CustomException(ErrorCode.TOKEN_INVALID);
+        }
+    }
+
 }
