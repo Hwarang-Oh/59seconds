@@ -3,6 +3,7 @@ import Link from 'next/link';
 import MainLogo from '@/components/icon/MainLogo';
 import HeaderInfo from '@/components/common/HeaderInfo';
 import SearchComponent from '@/components/common/SearchComponent';
+import { Suspense } from 'react';
 
 export default function Header() {
   return (
@@ -14,7 +15,9 @@ export default function Header() {
           </Link>
           <SearchComponent />
         </div>
-        <HeaderInfo />
+        <Suspense fallback={<div>Loading...</div>}>
+          <HeaderInfo />
+        </Suspense>
       </div>
     </div>
   );

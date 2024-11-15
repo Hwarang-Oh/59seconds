@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import ToggleIcon from '@/components/icon/ToggleIcon';
+import TempPopup from '../login/TempPopup';
 import LoginPopUp from '@/components/login/LoginPopUp';
 import { useMemberLogin } from '@/hooks/useMemberLoginHook';
 
@@ -47,8 +48,10 @@ export default function HeaderInfo() {
         <ToggleIcon toggle={isCreatorMode} handleToggle={handleToggle} />
       </div>
       {isLoginPopUpOpen && (
-        // <LoginPopUp closePopUp={closeLoginPopUp} />
-        <LoginPopUp handleKakaoLogin={handleKakaoLogin} closePopUp={closeLoginPopUp} />
+        <>
+          <TempPopup closePopUp={closeLoginPopUp} />
+          <LoginPopUp handleKakaoLogin={handleKakaoLogin} closePopUp={closeLoginPopUp} />
+        </>
       )}
     </>
   );
