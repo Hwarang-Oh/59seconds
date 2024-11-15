@@ -7,7 +7,7 @@ pipeline {
         PARTICIPATION_DOCKERHUB_REPO = '404dreamsolutions/participation'
         GITLAB_REPO = 'https://lab.ssafy.com/s11-final/S11P31A404.git'
         BRANCH = 'backend/participation'
-        USER_SERVER_IP = 'k11a404.p.ssafy.io'
+        USER_SERVER_IP = '43.203.129.131'
         SPRING_PROFILE = 'prod'
     }
 
@@ -53,11 +53,12 @@ pipeline {
                             steps {
                                 dir('backend/participation') {
                                     withDockerRegistry([credentialsId: "${DOCKER_CREDENTIALS_ID}", url: "https://index.docker.io/v1/"]) {
-                                        script {
+                                        script {                                            
                                             def remoteDigest = sh(
                                                 script: "docker pull ${PARTICIPATION_DOCKERHUB_REPO}:latest && docker inspect --format='{{index .RepoDigests 0}}' ${PARTICIPATION_DOCKERHUB_REPO}:latest || echo 'no_remote_digest'",
                                                 returnStdout: true
                                             ).trim()
+
                                             def localDigest = sh(
                                                 script: """
                                                 docker build -t ${PARTICIPATION_DOCKERHUB_REPO}:latest .
@@ -83,7 +84,7 @@ pipeline {
                                         usernameVariable: 'DOCKER_USERNAME',
                                         passwordVariable: 'DOCKER_PASSWORD')]) {
                 sh """
-                    ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
+                    ssh -o StrictHostKeyChecking=ec2-user@${USER_SERVER_IP} '
                     echo "Logging into Docker Hub..." && \
                     docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
                     echo "Checking Docker network..." && \
