@@ -54,14 +54,6 @@ spring:
 
   jackson:
     time-zone: Asia/Seoul
-
-minio:
-  endpoint: ${minio.endpoint}
-  bucket-name: ${minio.bucket-name}
-  access-key: ${minio.access-key}
-  secret-key: ${minio.secret-key}
-  file-manager-user: ${minio.file-manager-user}
-  file-manager-password: ${minio.file-manager-password}
  
 management:
   endpoints:

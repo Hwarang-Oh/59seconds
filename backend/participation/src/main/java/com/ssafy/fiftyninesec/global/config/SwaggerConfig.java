@@ -13,6 +13,6 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(new Info().title("59초 프로젝트 API")
                         .description("59초 프로젝트의 API 문서입니다.")
-                        .version("v1.0"));
+                        .version("v2.0"));
     }
 }
