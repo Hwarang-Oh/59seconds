@@ -55,7 +55,7 @@ public class ParticipationResponseDto {
                 .build();
     }
 
-    private LocalDateTime convertToLocalDateTime(Object joinedAt) {
+    private static LocalDateTime convertToLocalDateTime(Object joinedAt) {
         if (joinedAt instanceof ArrayList) {
             @SuppressWarnings("unchecked")
             ArrayList<Integer> dateList = (ArrayList<Integer>) joinedAt;
