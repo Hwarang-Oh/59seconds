@@ -74,6 +74,6 @@ tasks.named('test') {
 }
 
 bootJar {
-	archiveBaseName.set('dreamsolution')
+	archiveBaseName.set('participation')
 	archiveVersion.set('0.0.2-SNAPSHOT')
 }

@@ -1,22 +1,9 @@
-#FROM openjdk:17-jdk-slim
-#VOLUME /tmp
-#COPY build/libs/dreamsolution-0.0.1-SNAPSHOT.jar contents.jar
-#EXPOSE 9090
-#ENV TZ Asia/Seoul
-#ENTRYPOINT ["java", "-jar", "/contents.jar"]
 FROM openjdk:17-jdk-slim
 
-# Create directory for application
 WORKDIR /app
 
-# Copy the JAR file to the application directory
-COPY build/libs/dreamsolution-0.0.1-SNAPSHOT.jar contents.jar
+COPY build/libs/participation-0.0.2-SNAPSHOT.jar participation.jar
  
-# Set timezone
 ENV TZ Asia/Seoul
-
-# Expose port
-EXPOSE 9090
-
-# Run the Spring Boot application with the specified profile
-ENTRYPOINT ["java", "-jar", "/app/contents.jar", "--spring.profiles.active=prod"]
+EXPOSE 9091
+ENTRYPOINT ["java", "-jar", "/app/participation.jar", "--spring.profiles.active=prod"]
