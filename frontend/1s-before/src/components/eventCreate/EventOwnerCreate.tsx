@@ -27,7 +27,7 @@ export default function EventOwnerCreate() {
             {imageUrl || typeof ownerData.profileImage === 'string' ? (
               <img
                 src={getProfileImageSrc()}
-                alt=""
+                alt="프로필 이미지"
                 className="w-40 h-40 rounded-full object-cover border-2"
               />
             ) : (
