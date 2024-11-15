@@ -40,10 +40,6 @@ spring:
           uris: ${spring.elasticsearch.uris}
           username: ${spring.elasticsearch.username}
           password: ${spring.elasticsearch.password}
-    redis:
-      host: localhost
-      port: 6379
-
   doc:
     api-docs:
       path: /api/v2/docs
