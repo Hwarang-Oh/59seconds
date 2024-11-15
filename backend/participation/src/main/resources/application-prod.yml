@@ -1,9 +1,3 @@
-spring:
-  data:
-    redis:
-      host: my-redis
-      port: 6379
-
 otel:
   metrics:
     exporter: none  # Disable metrics exporter

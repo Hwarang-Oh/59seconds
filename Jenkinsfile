@@ -27,11 +27,11 @@ pipeline {
         stage('Parallel Build & Deploy') {
             parallel {
                 stage('Participation') {
-                    // when {
-                    //     expression {
-                    //         sh(script: "git diff --name-only HEAD^ | grep '^backend/participation'", returnStatus: true) == 0
-                    //     }
-                    // }
+                    when {
+                        expression {
+                            sh(script: "git diff --name-only HEAD^ | grep '^backend/participation'", returnStatus: true) == 0
+                        }
+                    }
                     stages {
                         stage('Build backend/participation') {
                             steps {
