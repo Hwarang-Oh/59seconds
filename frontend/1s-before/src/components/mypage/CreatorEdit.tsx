@@ -58,26 +58,23 @@ export default function CreatorEdit() {
   };
 
   return (
-    <form className="p-6 mb-8 mx-auto max-w-screen-xl space-y-6">
-      <div className="flex items-center space-x-10">
-        <div className="flex flex-col justify-center items-center mr-6">
+    <form className="p-6 mb-8 mx-auto max-w-screen-2xl space-y-6">
+      <div className="flex items-center space-x-12">
+        <div className="flex flex-col justify-center items-center">
           <div className="relative mb-6">
             <label htmlFor="profileImage" className="cursor-pointer">
               {profileImageSrc ? (
                 <img
                   src={profileImageSrc}
-                  alt=""
-                  className="w-60 h-60 rounded-full object-cover border-2"
+                  alt="프로필"
+                  className="w-40 h-40 sm:w-48 sm:h-48 md:w-52 md:h-52 lg:w-60 lg:h-60 rounded-full object-cover border-2"
                 />
               ) : (
-                <div className="w-60 h-60 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+                <div className="w-40 h-40 sm:w-48 sm:h-48 md:w-52 md:h-52 lg:w-60 lg:h-60  bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
                   사진 없음
                 </div>
               )}
-              <FaCirclePlus
-                className="text-mainColor1 absolute right-1 bottom-1 bg-white rounded-full border-white border-4"
-                size={52}
-              />
+              <FaCirclePlus className="text-mainColor1 absolute right-1 bottom-1 bg-white rounded-full border-white border-4 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16" />
             </label>
             <input
               type="file"
@@ -92,7 +89,7 @@ export default function CreatorEdit() {
               className="hidden"
             />
           </div>
-          <div className="flex flex-row space-x-5 mb-3">
+          <div className="flex flex-row space-x-4 mb-3">
             {isEditingName ? (
               <>
                 <input
@@ -127,7 +124,7 @@ export default function CreatorEdit() {
                   type="button"
                   className="text-blue-500 flex items-center"
                 >
-                  <FaEdit className="mr-1 text-mainColor1" />
+                  <FaEdit className=" text-mainColor1" />
                 </button>
               </>
             )}

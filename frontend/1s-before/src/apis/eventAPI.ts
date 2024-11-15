@@ -2,7 +2,7 @@ import api from '@/apis/commonAPI';
 import { isAxiosError } from 'axios';
 import { DeadlineEventTypes } from '@/types/home';
 import { EventParticipation } from '@/types/eventRoom';
-import { WinnerUserInfo, WinnerInfo } from '@/types/user';
+import { WinnerUserInfo } from '@/types/user';
 import { PageParamsType, PageType, SliceDetails } from '@/types/common/common';
 const EVENT_URL = 'v1/rooms';
 const EVENT_PARTICIPATION_URL = 'v1/participations';
