@@ -7,7 +7,7 @@ pipeline {
         PARTICIPATION_DOCKERHUB_REPO = '404dreamsolutions/participation'
         GITLAB_REPO = 'https://lab.ssafy.com/s11-final/S11P31A404.git'
         BRANCH = 'backend/participation'
-        USER_SERVER_IP = '43.203.129.131'
+        USER_SERVER_IP = 'k11a404.p.ssafy.io'
         SPRING_PROFILE = 'prod'
     }
 
@@ -36,7 +36,7 @@ pipeline {
                         stage('Build backend/participation') {
                             steps {
                                 dir('backend/participation') {
-                                    withCredentials([file(credentialsId: 'application-secret', variable: 'SECRET_FILE')]) {
+                                    withCredentials([file(credentialsId: 'participation-secret', variable: 'SECRET_FILE')]) {
                                         sh '''
                                             mkdir -p src/main/resources
                                             cp $SECRET_FILE src/main/resources/application-secret.yml
@@ -79,16 +79,16 @@ pipeline {
                         }
                         stage('Deploy Participation') {
                             steps {
-                                sshagent(['application-ec2-ssh']) {
+                                sshagent(['ssafy-ec2-ssh']) {
                                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}",
                                         usernameVariable: 'DOCKER_USERNAME',
                                         passwordVariable: 'DOCKER_PASSWORD')]) {
                 sh """
-                    ssh -o StrictHostKeyChecking=no ec2-user@${USER_SERVER_IP} '
+                    ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
                     echo "Logging into Docker Hub..." && \
                     docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
                     echo "Checking Docker network..." && \
-                    docker network inspect 404_dream_solutions_network >/dev/null 2>&1 || docker network create 404_dream_solutions_network && \
+                    docker network inspect 404_dream_solutions_network || docker network create 404_dream_solutions_network && \
                     echo "Stopping existing container..." && \
                     docker stop participation || true && \
                     docker rm participation || true && \
@@ -120,9 +120,13 @@ pipeline {
             script {
                 mattermostSend (
                     color: 'good',
-                    message: "빌드 성공 :hwarang_sun:: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Details>)",
-                    endpoint: 'https://meeting.ssafy.com/hooks/s88btx34q7fzmcbp5fnxzdtq1o',
-                    channel: 'a404-jenkins'
+                    message: """
+                    *:tada: 빌드 성공! :tada:*
+                    ### ${env.JOB_NAME} 
+                    #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Details>)
+                    """,
+                    endpoint: 'https://meeting.ssafy.com/hooks/b914jy3nbpbo3pezpqak97z3uh',
+                    channel: 'Participation_Jenkins'
                 )
             }
         }
@@ -130,9 +134,13 @@ pipeline {
             script {
                 mattermostSend (
                     color: 'danger',
-                    message: "빌드 실패 :404_burn: : ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Details>)",
-                    endpoint: 'https://meeting.ssafy.com/hooks/s88btx34q7fzmcbp5fnxzdtq1o',
-                    channel: 'a404-jenkins'
+                    message: """
+                    :sad_blob: 빌드 실패 :404_burn:
+                    ### ${env.JOB_NAME} 
+                    #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Details>)
+                    """,
+                    endpoint: 'https://meeting.ssafy.com/hooks/b914jy3nbpbo3pezpqak97z3uh',
+                    channel: 'Participation_Jenkins'
                 )
             }
         }
