@@ -13,6 +13,7 @@ let activeEventIds = new Set<number>();
 
 const connect = ({
   eventId,
+  memberId,
   onEventRoomResultReceived,
   onEventRoomInfoReceived,
   onMessageReceived,
@@ -22,13 +23,14 @@ const connect = ({
     console.log('Already Connected, Adding New subscription');
     addSubscription({
       eventId,
+      memberId,
       onEventRoomResultReceived,
       onEventRoomInfoReceived,
       onMessageReceived,
       subscriptions,
     });
     if (!activeEventIds.has(eventId)) {
-      sendEnterEventRoom(eventId);
+      sendEnterEventRoom(eventId, memberId);
       activeEventIds.add(eventId);
     }
   } else {
@@ -41,13 +43,14 @@ const connect = ({
         console.log('Connected to ' + eventId);
         addSubscription({
           eventId,
+          memberId,
           onEventRoomResultReceived,
           onEventRoomInfoReceived,
           onMessageReceived,
           subscriptions,
         });
         if (!activeEventIds.has(eventId)) {
-          sendEnterEventRoom(eventId);
+          sendEnterEventRoom(eventId, memberId);
           activeEventIds.add(eventId);
         }
       },
@@ -148,14 +151,15 @@ const sendEventRoomMessage = (eventId: number, message: EventRoomMessageInfo) =>
   }
 };
 
-const sendEnterEventRoom = (eventId: number) => {
+const sendEnterEventRoom = (eventId: number, memberId: number) => {
   if (stompClient?.connected) {
     stompClient.publish({
       destination: `/chat/pub/room/${eventId}/enter`,
       body: JSON.stringify({ eventId: eventId }),
     });
     sendEventRoomMessage(eventId, {
-      eventId: eventId,
+      eventId,
+      memberId,
       sender: 'system',
       content: 'Entered the room',
       sentAt: new Date().toISOString(),

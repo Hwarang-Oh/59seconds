@@ -1,3 +1,4 @@
+import { Prize } from '@/types/eventDetail';
 /**
  * IMP : Event Room Page Component에서 사용하는 Type 정의
  */
@@ -8,6 +9,7 @@ export interface EventRoomInfo {
   winnerNum: number;
   eventTime: string;
   bannerImage: string;
+  prizes: Prize[];
 }
 
 export interface BannerHeaderProps {
@@ -16,13 +18,14 @@ export interface BannerHeaderProps {
 
 export interface EventStatusAreaProps {
   eventId: number;
+  eventTime: string;
   isDrawing: boolean;
+  competitionRate: number;
   totalParticipants: number;
   currentProccessed: number;
-  competitionRate: number;
-  eventTime: string;
   myResult: EventRoomResultViewInfo;
   goDrawView: () => void;
+  getMyEventResult: (eventId: number) => void;
 }
 
 export interface EventStatusStatsProps {
@@ -41,8 +44,8 @@ export interface EventStatusView {
 }
 
 export interface EventWinOrLoseStateView {
-  isWinner: boolean;
   eventId: number;
+  isWinner: boolean;
   joinedAt: string;
   ranking: number;
 }
@@ -89,11 +92,20 @@ interface EventRoomSubscription {
   eventId: number;
 }
 
+export interface PrizeInfo {
+  ranking: number;
+  eventId: number;
+  prizeId: number;
+  prizeType: string;
+  prizeName: string;
+}
+
 export interface EventRoomCurrentInfo extends EventRoomSubscription {
   userCount: number;
 }
 
 export interface EventRoomMessageInfo extends EventRoomSubscription {
+  memberId: number;
   sender: string;
   content: string;
   sentAt: string;
@@ -104,10 +116,18 @@ export interface EventRoomResultInfo extends EventRoomSubscription {
   joinedAt: string;
   ranking: number;
   isWinner: boolean;
+  winnerName: string;
 }
 
 export interface EventRoomResultViewInfo extends EventRoomResultInfo {
   isMine: boolean;
+  prize?: PrizeInfo;
+}
+
+export interface EventRoomAllResultProps {
+  list: EventRoomResultViewInfo[];
+  untilMyResult: EventRoomResultViewInfo[];
+  myResult: EventRoomResultViewInfo;
 }
 
 // Type : Subscription Type 정의
@@ -120,12 +140,13 @@ export interface EventRoomMessageSubscription extends EventRoomSubscription {
 }
 
 export interface EventRoomResultSubscription extends EventRoomSubscription {
-  onEventRoomResultReceived: (eventRoomResult: EventRoomResultInfo) => void;
+  onEventRoomResultReceived: (eventRoomResult: EventRoomResultInfo[]) => void;
 }
 
 export interface EventSocketProps extends EventRoomSubscription {
+  memberId: number;
   onEventRoomInfoReceived: (eventRoomCurrentInfo: EventRoomCurrentInfo) => void;
-  onEventRoomResultReceived: (eventRoomResult: EventRoomResultInfo) => void;
+  onEventRoomResultReceived: (eventRoomResult: EventRoomResultInfo[]) => void;
   onMessageReceived: (messageInfo: EventRoomMessageInfo) => void;
   subscriptions: string[];
 }

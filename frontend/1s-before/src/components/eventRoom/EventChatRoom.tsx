@@ -18,6 +18,7 @@ export default function EventChatRoom({ messages }: Readonly<EventChatRoomProps>
       {messages.map((message) => (
         <EventChatMessage
           key={message.sentAt}
+          memberId={message.memberId}
           eventId={message.eventId}
           sender={message.sender}
           content={message.content}

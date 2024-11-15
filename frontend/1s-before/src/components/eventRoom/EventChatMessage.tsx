@@ -2,6 +2,7 @@ import { EventRoomMessageInfo } from '@/types/eventRoom';
 
 export default function EventChatMessage({
   eventId,
+  memberId,
   sender,
   content,
   sentAt,
