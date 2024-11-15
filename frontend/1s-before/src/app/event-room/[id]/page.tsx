@@ -3,7 +3,7 @@ import BannerHeader from '@/components/eventRoom/BannerHeader';
 import EventStatusArea from '@/components/eventRoom/EventStatusArea';
 import EventChatRoomArea from '@/components/eventRoom/EventChatRoomArea';
 import EventResultAllResult from '@/components/eventRoom/EventResultAllResult';
-import { useEventRoom } from '@/hooks/useEventRoomHook';
+import { useEventProgress } from '@/hooks/useEventProgressHook';
 
 export default function EventRoom() {
   const {
@@ -16,12 +16,12 @@ export default function EventRoom() {
     untilMyResult,
     competitionRate,
     currentProcessed,
+    setIsDrawing,
     toggleChatSize,
     getStatusAreaWidth,
     getChatRoomAreaWidth,
     getUntilMyResult,
-    setIsDrawing,
-  } = useEventRoom();
+  } = useEventProgress();
 
   return (
     <div className='flex flex-col max-w-screen-xl mx-auto px-7'>

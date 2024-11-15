@@ -118,7 +118,7 @@ export const postWinnerUserInfo = async (roomId: number, userInfo: WinnerUserInf
 
 export const getWinnerInfo = async (roomId: number) => {
   try {
-    const response = await api.post(`${EVENT_URL}/${roomId}/winners`, winnerInfo);
+    const response = await api.post(`${EVENT_URL}/${roomId}/winners`, getWinnerInfo);
     return response.data;
   } catch (error) {
     if (isAxiosError(error)) {

@@ -39,6 +39,7 @@ export interface EventStatusView {
   joinedAt: string;
   ranking: number;
   isWinner: boolean;
+  prize?: PrizeInfo;
   totalParticipants: number;
   currentProccessed: number;
 }
@@ -48,6 +49,7 @@ export interface EventWinOrLoseStateView {
   isWinner: boolean;
   joinedAt: string;
   ranking: number;
+  prize?: PrizeInfo;
 }
 
 export interface CountdownTimerProps {

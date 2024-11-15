@@ -9,22 +9,24 @@ export const useEventResultHook = (
   const [frontSection, setFrontSection] = useState<EventRoomResultViewInfo[]>([]);
   const [afterSection, setAfterSection] = useState<EventRoomResultViewInfo[]>([]);
   const [expandedSection, setExpandedSection] = useState<'after' | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     if (myResult.ranking === 0) return;
-    const front = untilMyResult;
-    setFrontSection(front);
-    let index = 0;
+
+    // 일정 간격으로 untilMyResult의 항목을 하나씩 frontSection에 추가
     const interval = setInterval(() => {
-      if (index < myResult.ranking) {
-        setFrontSection((prev) => [...prev, front[index]]);
-        index++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 300);
+      setFrontSection((prev) => [...prev, untilMyResult[currentIndex]]);
+      setCurrentIndex((prevIndex) => prevIndex + 1);
+    }, 200);
+
+    // untilMyResult가 끝나면 interval 정지
+    if (currentIndex >= untilMyResult.length) {
+      clearInterval(interval);
+    }
+
     return () => clearInterval(interval);
-  }, [myResult, untilMyResult]);
+  }, [untilMyResult, currentIndex]);
 
   useEffect(() => {
     if (myResult.ranking === 0) return;
