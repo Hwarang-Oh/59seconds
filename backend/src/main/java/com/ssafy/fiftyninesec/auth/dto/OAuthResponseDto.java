@@ -9,4 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OAuthResponseDto {
     private Long memberId;
+    private String participateName;
+    private String creatorName;
 }
