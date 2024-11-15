@@ -44,7 +44,7 @@ pipeline {
                                         '''
                                     }
                                     sh 'chmod +x ./gradlew'
-                                    sh './gradlew clean build -Pprofile=prod -x test'
+                                    sh './gradlew clean bootJar -Pprofile=prod -x test'
                                     sh 'ls -l build/libs/'
                                 }
                             }
