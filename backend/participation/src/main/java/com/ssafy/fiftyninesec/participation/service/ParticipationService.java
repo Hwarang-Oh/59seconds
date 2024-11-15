@@ -49,6 +49,7 @@ public class ParticipationService {
     @Transactional(readOnly = true)
     public List<ParticipationResponseDto> getParticipationsByRoomId(Long roomId) {
         List<Participation> participations = participationRepository.findByRoomIdOrderByRankingAsc(roomId);
+
         if(participations.isEmpty())
             return Collections.emptyList();
 
@@ -151,7 +152,7 @@ public class ParticipationService {
             while ((dto = redisTemplate.opsForList().leftPop(queueKey)) != null) {
                 try {
                     if (dto instanceof LinkedHashMap) {
-                        ParticipationResponseDto participationDto = convertToParticipationDto((LinkedHashMap<String, Object>) dto);
+                        ParticipationResponseDto participationDto = ParticipationResponseDto.from((LinkedHashMap<String, Object>) dto);
                         if (participationDto.getRanking() > lastProcessedRanking) {
                             participations.add(participationDto);
                             log.info("Added participation: {}", participationDto);
@@ -209,39 +210,6 @@ public class ParticipationService {
     public void deleteEventRanking(Long roomId){
         String rankingKey = RANKING_KEY_PREFIX + roomId;
         redisTemplate.delete(rankingKey);
-    }
-
-// -----------------------------------------------------------------------------------------------------
-
-    private ParticipationResponseDto convertToParticipationDto(LinkedHashMap<String, Object> map) {
-        LocalDateTime joinedAt = convertToLocalDateTime(map.get("joinedAt"));
-
-        return ParticipationResponseDto.builder()
-                .eventId(((Number) map.get("eventId")).longValue())
-                .memberId(((Number) map.get("memberId")).longValue())
-                .joinedAt(joinedAt)
-                .ranking(((Number) map.get("ranking")).intValue())
-                .isWinner((Boolean) map.get("isWinner"))
-                .winnerName((String) map.get("winnerName"))
-                .build();
-    }
-
-    private LocalDateTime convertToLocalDateTime(Object joinedAt) {
-        if (joinedAt instanceof ArrayList) {
-            @SuppressWarnings("unchecked")
-            ArrayList<Integer> dateList = (ArrayList<Integer>) joinedAt;
-            return LocalDateTime.of(
-                    dateList.get(0), // year
-                    dateList.get(1), // month
-                    dateList.get(2), // day
-                    dateList.get(3), // hour
-                    dateList.get(4), // minute
-                    dateList.get(5), // second
-                    dateList.get(6)  // nanosecond
-            );
-        } else {
-            return LocalDateTime.parse((String) joinedAt);
-        }
     }
 
 // TEST -----------------------------------------------------------------------------------------------------

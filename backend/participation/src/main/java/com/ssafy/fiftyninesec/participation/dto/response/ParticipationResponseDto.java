@@ -4,6 +4,8 @@ import com.ssafy.fiftyninesec.participation.entity.Participation;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 @Getter
 @Setter
@@ -37,5 +39,37 @@ public class ParticipationResponseDto {
                 .isWinner(participation.getIsWinner())
                 .winnerName(name)
                 .build();
+    }
+
+
+    public static ParticipationResponseDto from(LinkedHashMap<String, Object> map) {
+        LocalDateTime joinedAt = convertToLocalDateTime(map.get("joinedAt"));
+
+        return ParticipationResponseDto.builder()
+                .eventId(((Number) map.get("eventId")).longValue())
+                .memberId(((Number) map.get("memberId")).longValue())
+                .joinedAt(joinedAt)
+                .ranking(((Number) map.get("ranking")).intValue())
+                .isWinner((Boolean) map.get("isWinner"))
+                .winnerName((String) map.get("winnerName"))
+                .build();
+    }
+
+    private LocalDateTime convertToLocalDateTime(Object joinedAt) {
+        if (joinedAt instanceof ArrayList) {
+            @SuppressWarnings("unchecked")
+            ArrayList<Integer> dateList = (ArrayList<Integer>) joinedAt;
+            return LocalDateTime.of(
+                    dateList.get(0), // year
+                    dateList.get(1), // month
+                    dateList.get(2), // day
+                    dateList.get(3), // hour
+                    dateList.get(4), // minute
+                    dateList.get(5), // second
+                    dateList.get(6)  // nanosecond
+            );
+        } else {
+            return LocalDateTime.parse((String) joinedAt);
+        }
     }
 }
