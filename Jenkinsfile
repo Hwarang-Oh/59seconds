@@ -84,7 +84,7 @@ pipeline {
                                         usernameVariable: 'DOCKER_USERNAME',
                                         passwordVariable: 'DOCKER_PASSWORD')]) {
                 sh """
-                    ssh -o StrictHostKeyChecking=ec2-user@${USER_SERVER_IP} '
+                    ssh -o StrictHostKeyChecking=no ec2-user@${USER_SERVER_IP} '
                     echo "Logging into Docker Hub..." && \
                     docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
                     echo "Checking Docker network..." && \
