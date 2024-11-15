@@ -47,8 +47,8 @@ export default function HeaderInfo() {
         <ToggleIcon toggle={isCreatorMode} handleToggle={handleToggle} />
       </div>
       {isLoginPopUpOpen && (
-        <LoginPopUp closePopUp={closeLoginPopUp} />
-        // <LoginPopUp handleKakaoLogin={handleKakaoLogin} closePopUp={closeLoginPopUp} />
+        // <LoginPopUp closePopUp={closeLoginPopUp} />
+        <LoginPopUp handleKakaoLogin={handleKakaoLogin} closePopUp={closeLoginPopUp} />
       )}
     </>
   );

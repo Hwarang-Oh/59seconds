@@ -1,4 +1,5 @@
 import { EventRoomMessageInfo } from '@/types/eventRoom';
+import { formatTimeBasic2 } from '@/utils/timeUtils';
 
 export default function EventChatMessage({
   eventId,
@@ -16,7 +17,9 @@ export default function EventChatMessage({
           style={{ color: '#1C1C1E' }}>
           {content}
         </p>
-        <p className='font-semibold text-xs leading-normal text-[#999]'>{sentAt}</p>
+        <p className='font-semibold text-xs leading-normal text-[#999]'>
+          {formatTimeBasic2(sentAt)}
+        </p>
       </div>
     </div>
   );

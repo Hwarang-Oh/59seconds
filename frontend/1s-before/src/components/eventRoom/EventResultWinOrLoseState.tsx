@@ -1,16 +1,17 @@
 import Lottie from 'lottie-react';
-import { EventWinOrLoseStateView } from '@/types/eventRoom';
-import Animation_Prize from '@/assets/Animation_Prize.json';
 import Animation_Tada from '@/assets/Animation_Tada.json';
+import Animation_Prize from '@/assets/Animation_Prize.json';
 import Animation_Crying from '@/assets/Animation_Crying.json';
+import { EventWinOrLoseStateView } from '@/types/eventRoom';
+import { formatTimeWithMilliseconds } from '@/utils/timeUtils';
 
 export default function EventResultWinOrLoseState({
   eventId,
   isWinner,
   joinedAt,
   ranking,
+  prize,
 }: Readonly<EventWinOrLoseStateView>) {
-  // isWinner = false;
   return (
     <>
       {isWinner ? (
@@ -23,7 +24,7 @@ export default function EventResultWinOrLoseState({
                 <div className='text-2xl font-semibold text-[#1C1C1E] leading-[40px]'>
                   <p>축하합니다!</p>
                   <p>선착순 {ranking}등으로</p>
-                  <p>아이폰 15프로에 당첨되셨습니다</p>
+                  <p>{prize?.prizeName}에 당첨되셨습니다</p>
                 </div>
                 <Lottie
                   animationData={Animation_Tada}
@@ -31,7 +32,7 @@ export default function EventResultWinOrLoseState({
                   className='w-[100] h-[100] transform scale-x-[-1]'
                 />
               </div>
-              <p className='text-lg text-[#999999]'>기록 :{joinedAt}</p>
+              <p className='text-lg text-[#999999]'>기록 :{formatTimeWithMilliseconds(joinedAt)}</p>
             </div>
           </div>
           <button className='bg-[#474972] rounded-xl text-white text-xl font-bold py-3 px-20'>
@@ -51,7 +52,7 @@ export default function EventResultWinOrLoseState({
                 </div>
                 <Lottie animationData={Animation_Crying} loop={true} className='w-20 h-20' />
               </div>
-              <p className='text-lg text-[#999999]'>기록 :{joinedAt}</p>
+              <p className='text-lg text-[#999999]'>기록 :{formatTimeWithMilliseconds(joinedAt)}</p>
             </div>
           </div>
           <button className='bg-[#474972] rounded-xl text-white text-xl font-bold py-3 px-20'>
