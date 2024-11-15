@@ -116,7 +116,7 @@ export const postWinnerUserInfo = async (roomId: number, userInfo: WinnerUserInf
   }
 };
 
-export const getWinnerInfo = async (roomId: number, winnerInfo: WinnerInfo) => {
+export const getWinnerInfo = async (roomId: number) => {
   try {
     const response = await api.post(`${EVENT_URL}/${roomId}/winners`, winnerInfo);
     return response.data;

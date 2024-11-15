@@ -29,7 +29,7 @@ export default function EventRoomPart({
   return (
     <div className="max-w-sm">
       {!isCodeValid ? (
-        <div className="flex flex-col items-center justify-center min-h-[80vh] bg-mainColor2 p-6 rounded-lg border">
+        <div className="flex flex-col items-center justify-center min-h-[50vh] bg-mainColor2 p-6 rounded-lg border">
           <IoMdLock className="text-mainColor1 mb-4" size={40} />
           <p className="text-center text-mainColor1 font-bold text-xl mb-4">
             이벤트 참여하기
@@ -53,14 +53,14 @@ export default function EventRoomPart({
       ) : (
         <div className="sticky top-0 z-10 bg-white border rounded-lg shadow-lg px-5 pb-5 pt-2">
           <div className="flex flex-row justify-end items-center my-1">
-            {showTooltip && lastUpdated && (
+            {showTooltip && lastUpdated ? (
               <div className="absolute bottom-full right-0 mb-2 whitespace-nowrap">
                 <div className="bg-gray-800 text-white text-[10px] px-2 py-1 rounded shadow-lg">
                   {lastUpdated}에 업데이트됨
                 </div>
                 <div className="absolute -bottom-1 right-1.5 w-2 h-2 bg-gray-800 transform rotate-45" />
               </div>
-            )}
+            ) : null}
             <MdOutlineRefresh
               className="text-gray-400 cursor-pointer hover:text-gray-600 transition-colors duration-200"
               onMouseEnter={() => setShowTooltip(true)}
@@ -84,9 +84,9 @@ export default function EventRoomPart({
             </div>
             <p className="text-gray-600 ml-6 text-sm">
               {prizes.map((product) => (
-                <span key={product.prizeId}>
+                <div key={product.prizeId}>
                   {product.prizeName} {product.winnerCount}개 <br />
-                </span>
+                </div>
               ))}
             </p>
 
@@ -113,7 +113,7 @@ export default function EventRoomPart({
                 ? creator.snsLink.split(/[\s,]+/).map((link, index) => (
                     <span
                       key={link}
-                      className="inline-block max-w-sm overflow-hidden text-ellipsis whitespace-nowrap align-middle"
+                      className="inline-block max-w-16 md:max-w-28 lg:max-w-40 xl:max-w-56 overflow-hidden text-ellipsis whitespace-nowrap align-middle"
                     >
                       <Link
                         href={

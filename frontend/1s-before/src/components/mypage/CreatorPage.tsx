@@ -1,11 +1,20 @@
+import Link from 'next/link';
 import Image from 'next/image';
-import CreatorEdit from './CreatorEdit';
 import Banner from '@/assets/defaultBanner.png';
+import CreatorEdit from '@/components/mypage/CreatorEdit';
+import PrizeInfoPopUp from '@/components/mypage/PrizeInfoPopUp';
 import { useState } from 'react';
 import { useEventRoom } from '@/hooks/eventRoomHook';
 
 export default function EventCreatorPage() {
-  const { createdRooms, loading } = useEventRoom();
+  const {
+    createdRooms,
+    loading,
+    isPopupOpen,
+    selectedRoom,
+    openPopup,
+    closePopup,
+  } = useEventRoom();
 
   // IMP: 필터 상태 ("전체", "진행중", "종료")
   const [filter, setFilter] = useState('전체');
@@ -76,14 +85,16 @@ export default function EventCreatorPage() {
               key={room.eventId}
               className="flex flex-col border border-gray-300 rounded-lg overflow-hidden"
             >
-              <div className="w-full h-56 relative">
-                <Image
-                  src={room.bannerUrl ?? Banner}
-                  alt="배너"
-                  fill
-                  className="object-cover"
-                />
-              </div>
+              <Link href={`/event-detail/${room.eventId}`}>
+                <div className="w-full h-56 relative">
+                  <Image
+                    src={room.bannerUrl ?? Banner}
+                    alt="배너"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </Link>
               <div className="flex flex-row justify-between items-center mx-1 my-4 px-3">
                 <span
                   className={`mr-3 rounded-2xl px-2 py-1 ${
@@ -98,12 +109,29 @@ export default function EventCreatorPage() {
                   참여자 {room.unlockCount}명
                 </div>
               </div>
-              <p className="ml-2 text-gray-600 font-bold text-lg pl-3">
-                {room.title}
-              </p>
+              <div className="flex justify-between items-center mx-3 mb-4">
+                <Link href={`/event-detail/${room.eventId}`}>
+                  <p className="mt-2 ml-2 text-gray-600 font-bold text-lg pb-3 pl-3 cursor-pointer">
+                    {room.title}
+                  </p>
+                </Link>
+                {(room.status === 'COMPLETED' ||
+                  room.status === 'COMPLETED_NO_WINNER_INFO') && (
+                  <button
+                    onClick={() => openPopup(room.eventId)}
+                    className="px-4 py-2 bg-mainColor1 text-white rounded-lg"
+                  >
+                    당첨자 정보 보기
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
+      )}
+
+      {isPopupOpen && (
+        <PrizeInfoPopUp roomId={selectedRoom} closePopup={closePopup} />
       )}
     </div>
   );
