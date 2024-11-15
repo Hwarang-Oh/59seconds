@@ -95,7 +95,7 @@ public class ParticipationService {
 
             // Redis 큐에 참여 정보 저장
             String queueKey = PARTICIPATION_QUEUE_PREFIX + roomId;
-            ParticipationResponseDto responseDto = convertToDto(savedParticipation, member.getName());
+            ParticipationResponseDto responseDto = ParticipationResponseDto.of(savedParticipation, member.getName());
             redisTemplate.opsForList().rightPush(queueKey, responseDto);
 
             // 자신의 랭킹보다 낮은 참여자 정보 가져오기
@@ -212,18 +212,6 @@ public class ParticipationService {
     }
 
 // -----------------------------------------------------------------------------------------------------
-
-    // 엔티티를 DTO로 변환하는 메서드
-    private ParticipationResponseDto convertToDto(Participation participation, String winnerName) {
-        return ParticipationResponseDto.builder()
-                .eventId(participation.getRoomId())
-                .memberId(participation.getMemberId())
-                .joinedAt(participation.getJoinedAt())
-                .ranking(participation.getRanking())
-                .isWinner(participation.getIsWinner())
-                .winnerName(winnerName)
-                .build();
-    }
 
     private ParticipationResponseDto convertToParticipationDto(LinkedHashMap<String, Object> map) {
         LocalDateTime joinedAt = convertToLocalDateTime(map.get("joinedAt"));
