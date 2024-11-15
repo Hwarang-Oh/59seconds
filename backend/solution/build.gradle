@@ -1,6 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.3.5'
+	id 'org.springframework.boot' version '3.2.11'
+//	id 'org.springframework.boot' version '3.3.5'
 	id 'io.spring.dependency-management' version '1.1.6'
 }
 
@@ -23,6 +24,13 @@ repositories {
 	mavenCentral()
 }
 
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:2023.0.3"
+		mavenBom("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:2.6.0")
+	}
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 //	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
@@ -39,6 +47,7 @@ dependencies {
 //	implementation("io.opentelemetry:opentelemetry-exporter-jaeger:1.34.1")
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -55,11 +64,6 @@ dependencies {
 	// Redis + Redisson
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.redisson:redisson-spring-boot-starter:3.23.5'
-}
-dependencyManagement {
-	imports {
-		mavenBom("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:2.6.0")
-	}
 }
 
 tasks.named('test') {

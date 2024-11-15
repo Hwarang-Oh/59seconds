@@ -2,8 +2,10 @@ server:
   port: 8080
   servlet:
     context-path: /api/v2
-  
+
 spring:
+  application:
+    name: solution-service
   profiles:
     active: local
   config:
@@ -67,4 +69,6 @@ management:
   endpoint:
     prometheus:
       enabled: true  # prometheus 메트릭 활성화
-
+participation-service:
+  url: https://k11a404.p.ssafy.io:9090/api
+  version: /v2
