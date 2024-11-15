@@ -118,14 +118,9 @@ pipeline {
     post {
         success {
             script {
-                def lastCommitMessage = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
-                def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
-
                 mattermostSend (
                     color: 'good',
-                    message: """빌드 성공 :hwarang_sun:: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_Name} 
-                    최근 커밋: ${lastCommitMessage}
-                    (<${env.BUILD_URL}|Details>)""",
+                    message: "빌드 성공 :hwarang_sun:: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Details>)",
                     endpoint: 'https://meeting.ssafy.com/hooks/s88btx34q7fzmcbp5fnxzdtq1o',
                     channel: 'a404-jenkins'
                 )
@@ -133,13 +128,9 @@ pipeline {
         }
         failure {
             script {
-                def lastCommitMessage = sh(script: 'git log -1 --pretty=%B', returnStdout: true).trim()
-                def Author_Name = sh(script: "git show -s --pretty=%ae", returnStdout: true).trim()
                 mattermostSend (
                     color: 'danger',
-                    message: """빌드 실패 :cryingpatamon:: ${env.JOB_NAME} #${env.BUILD_NUMBER} by ${Author_Name}
-                    최근 커밋: ${lastCommitMessage}
-                    (<${env.BUILD_URL}|Details>)""",
+                    message: "빌드 실패 :404_burn: : ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Details>)",
                     endpoint: 'https://meeting.ssafy.com/hooks/s88btx34q7fzmcbp5fnxzdtq1o',
                     channel: 'a404-jenkins'
                 )
