@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_CREDENTIALS_ID = 'dockerhub-access'
-        GITLAB_CREDENTIALS_ID = 'gitlab-access-u1qns'
+        GITLAB_CREDENTIALS_ID = 'gitlab-access-leeju1013'
         PARTICIPATION_DOCKERHUB_REPO = '404dreamsolutions/participation'
         GITLAB_REPO = 'https://lab.ssafy.com/s11-final/S11P31A404.git'
         BRANCH = 'backend/participation'
