@@ -7,15 +7,19 @@ import { useEventRoom } from '@/hooks/useEventRoomHook';
 
 export default function EventRoom() {
   const {
-    eventInfo,
     messages,
-    eventStatus,
-    eventResult,
     myResult,
     isDrawing,
+    eventInfo,
+    eventStatus,
+    eventResult,
+    untilMyResult,
+    competitionRate,
+    currentProcessed,
     toggleChatSize,
     getStatusAreaWidth,
     getChatRoomAreaWidth,
+    getUntilMyResult,
     setIsDrawing,
   } = useEventRoom();
 
@@ -34,12 +38,17 @@ export default function EventRoom() {
                 isDrawing={isDrawing}
                 eventTime={eventInfo.eventTime}
                 eventId={eventInfo.eventId}
+                getMyEventResult={getUntilMyResult}
                 goDrawView={() => setIsDrawing(true)}
-                currentProccessed={eventResult.length}
-                competitionRate={eventStatus?.userCount ?? 0}
+                currentProccessed={currentProcessed}
+                competitionRate={competitionRate}
                 totalParticipants={eventStatus?.userCount ?? 0}
               />
-              <EventResultAllResult list={eventResult} />
+              <EventResultAllResult
+                list={eventResult}
+                untilMyResult={untilMyResult}
+                myResult={myResult}
+              />
             </div>
             <div className={`transition-all duration-300 cursor-pointer ${getChatRoomAreaWidth()}`}>
               <EventChatRoomArea

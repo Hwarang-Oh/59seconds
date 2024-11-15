@@ -15,18 +15,10 @@ export default async function Home() {
   return (
     <div>
       <Header />
-      <HomeContent
-        popularEvents={popularEvents}
-        deadlineEvents={deadlineEvents}
-      />
-      <div className="flex max-w-screen-xl mx-auto gap-6 pb-20">
+      <HomeContent popularEvents={popularEvents} deadlineEvents={deadlineEvents} />
+      <div className='flex max-w-screen-xl mx-auto gap-6 pb-20'>
         {CardDummy.FancyCards.map((card) => (
-          <FancyCard
-            key={card.id}
-            id={card.id}
-            title={card.title}
-            content={card.content}
-          />
+          <FancyCard key={card.id} id={card.id} title={card.title} content={card.content} />
         ))}
       </div>
       <Footer />

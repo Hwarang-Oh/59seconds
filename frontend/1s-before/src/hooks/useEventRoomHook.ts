@@ -1,9 +1,12 @@
 import WebsocketAPI from '@/apis/webSocket';
+import { Prize } from '@/types/eventDetail';
 import { useEffect, useState } from 'react';
 import { useMemberStore } from '@/store/memberStore';
+import { eventParticipate, getFrontEventParticipationInfo } from '@/apis/eventAPI';
 import { fetchEventInfo } from '@/apis/eventDetailApi';
 import { useParams } from 'next/navigation';
 import {
+  PrizeInfo,
   EventRoomInfo,
   EventRoomCurrentInfo,
   EventRoomMessageInfo,
@@ -13,38 +16,42 @@ import {
 
 export const useEventRoom = () => {
   const params = useParams();
-  const member = useMemberStore((state) => state.member);
-  const setMember = useMemberStore((state) => state.setMember);
+  let memberData;
+  let eventId: string;
+  const { member, setMember } = useMemberStore();
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [eventInfo, setEventInfo] = useState<EventRoomInfo>();
+  const [prizeList, setPrizeList] = useState<PrizeInfo[]>([]);
+  const [messages, setMessages] = useState<EventRoomMessageInfo[]>([]);
+  const [eventStatus, setEventStatus] = useState<EventRoomCurrentInfo>();
+  const [untilMyResult, setUntilMyResult] = useState<EventRoomResultViewInfo[]>([]);
+  const [eventResult, setEventResult] = useState<EventRoomResultViewInfo[]>([]);
   const [myResult, setMyResult] = useState<EventRoomResultViewInfo>({
     eventId: 0,
     memberId: 0,
-    joinedAt: '',
     ranking: 0,
     isWinner: false,
+    joinedAt: '',
     isMine: false,
+    winnerName: '',
+    prize: undefined,
   });
-  const [eventInfo, setEventInfo] = useState<EventRoomInfo | null>(null);
-  const [messages, setMessages] = useState<EventRoomMessageInfo[]>([]);
-  const [eventStatus, setEventStatus] = useState<EventRoomCurrentInfo | null>(null);
-  const [eventResult, setEventResult] = useState<EventRoomResultViewInfo[]>([]);
+
+  const currentProcessed = eventResult.length;
+  const competitionRate =
+    eventInfo && eventStatus ? (eventStatus.userCount ?? 0) / eventInfo.winnerNum : 0;
 
   // URL 파라미터 처리를 위한 useEffect
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const { id: eventId } = params as { id: string };
-    const memberData = urlParams.get('memberData');
-
-    if (memberData) {
+    memberData = urlParams.get('memberData');
+    eventId = params?.id as string;
+    if (memberData && eventId) {
       const parsedMemberData = JSON.parse(decodeURIComponent(memberData));
       const { memberId, nickname, isCreatorMode } = parsedMemberData.state.member;
       setMember(memberId, nickname, isCreatorMode);
-    }
-
-    if (eventId) {
       fetchEventInfo(Number(eventId)).then((eventInfo) => {
-        console.log(eventInfo);
         setEventInfo({
           eventId: Number(eventId),
           creatorName: eventInfo.memberResponseDto.creatorName,
@@ -52,18 +59,19 @@ export const useEventRoom = () => {
           winnerNum: eventInfo.winnerNum,
           eventTime: eventInfo.endTime,
           bannerImage: eventInfo.bannerImage,
+          prizes: eventInfo.prizes,
         });
+        setPrizeList(createPrizeRankingList(eventInfo.prizes));
       });
-
       WebsocketAPI.connect({
         eventId: Number(eventId),
+        memberId: memberId,
         onEventRoomInfoReceived: (eventRoomInfo) => setEventStatus(eventRoomInfo),
         onMessageReceived: (messageInfo) =>
           setMessages((prevMessages) => [...prevMessages, messageInfo]),
         onEventRoomResultReceived: (eventRoomResult) => getEventResult(eventRoomResult),
         subscriptions: ['eventRoomInfo', 'eventRoomMessage', 'eventRoomResult'],
       });
-
       return () => {
         console.log('Cleaning up WebSocket connection for event:', eventId);
         WebsocketAPI.disconnectFromEvent(Number(eventId));
@@ -83,11 +91,51 @@ export const useEventRoom = () => {
     return isChatExpanded ? 'w-1/2' : 'w-1/3';
   };
 
-  const getEventResult = (receivedEachEventResult: EventRoomResultInfo) => {
-    const isMine = member ? receivedEachEventResult.memberId === member.memberId : false;
-    const processedResult = { ...receivedEachEventResult, isMine };
-    if (isMine) setMyResult(processedResult);
-    setEventResult((prevResult) => [...prevResult, processedResult]);
+  const createPrizeRankingList = (prizes: Prize[]) => {
+    const list: PrizeInfo[] = [];
+    prizes.forEach((prize) => {
+      for (let i = 0; i < prize.winnerCount; i++) {
+        list.push({
+          ranking: list.length + 1,
+          eventId: prize.roomId,
+          prizeId: prize.prizeId,
+          prizeType: prize.prizeType,
+          prizeName: prize.prizeName,
+        });
+      }
+    });
+    return list;
+  };
+
+  const findPrizeByRanking = (ranking: number) => {
+    return prizeList.find((prize) => prize.ranking === ranking);
+  };
+
+  const getUntilMyResult = async (eventId: number) => {
+    try {
+      const myResult = await eventParticipate({ eventId, memberId: member.memberId });
+      const prize = findPrizeByRanking(myResult.ranking);
+      const processedMyResult = { ...myResult, isMine: true, prize };
+      const frontResults = await getFrontEventParticipationInfo(Number(eventId));
+      const processedFrontResults = frontResults
+        .filter((result) => result.ranking < myResult.ranking) // 내 순위 이전 데이터만 포함
+        .map((result) => ({
+          ...result,
+          isMine: false,
+        }));
+      setUntilMyResult([...processedFrontResults, processedMyResult]);
+      setMyResult(processedMyResult);
+    } catch (error) {
+      console.error('Error fetching event results:', error);
+    }
+  };
+
+  const getEventResult = (receivedEachEventResult: EventRoomResultInfo[]) => {
+    const processedResults = receivedEachEventResult.map((result) => {
+      const prize = findPrizeByRanking(result.ranking);
+      return { ...result, isMine: false, prize };
+    });
+    setEventResult((prevResult) => [...prevResult, ...processedResults]);
   };
 
   useEffect(() => {
@@ -102,15 +150,19 @@ export const useEventRoom = () => {
   }, [params]);
 
   return {
-    eventInfo,
     messages,
-    eventStatus,
-    eventResult,
     myResult,
     isDrawing,
+    eventInfo,
+    eventStatus,
+    eventResult,
+    untilMyResult,
+    competitionRate,
+    currentProcessed,
     toggleChatSize,
     getStatusAreaWidth,
     getChatRoomAreaWidth,
+    getUntilMyResult,
     setIsDrawing,
   };
 };

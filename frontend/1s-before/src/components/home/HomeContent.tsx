@@ -19,7 +19,7 @@ export default function HomeContent({ popularEvents, deadlineEvents }: Readonly<
 
   useEffect(() => {
     const loadCreatorData = async () => {
-      if (member) {
+      if (member.isLoggedIn) {
         try {
           const [rooms, banner] = await Promise.all([
             fetchCreatedRooms(member.memberId),
@@ -34,11 +34,11 @@ export default function HomeContent({ popularEvents, deadlineEvents }: Readonly<
       }
     };
     loadCreatorData();
-  }, [member]);
+  }, []);
 
   return (
     <div>
-      {member?.isCreatorMode ? (
+      {member.isCreatorMode ? (
         <>
           <CreatorBanner bannerImage={bannerImage} />
           <div className='flex flex-col gap-20 px-7 py-20'>

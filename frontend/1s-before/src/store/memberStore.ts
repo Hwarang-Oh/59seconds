@@ -5,11 +5,17 @@ interface MemberState {
   memberId: number;
   nickname: string;
   isCreatorMode: boolean;
+  isLoggedIn: boolean;
 }
 
 interface MemberStore {
-  member: MemberState | null;
-  setMember: (memberId: number, nickname: string, isCreatorMode?: boolean) => void;
+  member: MemberState;
+  setMember: (
+    memberId: number,
+    nickname: string,
+    isCreatorMode?: boolean,
+    isLoggedIn?: boolean
+  ) => void;
   clearMember: () => void;
   toggleCreatorMode: () => void;
 }
@@ -22,17 +28,23 @@ export const useMemberStore = create<MemberStore>()(
         member:
           typeof window !== 'undefined' && sessionStorage.getItem('member-storage')
             ? JSON.parse(sessionStorage.getItem('member-storage') as string)
-            : null,
+            : {
+                memberId: 0,
+                nickname: '',
+                isCreatorMode: false,
+                isLoggedIn: false,
+              },
         setMember: (memberId, nickname, isCreatorMode = false) =>
           set({
-            member: { memberId, nickname, isCreatorMode },
+            member: { memberId, nickname, isCreatorMode, isLoggedIn: true },
           }),
-        clearMember: () => set({ member: null }),
+        clearMember: () =>
+          set({
+            member: { memberId: 0, nickname: '', isCreatorMode: false, isLoggedIn: false },
+          }),
         toggleCreatorMode: () =>
           set((state) => ({
-            member: state.member
-              ? { ...state.member, isCreatorMode: !state.member.isCreatorMode }
-              : null,
+            member: { ...state.member, isCreatorMode: !state.member.isCreatorMode },
           })),
       }),
       {
