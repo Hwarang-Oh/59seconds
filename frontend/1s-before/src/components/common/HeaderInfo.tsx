@@ -4,6 +4,7 @@ import ToggleIcon from '@/components/icon/ToggleIcon';
 import TempPopup from '../login/TempPopup';
 import LoginPopUp from '@/components/login/LoginPopUp';
 import { useMemberLogin } from '@/hooks/useMemberLoginHook';
+import { useState } from 'react';
 
 export default function HeaderInfo() {
   const {
@@ -16,6 +17,8 @@ export default function HeaderInfo() {
     handleKakaoLogin,
     handleLogout,
   } = useMemberLogin();
+
+  const [isTempPopupOpen, setIsTempPopupOpen] = useState(false);
 
   return (
     <>
@@ -39,20 +42,25 @@ export default function HeaderInfo() {
             </button>
           </>
         ) : (
-          <button
-            className='text-[15px] font-normal leading-[18px] text-[#474972] cursor-pointer bg-transparent border-none p-0'
-            onClick={openLoginPopUp}>
-            로그인
-          </button>
+          <>
+            <button
+              className='text-[15px] font-normal leading-[18px] text-[#474972] cursor-pointer bg-transparent border-none p-0'
+              onClick={() => setIsTempPopupOpen(true)}>
+              임시로그인
+            </button>
+            <button
+              className='text-[15px] font-normal leading-[18px] text-[#474972] cursor-pointer bg-transparent border-none p-0'
+              onClick={openLoginPopUp}>
+              로그인
+            </button>
+          </>
         )}
         <ToggleIcon toggle={isCreatorMode} handleToggle={handleToggle} />
       </div>
       {isLoginPopUpOpen && (
-        <>
-          <TempPopup closePopUp={closeLoginPopUp} />
-          <LoginPopUp handleKakaoLogin={handleKakaoLogin} closePopUp={closeLoginPopUp} />
-        </>
+        <LoginPopUp handleKakaoLogin={handleKakaoLogin} closePopUp={closeLoginPopUp} />
       )}
+      {isTempPopupOpen && <TempPopup closePopUp={() => setIsTempPopupOpen(false)} />}
     </>
   );
 }
