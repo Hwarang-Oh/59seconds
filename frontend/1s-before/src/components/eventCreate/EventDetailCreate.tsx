@@ -1,20 +1,24 @@
 import React from 'react';
-import { ko } from 'date-fns/locale';
 import Cropper from 'react-easy-crop';
 import Tiptap from '../common/TextEditor';
 import DatePicker from 'react-datepicker';
+import Modal from '@/components/common/alertModal';
 import 'react-datepicker/dist/react-datepicker.css';
+import { ko } from 'date-fns/locale';
 import { useEventCreate } from '@/hooks/eventCreateHook';
 export default function EventDetailCreate() {
   const {
     formData,
     bannerCrop,
     bannerZoom,
+    isModalOpen,
     rectImageUrl,
+    modalMessage,
     rectangleCrop,
     rectangleZoom,
     bannerImageUrl,
     handleCrop,
+    setIsModalOpen,
     handleDateChange,
     handleFileChange,
     handleInputChange,
@@ -63,8 +67,13 @@ export default function EventDetailCreate() {
               onClick={handleCrop}
               className="min-w-[8vh] py-1 px-2 bg-mainColor1 text-white rounded"
             >
-              결정
+              자르기
             </button>
+            <Modal
+              message={modalMessage}
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+            />
           </div>
           <div className="flex flex-row gap-4 p-4">
             {formData.eventInfo.bannerImage && (
