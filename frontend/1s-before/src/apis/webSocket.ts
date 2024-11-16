@@ -155,13 +155,14 @@ const sendEnterEventRoom = (eventId: number, memberId: number) => {
       destination: `/chat/pub/room/${eventId}/enter`,
       body: JSON.stringify({ eventId: eventId }),
     });
-    sendEventRoomMessage(eventId, {
-      eventId,
-      memberId,
-      sender: 'system',
-      content: 'Entered the room',
-      sentAt: new Date().toISOString(),
-    });
+    // sendEventRoomMessage(eventId, {
+    //   eventId,
+    //   memberId,
+    //   sender: 'system',
+    //   content: 'Entered the room',
+    //   sentAt: new Date().toISOString(),
+    //   isMine: false,
+    // });
   }
 };
 
