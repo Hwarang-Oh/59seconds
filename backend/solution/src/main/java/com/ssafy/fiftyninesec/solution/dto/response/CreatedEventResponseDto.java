@@ -21,7 +21,7 @@ public class CreatedEventResponseDto {
     private LocalDateTime endTime;
 
     private String enterCode;
-    private int unlockCount = 0;
+    private int unlockCount;
 
     private String bannerUrl;
     private String rectangleUrl;

@@ -26,16 +26,16 @@ pipeline {
         stage('Parallel Build & Deploy') {
             parallel {
                 stage('Solution') {
-                    // when {
-                    //     expression {
-                    //         sh(script: "git diff --name-only HEAD^ | grep '^backend/solution'", returnStatus: true) == 0
-                    //     }
-                    // }
+                    when {
+                        expression {
+                            sh(script: "git diff --name-only HEAD^ | grep '^backend/solution'", returnStatus: true) == 0
+                        }
+                    }
                     stages {
                         stage('Build backend/solution') {
                             steps {
                                 dir('backend/solution') {
-                                    withCredentials([file(credentialsId: 'application-secret', variable: 'SECRET_FILE')]) {
+                                    withCredentials([file(credentialsId: 'solution-secret', variable: 'SECRET_FILE')]) {
                                         sh '''
                                             mkdir -p src/main/resources
                                             cp $SECRET_FILE src/main/resources/application-secret.yml

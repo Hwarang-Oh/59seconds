@@ -14,12 +14,12 @@ import java.time.LocalDateTime;
 public class PopularEventResponseDto {
     private Long eventId;
     private String title;
-    private int ranking = 0;
+    private int ranking;
     private String description;
     private LocalDateTime endTime;
     private String mainPrize;
-    private int prizeCount = 0;
-    private int unlockCount = 0;
+    private int prizeCount;
+    private int unlockCount;
     private Boolean isDeadline;
     private String bannerImage;
     private String rectangleImage;
