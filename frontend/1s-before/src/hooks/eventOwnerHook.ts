@@ -14,6 +14,8 @@ export function useEventOwner() {
   });
 
   const [imageUrl, setImageUrl] = useState<string>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   // IMP: profileImage가 File일 때 URL 생성, 문자열일 때 그대로 사용
   useEffect(() => {
@@ -64,7 +66,7 @@ export function useEventOwner() {
   const handleEditorChange = (content: string) => {
     setOwnerData((prev) => ({
       ...prev,
-      creatorIntroduce: content, // 에디터 내용이 creatorIntroduce에 반영되도록 설정
+      creatorIntroduce: content,
     }));
   };
 
@@ -87,36 +89,52 @@ export function useEventOwner() {
     }
   };
 
-  const handleUserSubmit = async (event: { preventDefault: () => void }) => {
-    event.preventDefault();
-
-    const formData = new FormData();
-    Object.entries(ownerData).forEach(([key, value]) => {
-      if (value && key !== 'profileImage') {
-        formData.append(key, value as string);
+  // IMP: 폼 데이터 검증
+  const validateOwnerData = (): boolean => {
+    const requiredFields = ['creatorName', 'creatorIntroduce', 'snsLink'];
+    for (const field of requiredFields) {
+      if (!ownerData[field as keyof UserData]) {
+        setModalMessage(`${field}을(를) 입력해주세요.`);
+        setIsModalOpen(true);
+        return false;
       }
-    });
-
-    if (ownerData.profileImage instanceof File) {
-      formData.append('profileImage', ownerData.profileImage);
     }
+    return true;
+  };
 
+  const handleUserSubmit = async (): Promise<boolean> => {
     try {
+      const formData = new FormData();
+      Object.entries(ownerData).forEach(([key, value]) => {
+        if (value && key !== 'profileImage') {
+          formData.append(key, value as string);
+        }
+      });
+
+      if (ownerData.profileImage instanceof File) {
+        formData.append('profileImage', ownerData.profileImage);
+      }
+
       const result = await putCreatorInfo(formData);
-      console.log(result);
+      return true;
     } catch (error) {
       console.error('정보 수정 중 오류 발생:', error);
+      return false;
     }
   };
 
   return {
     ownerData,
     imageUrl,
+    isModalOpen,
+    modalMessage,
+    setIsModalOpen,
     getProfileImageSrc,
     handleInputChange,
     handleEditorChange,
     handleImageChange,
-    handleSaveCreatorName,
     handleUserSubmit,
+    validateOwnerData,
+    handleSaveCreatorName,
   };
 }

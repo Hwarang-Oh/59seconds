@@ -34,6 +34,9 @@ export function useEventDetail(id: number) {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [eventData, setEventData] = useState<EventData>(defaultEventData);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+
   const isCodeValid = useEventStore((state) => state.isCodeValid);
   const setIsCodeValid = useEventStore((state) => state.setCodeValid);
   const setAuthenticated = useEventStore((state) => state.setAuthenticated);
@@ -65,10 +68,8 @@ export function useEventDetail(id: number) {
     return () => clearInterval(interval);
   }, [id]);
 
-  // IMP: 새창으로 여는 코드
   const openWindow = () => {
     const memberData = sessionStorage.getItem('member-storage');
-    console.log(memberData);
     const encodedMemberData = encodeURIComponent(memberData ?? '');
     window.open(
       `/event-room/${id}?memberData=${encodedMemberData}`,
@@ -83,13 +84,16 @@ export function useEventDetail(id: number) {
       if (response?.success) {
         setIsCodeValid(true);
         setAuthenticated(true);
-        alert('방 잠금이 해제되었습니다.');
+        setModalMessage('방 잠금이 해제되었습니다.');
+        setIsModalOpen(true);
       } else {
-        alert('올바른 참여 코드를 입력하세요.');
+        setModalMessage('올바른 참여 코드를 입력하세요.');
+        setIsModalOpen(true);
       }
     } catch (error) {
       console.error('코드 제출 오류:', error);
-      alert('코드 제출 중 오류가 발생했습니다.');
+      setModalMessage('코드 제출 중 오류가 발생했습니다.');
+      setIsModalOpen(true);
     }
   };
 
@@ -111,10 +115,12 @@ export function useEventDetail(id: number) {
     try {
       const currentUrl = window.location.href;
       await navigator.clipboard.writeText(currentUrl);
-      alert('클립보드에 복사되었습니다');
+      setModalMessage('클립보드에 복사되었습니다.');
+      setIsModalOpen(true);
     } catch (err) {
       console.error('Failed to copy: ', err);
-      alert('복사에 실패했습니다. 다시 시도해주세요.');
+      setModalMessage('복사에 실패했습니다. 다시 시도해주세요.');
+      setIsModalOpen(true);
     }
   };
 
@@ -124,6 +130,8 @@ export function useEventDetail(id: number) {
     isCodeValid,
     lastUpdated,
     isSharePopupOpen,
+    isModalOpen,
+    modalMessage,
     copyUrl,
     openWindow,
     setInputCode,
@@ -132,5 +140,6 @@ export function useEventDetail(id: number) {
     closeSharePopUp,
     handleCodeSubmit,
     refreshUnlockCount,
+    setIsModalOpen,
   };
 }

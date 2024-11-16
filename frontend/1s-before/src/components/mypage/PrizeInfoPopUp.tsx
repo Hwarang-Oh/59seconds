@@ -74,20 +74,23 @@ export default function PrizeInfoPopUp({
 
   const csvData = winnerInfo.map((winner) => ({
     ranking: winner.ranking,
-    product: winner.prize ?? '정보가 입력되지 않았습니다.',
+    product: winner.prize ?? '미입력',
     winnerName: winner.winnerName,
-    phone: winner.phone ?? '정보가 입력되지 않았습니다.',
-    address: winner.address ?? '정보가 입력되지 않았습니다.',
+    phone: winner.phone ?? '미입력',
+    address: winner.address ?? '미입력',
   }));
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-      <div className="relative bg-white p-6 rounded-lg w-full max-w-2xl md:max-w-3xl lg:max-w-4xl h-[60vh] flex flex-col">
+      <div className="relative bg-white p-6 rounded-lg w-full max-w-2xl md:max-w-3xl lg:max-w-4xl h-[55vh] flex flex-col">
         <p className="text-2xl font-bold my-4 text-center">당첨자 정보</p>
-        {loading && <p>Loading...</p>}
-        {error && <p className="text-red-500">{error}</p>}
+        {loading && (
+          <p className="text-center text-gray-500 mb-10 flex-grow flex items-center justify-center">
+            로딩 중...
+          </p>
+        )}
 
-        {!loading && winnerInfo.length === 0 ? (
+        {!loading && winnerInfo.length === 0 && error ? (
           <p className="text-center text-gray-500 mb-10 flex-grow flex items-center justify-center">
             배송 요청 정보 없음
           </p>

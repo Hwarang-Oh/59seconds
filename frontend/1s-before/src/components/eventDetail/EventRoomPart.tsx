@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Modal from '@/components/common/alertModal';
 import { useState } from 'react';
 import { IoMdLock } from 'react-icons/io';
 import { IoEnterOutline } from 'react-icons/io5';

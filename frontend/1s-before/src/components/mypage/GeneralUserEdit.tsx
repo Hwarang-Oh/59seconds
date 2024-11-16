@@ -53,7 +53,7 @@ export default function GeneralUserEdit() {
                 value={localName}
                 onChange={(e) => setLocalName(e.target.value)}
                 placeholder="참여자 이름을 입력하세요"
-                className="w-40 p-2 border rounded"
+                className="w-auto p-2 border rounded"
                 autoFocus
               />
               <button
@@ -68,7 +68,9 @@ export default function GeneralUserEdit() {
             </>
           ) : (
             <>
-              <h1 className="text-2xl font-bold">{userData.participateName}</h1>
+              <h1 className="text-2xl font-bold">
+                {userData.participateName || '이름 없음'}
+              </h1>
               <button
                 onClick={() =>
                   handleEditClick(
