@@ -42,7 +42,7 @@ pipeline {
                                     // 환경변수 직접 설정
                                     sh '''
                                         echo "NEXT_PUBLIC_BASE_URL=http://43.203.129.131/api" > .env
-                                        echo "NEXT_PUBLIC_WEBSOCKET_URL=ws://43.203.129.131:9090/api/v2/ws" >> .env
+                                        echo "NEXT_PUBLIC_WEBSOCKET_URL=wss://k11a404.p.ssafy.io/api/v2/ws" >> .env
                                         echo "NEXT_PUBLIC_KAKAO_REST_API_KEY=d117153d60a3f48a68b2f2e166adc087" >> .env
                                         echo "NEXT_PUBLIC_KAKAO_REDIRECT_URL=http://43.203.129.131" >> .env
                                     '''
