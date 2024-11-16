@@ -32,7 +32,9 @@ export default function EventResultWinOrLoseState({
                   className='w-[100] h-[100] transform scale-x-[-1]'
                 />
               </div>
-              <p className='text-lg text-[#999999]'>기록 :{formatTimeWithMilliseconds(joinedAt)}</p>
+              <p className='text-lg text-[#999999]'>
+                기록 : {formatTimeWithMilliseconds(joinedAt)}
+              </p>
             </div>
           </div>
           <button className='bg-[#474972] rounded-xl text-white text-xl font-bold py-3 px-20'>
@@ -52,7 +54,9 @@ export default function EventResultWinOrLoseState({
                 </div>
                 <Lottie animationData={Animation_Crying} loop={true} className='w-20 h-20' />
               </div>
-              <p className='text-lg text-[#999999]'>기록 :{formatTimeWithMilliseconds(joinedAt)}</p>
+              <p className='text-lg text-[#999999]'>
+                기록 : {formatTimeWithMilliseconds(joinedAt)}
+              </p>
             </div>
           </div>
           <button className='bg-[#474972] rounded-xl text-white text-xl font-bold py-3 px-20'>

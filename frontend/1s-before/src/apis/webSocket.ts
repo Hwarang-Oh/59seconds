@@ -100,6 +100,7 @@ const addEventRoomResultSubscription = ({
     const eventRoomResultSubscription = stompClient.subscribe(
       `/result/sub/participations/${eventId}`,
       (message) => {
+        console.log(JSON.parse(message.body));
         onEventRoomResultReceived(JSON.parse(message.body));
       }
     );
@@ -133,7 +134,7 @@ const addEventRoomMessageSubscription = ({
     const eventRoomMessageSubscription = stompClient.subscribe(
       `/chat/sub/room/${eventId}`,
       (message) => {
-        console.log('Received Message : ', message.body);
+        console.log(JSON.parse(message.body));
         onMessageReceived(JSON.parse(message.body));
       }
     );

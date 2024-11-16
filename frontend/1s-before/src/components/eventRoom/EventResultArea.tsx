@@ -1,5 +1,5 @@
-import EventResultWinOrLoseState from '@/components/eventRoom/EventResultWinOrLoseState';
-import EventResultPendingState from '@/components/eventRoom/EventResultPendingState';
+import EventResultWinOrLoseState from '@/components/eventRoom/result/EventResultWinOrLoseState';
+import EventResultPendingState from '@/components/eventRoom/result/EventResultPendingState';
 import { EventStatusView } from '@/types/eventRoom';
 
 export default function EventResultArea({
@@ -21,7 +21,7 @@ export default function EventResultArea({
           이벤트 응모 결과
         </div>
         <p className='text-2xl mb-1' style={{ color: '#1C1C1E' }}>
-          총 참가자 <span className='font-bold'>{totalParticipants}</span>명 중
+          총 참가자 <span className='font-bold'>{totalParticipants}</span> 명 중
         </p>
         <p className='text-2xl font-bold' style={{ color: '#1C1C1E' }}>
           {currentProccessed} 명 추첨!

@@ -130,6 +130,8 @@ export interface EventRoomAllResultProps {
   list: EventRoomResultViewInfo[];
   untilMyResult: EventRoomResultViewInfo[];
   myResult: EventRoomResultViewInfo;
+  calculateCurrentProcessed: (processed: number) => void;
+  addCalculatedCurrentProcessed: (processed: number) => void;
 }
 
 // Type : Subscription Type 정의

@@ -3,8 +3,17 @@ import BannerHeader from '@/components/eventRoom/BannerHeader';
 import EventStatusArea from '@/components/eventRoom/EventStatusArea';
 import EventChatRoomArea from '@/components/eventRoom/EventChatRoomArea';
 import EventResultAllResult from '@/components/eventRoom/EventResultAllResult';
-import { useEventProgress } from '@/hooks/useEventProgressHook';
+import { useState } from 'react';
+import { useEventProgress } from '@/hooks/useEventProgress';
 
+/**
+ * IMP : Event의 진행 및 결과를 보여주는 Page
+ * TYPE 1 : 해당 Event의 정보를 보여주는 BannerHeader
+ * TYPE 2 : Event의 진행 상태를 보여주는 EventStatusArea, EventResultArea 포함되어 있음
+ * TYPE 3 : Event의 채팅창을 보여주는 EventChatRoomArea
+ * TYPE 4 : Event의 결과를 보여주는 EventResultAllResult
+ * @returns
+ */
 export default function EventRoom() {
   const {
     messages,
@@ -14,14 +23,19 @@ export default function EventRoom() {
     eventStatus,
     eventResult,
     untilMyResult,
-    competitionRate,
-    currentProcessed,
     setIsDrawing,
     toggleChatSize,
+    getUntilMyResult,
     getStatusAreaWidth,
     getChatRoomAreaWidth,
-    getUntilMyResult,
   } = useEventProgress();
+
+  const competitionRate =
+    eventInfo && eventStatus ? (eventStatus.userCount ?? 0) / eventInfo.winnerNum : 0;
+  const [currentProccessed, setCurrentProccessed] = useState(0);
+  const calculateCurrentProcessed = (processed: number) => setCurrentProccessed(processed);
+  const addCalculatedCurrentProcessed = (processed: number) =>
+    setCurrentProccessed((prev) => prev + processed);
 
   return (
     <div className='flex flex-col max-w-screen-xl mx-auto px-7'>
@@ -40,7 +54,7 @@ export default function EventRoom() {
                 eventId={eventInfo.eventId}
                 getMyEventResult={getUntilMyResult}
                 goDrawView={() => setIsDrawing(true)}
-                currentProccessed={currentProcessed}
+                currentProccessed={currentProccessed}
                 competitionRate={competitionRate}
                 totalParticipants={eventStatus?.userCount ?? 0}
               />
@@ -48,6 +62,8 @@ export default function EventRoom() {
                 list={eventResult}
                 untilMyResult={untilMyResult}
                 myResult={myResult}
+                calculateCurrentProcessed={calculateCurrentProcessed}
+                addCalculatedCurrentProcessed={addCalculatedCurrentProcessed}
               />
             </div>
             <div className={`transition-all duration-300 cursor-pointer ${getChatRoomAreaWidth()}`}>
