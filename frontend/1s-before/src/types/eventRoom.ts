@@ -113,6 +113,7 @@ export interface EventRoomMessageInfo extends EventRoomSubscription {
   sender: string;
   content: string;
   sentAt: string;
+  isMine: boolean;
 }
 
 export interface EventRoomResultInfo extends EventRoomSubscription {
