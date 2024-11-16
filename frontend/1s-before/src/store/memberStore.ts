@@ -4,6 +4,7 @@ import { persist, devtools } from 'zustand/middleware';
 interface MemberState {
   memberId: number;
   nickname: string;
+  creatorName: string;
   isCreatorMode: boolean;
   isLoggedIn: boolean;
 }
@@ -13,6 +14,7 @@ interface MemberStore {
   setMember: (
     memberId: number,
     nickname: string,
+    creatokrName: string,
     isCreatorMode?: boolean,
     isLoggedIn?: boolean
   ) => void;
@@ -31,16 +33,23 @@ export const useMemberStore = create<MemberStore>()(
             : {
                 memberId: 0,
                 nickname: '',
+                creatorName: '',
                 isCreatorMode: false,
                 isLoggedIn: false,
               },
-        setMember: (memberId, nickname, isCreatorMode = false) =>
+        setMember: (memberId, nickname, creatorName, isCreatorMode = false) =>
           set({
-            member: { memberId, nickname, isCreatorMode, isLoggedIn: true },
+            member: { memberId, nickname, creatorName, isCreatorMode, isLoggedIn: true },
           }),
         clearMember: () =>
           set({
-            member: { memberId: 0, nickname: '', isCreatorMode: false, isLoggedIn: false },
+            member: {
+              memberId: 0,
+              nickname: '',
+              creatorName: '',
+              isCreatorMode: false,
+              isLoggedIn: false,
+            },
           }),
         toggleCreatorMode: () =>
           set((state) => ({

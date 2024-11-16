@@ -3,14 +3,15 @@ import { formatTimeWithMilliseconds } from '@/utils/timeUtils';
 import { Trophy, Clock, Medal, Award, Star, AlertCircle } from 'lucide-react';
 
 export default function EventResultEachResult({
+  isMine,
+  prize,
+  ranking,
   eventId,
   memberId,
   joinedAt,
-  ranking,
   isWinner,
   winnerName,
-  isMine,
-  prize,
+  timeDifference,
 }: Readonly<EventRoomResultViewInfo>) {
   const getResultStyle = (ranking: number, isWinner: boolean) => {
     if (!isWinner) {
@@ -61,7 +62,12 @@ export default function EventResultEachResult({
           </div>
           <div className='flex items-center mt-1 text-gray-500'>
             <Clock className='w-4 h-4 mr-2' />
-            <span className='font-mono'>{formatTimeWithMilliseconds(joinedAt)}</span>
+            <div className='flex gap-3 items-center'>
+              <span className='font-mono'>{formatTimeWithMilliseconds(joinedAt)}</span>
+              <span className='px-2 py-1 text-sm bg-red-100 text-red-600 rounded-full'>
+                반응속도 : {timeDifference} 초
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -70,9 +76,11 @@ export default function EventResultEachResult({
         {isWinner ? (
           <>
             <div className={`px-3 py-1 rounded-full ${color} ${bg} font-medium`}>당첨</div>
-            <div className='flex items-center mt-2 text-sm text-gray-600'>
-              <span className='font-semibold'>당첨 상품: </span>
-              <span className='ml-2'>{prize?.prizeName ?? '상품 정보 없음'}</span>
+            <div className='flex flex-col items-center text-sm text-gray-600 gap-1'>
+              <p className='font-semibold'>당첨 상품</p>
+              <span className='px-2 py-1 text-sm bg-gray-100 rounded-full'>
+                {prize?.prizeName ?? '상품 정보 없음'}
+              </span>
             </div>
           </>
         ) : (

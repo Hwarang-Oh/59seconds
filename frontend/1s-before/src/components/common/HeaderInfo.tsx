@@ -1,10 +1,10 @@
 'use client';
 import Link from 'next/link';
 import ToggleIcon from '@/components/icon/ToggleIcon';
-import TempPopup from '../login/TempPopup';
-import LoginPopUp from '@/components/login/LoginPopUp';
-import { useMemberLogin } from '@/hooks/useMemberLoginHook';
+import TempPopup from '@/components/common/TempPopup';
+import LoginPopUp from '@/components/common/LoginPopUp';
 import { useState } from 'react';
+import { useMemberLogin } from '@/hooks/useMemberLoginHook';
 
 export default function HeaderInfo() {
   const {

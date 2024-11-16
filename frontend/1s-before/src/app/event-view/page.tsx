@@ -3,25 +3,24 @@ import Header from '@/components/common/Header';
 import Footer from '@/components/common/Footer';
 import CardDummy from '@/assets/FancyCards.json';
 import FancyCard from '@/components/home/FancyCard';
-import useEventsFetch from '@/hooks/useEventsFetch';
+import useEventFetch from '@/hooks/useEventFetch';
 import NormalBanner from '@/components/home/NormalBanner';
-import NavigateButton from '@/components/search/NavigateButton';
+import NavigateButton from '@/components/common/NavigateButton';
 import { getPopularEvents } from '@/apis/eventAPI';
 
 export default function EventView() {
-  const { eventList, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useEventsFetch({
-      queryKey: ['popularEvents'],
-      fetchData: getPopularEvents,
-      initialPage: 0,
-    });
+  const { eventList, fetchNextPage, hasNextPage, isFetchingNextPage } = useEventFetch({
+    queryKey: ['popularEvents'],
+    fetchData: getPopularEvents,
+    initialPage: 0,
+  });
   return (
-    <div className="flex flex-col">
+    <div className='flex flex-col'>
       <Header />
-      <div className="max-w-screen-xl mx-auto py-20">
-        <div className="flex flex-col gap-7">
-          <p className="text-3xl font-bold">인기 이벤트</p>
-          <div className="grid grid-cols-5 gap-5 items-center justify-center">
+      <div className='max-w-screen-xl mx-auto py-20'>
+        <div className='flex flex-col gap-7'>
+          <p className='text-3xl font-bold'>인기 이벤트</p>
+          <div className='grid grid-cols-5 gap-5 items-center justify-center'>
             {eventList.map((banner, index) => (
               <NormalBanner
                 key={`${banner.eventId}-${index}`}
@@ -37,20 +36,12 @@ export default function EventView() {
               />
             ))}
           </div>
-          <div className="flex justify-center">
-            <NavigateButton
-              onClick={fetchNextPage}
-              disabled={!hasNextPage || isFetchingNextPage}
-            />
+          <div className='flex justify-center'>
+            <NavigateButton onClick={fetchNextPage} disabled={!hasNextPage || isFetchingNextPage} />
           </div>
-          <div className="flex max-w-screen-xl mx-auto gap-6 py-20">
+          <div className='flex max-w-screen-xl mx-auto gap-6 py-20'>
             {CardDummy.FancyCards.map((card) => (
-              <FancyCard
-                key={card.id}
-                id={card.id}
-                title={card.title}
-                content={card.content}
-              />
+              <FancyCard key={card.id} id={card.id} title={card.title} content={card.content} />
             ))}
           </div>
         </div>

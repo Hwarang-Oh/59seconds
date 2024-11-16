@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { EventChatRoomProps } from '@/types/eventRoom';
-import EventChatMessage from '@/components/eventRoom/EventChatMessage';
+import EventChatMessage from '@/components/eventRoom/chat/EventChatMessage';
 
 export default function EventChatRoom({ messages }: Readonly<EventChatRoomProps>) {
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    console.log(messages);
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }

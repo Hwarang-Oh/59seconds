@@ -1,5 +1,5 @@
-import EventEachResult from '@/components/eventRoom/EventResultEachResult';
-import RenderCollapsedSection from '@/components/eventRoom/EventResultRenderCollapsedSection';
+import EventEachResult from '@/components/eventRoom/result/EventResultEachResult';
+import RenderCollapsedSection from '@/components/eventRoom/result/EventResultRenderCollapsedSection';
 import { EventRoomResultViewInfo } from '@/types/eventRoom';
 
 interface RenderSectionProps {
