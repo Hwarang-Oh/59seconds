@@ -4,8 +4,8 @@ import { DeadlineEventTypes } from '@/types/home';
 import { EventParticipation, EventRoomResultInfo } from '@/types/eventRoom';
 import { WinnerUserInfo, WinnerInfo } from '@/types/user';
 import { PageParamsType, PageType, SliceDetails } from '@/types/common/common';
-const EVENT_URL = 'v1/rooms';
-const EVENT_PARTICIPATION_URL = 'v1/participations';
+const EVENT_URL = '/rooms';
+const EVENT_PARTICIPATION_URL = '/participations';
 
 export const createEvent = async (eventData: FormData) => {
   try {

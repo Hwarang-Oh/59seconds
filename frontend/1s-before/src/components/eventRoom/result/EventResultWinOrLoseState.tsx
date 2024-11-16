@@ -2,6 +2,8 @@ import Lottie from 'lottie-react';
 import Animation_Tada from '@/assets/Animation_Tada.json';
 import Animation_Prize from '@/assets/Animation_Prize.json';
 import Animation_Crying from '@/assets/Animation_Crying.json';
+import RequestPopUp from '@/components/prizeRequest/RequestPopUp';
+import { useState } from 'react';
 import { Clock } from 'lucide-react';
 import { EventWinOrLoseStateView } from '@/types/eventRoom';
 import { formatTimeWithMilliseconds } from '@/utils/timeUtils';
@@ -14,6 +16,11 @@ export default function EventResultWinOrLoseState({
   timeDifference,
   prize,
 }: Readonly<EventWinOrLoseStateView>) {
+  const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+  const handleCloseWindow = () => {
+    if (window.confirm('정말로 돌아 가시겠습니까?')) window.close();
+  };
+
   return (
     <>
       {isWinner ? (
@@ -45,7 +52,9 @@ export default function EventResultWinOrLoseState({
               </div>
             </div>
           </div>
-          <button className='bg-[#474972] rounded-xl text-white text-xl font-bold py-3 px-20'>
+          <button
+            onClick={() => setIsPopUpOpen(true)}
+            className='bg-[#474972] rounded-xl text-white text-xl font-bold py-3 px-20'>
             정보 입력하고 상품 GET!
           </button>
         </div>
@@ -73,10 +82,20 @@ export default function EventResultWinOrLoseState({
               </div>
             </div>
           </div>
-          <button className='bg-[#474972] rounded-xl text-white text-xl font-bold py-3 px-20'>
-            메인페이지로 이동
+          <button
+            onClick={handleCloseWindow}
+            className='bg-[#474972] rounded-xl text-white text-xl font-bold py-3 px-20'>
+            이벤트 페이지로 돌아가기
           </button>
         </div>
+      )}
+
+      {isPopUpOpen && prize && (
+        <RequestPopUp
+          roomId={eventId}
+          prizeType={prize.prizeType}
+          onClose={() => setIsPopUpOpen(false)}
+        />
       )}
     </>
   );

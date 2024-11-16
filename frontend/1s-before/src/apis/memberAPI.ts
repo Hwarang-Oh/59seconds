@@ -2,8 +2,8 @@ import { UserData, ParticipatedRoom, CreatedRoom } from '@/types/user';
 import { MemberInfo } from '@/types/common/common';
 import { isAxiosError } from 'axios';
 import api from '@/apis/commonAPI';
-const MEMBER_URL = '/v1/members';
-const OAUTH_URL = '/v1/oauth2';
+const MEMBER_URL = '/members';
+const OAUTH_URL = '/oauth2';
 
 // IMP : Kakao Oauth 로그인
 export const getLogin = async (OauthCode: string): Promise<MemberInfo> => {

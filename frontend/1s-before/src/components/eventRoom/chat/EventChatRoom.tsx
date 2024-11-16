@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { EventChatRoomProps } from '@/types/eventRoom';
+import { useMemberStore } from '@/store/memberStore';
 import EventChatMessage from '@/components/eventRoom/chat/EventChatMessage';
 
 export default function EventChatRoom({ messages }: Readonly<EventChatRoomProps>) {
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const { member } = useMemberStore();
 
   useEffect(() => {
     console.log(messages);
@@ -24,6 +26,7 @@ export default function EventChatRoom({ messages }: Readonly<EventChatRoomProps>
           sender={message.sender}
           content={message.content}
           sentAt={message.sentAt}
+          isMine={message.memberId === member.memberId}
         />
       ))}
     </div>
