@@ -1,6 +1,6 @@
 import EventEachResult from '@/components/eventRoom/result/EventResultEachResult';
 import RenderSection from '@/components/eventRoom/result/EventResultRenderSection';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useEventResult } from '@/hooks/useEventResult';
 import { EventRoomAllResultProps } from '@/types/eventRoom';
 

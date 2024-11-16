@@ -3,7 +3,7 @@ import BannerHeader from '@/components/eventRoom/BannerHeader';
 import EventStatusArea from '@/components/eventRoom/EventStatusArea';
 import EventChatRoomArea from '@/components/eventRoom/EventChatRoomArea';
 import EventResultAllResult from '@/components/eventRoom/EventResultAllResult';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useEventProgress } from '@/hooks/useEventProgress';
 
 /**
@@ -37,8 +37,25 @@ export default function EventRoom() {
   const addCalculatedCurrentProcessed = (processed: number) =>
     setCurrentProccessed((prev) => prev + processed);
 
+  const pageContainerRef = useRef<HTMLDivElement>(null);
+  const resultContainerRef = useRef<HTMLDivElement>(null);
+
+  // 스크롤을 아래로 이동하는 함수
+  const scrollToBottom = () => {
+    if (pageContainerRef.current) {
+      pageContainerRef.current.scrollTop = pageContainerRef.current.scrollHeight;
+    }
+  };
+  useEffect(() => {
+    if (!resultContainerRef.current) return;
+    const observer = new ResizeObserver(() => scrollToBottom());
+    observer.observe(resultContainerRef.current);
+
+    return () => observer.disconnect(); // 컴포넌트 언마운트 시 정리
+  }, []);
+
   return (
-    <div className='flex flex-col max-w-screen-xl mx-auto px-7'>
+    <div ref={pageContainerRef} className='flex flex-col max-w-screen-xl mx-auto px-7'>
       {eventInfo && (
         <div className='flex flex-col w-full gap-12 mb-7'>
           <BannerHeader bannerImage={eventInfo.bannerImage} />
@@ -46,7 +63,9 @@ export default function EventRoom() {
             [{eventInfo.creatorName}] <span className='font-bold'>{eventInfo.title}</span>
           </div>
           <div className='flex gap-5'>
-            <div className={`transition-all duration-300 ${getStatusAreaWidth()}`}>
+            <div
+              ref={resultContainerRef}
+              className={`transition-all duration-300 ${getStatusAreaWidth()}`}>
               <EventStatusArea
                 myResult={myResult}
                 isDrawing={isDrawing}
@@ -58,6 +77,7 @@ export default function EventRoom() {
                 competitionRate={competitionRate}
                 totalParticipants={eventStatus?.userCount ?? 0}
               />
+
               <EventResultAllResult
                 list={eventResult}
                 untilMyResult={untilMyResult}

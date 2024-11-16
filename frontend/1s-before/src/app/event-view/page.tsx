@@ -5,7 +5,7 @@ import CardDummy from '@/assets/FancyCards.json';
 import FancyCard from '@/components/home/FancyCard';
 import useEventFetch from '@/hooks/useEventFetch';
 import NormalBanner from '@/components/home/NormalBanner';
-import NavigateButton from '@/components/search/NavigateButton';
+import NavigateButton from '@/components/common/NavigateButton';
 import { getPopularEvents } from '@/apis/eventAPI';
 
 export default function EventView() {

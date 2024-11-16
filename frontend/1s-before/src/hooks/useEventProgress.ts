@@ -140,6 +140,7 @@ export const useEventProgress = () => {
         .map((result) => ({
           ...result,
           isMine: false,
+          prize: findPrizeByRanking(result.ranking),
           timeDifference: calculateTimeDifferenceWithMilliseconds(
             eventInfo.eventTime,
             result.joinedAt

@@ -118,7 +118,6 @@ const addEventRoomInfoSubscription = ({
       `/chat/sub/room/${eventId}/count`,
       (message) => {
         onEventRoomInfoReceived(JSON.parse(message.body));
-        console.log(message.body);
       }
     );
     subscriptionMap.set(eventRoomKey, eventRoomInfoSubscription);
@@ -134,7 +133,6 @@ const addEventRoomMessageSubscription = ({
     const eventRoomMessageSubscription = stompClient.subscribe(
       `/chat/sub/room/${eventId}`,
       (message) => {
-        console.log(JSON.parse(message.body));
         onMessageReceived(JSON.parse(message.body));
       }
     );
@@ -148,7 +146,6 @@ const sendEventRoomMessage = (eventId: number, message: EventRoomMessageInfo) =>
       destination: `/chat/pub/sendMessage/${eventId}`,
       body: JSON.stringify(message),
     });
-    console.log('Sent Messsage : ', message);
   }
 };
 
