@@ -44,16 +44,15 @@ export default function CreatorEdit() {
     value: string
   ) => {
     setEditing(true);
-    setLocalValue(value); // 로컬 상태를 현재 값으로 설정
+    setLocalValue(value);
   };
 
-  // 저장 버튼 클릭 핸들러
   const handleSave = (
     setEditing: React.Dispatch<React.SetStateAction<boolean>>,
     updateFunc: (value: string) => void,
     localValue: string
   ) => {
-    updateFunc(localValue); // 저장 버튼 클릭 시 API 호출
+    updateFunc(localValue);
     setEditing(false);
   };
 
@@ -112,7 +111,9 @@ export default function CreatorEdit() {
               </>
             ) : (
               <>
-                <h1 className="text-2xl font-bold">{userData.creatorName}</h1>
+                <h1 className="text-2xl font-bold">
+                  {userData.creatorName || '이름 없음'}
+                </h1>
                 <button
                   onClick={() =>
                     handleEditClick(

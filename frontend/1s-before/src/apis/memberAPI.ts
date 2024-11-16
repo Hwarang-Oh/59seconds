@@ -21,13 +21,14 @@ export const fetchTokens = async (OauthCode: string): Promise<string> => {
   }
 };
 
-// IMP: 개설자 정보 GET
+// IMP: 사용자 및 개설자 정보 GET
 export const fetchCreatorInfo = async (): Promise<UserData> => {
   try {
     const response = await api.get(MEMBER_URL);
+    // console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error('기존 정보 가져오기 오류:', error);
+    console.error('기본 정보 가져오기 오류:', error);
     throw error;
   }
 };

@@ -14,7 +14,7 @@ export const createEvent = async (eventData: FormData) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error while creating event:', error);
+    console.error('이벤트 생성 중 오류가 발생했습니다:', error);
     throw error;
   }
 };

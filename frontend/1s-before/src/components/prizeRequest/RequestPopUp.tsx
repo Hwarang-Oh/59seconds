@@ -1,5 +1,6 @@
 import { X } from 'lucide-react';
 import AddressNeed from './AddressNeed';
+import Modal from '@/components/common/alertModal';
 import { RequestPopUpProps } from '@/types/common/common';
 import { usePrizeRequest } from '@/hooks/prizeRequestHook';
 
@@ -11,8 +12,11 @@ export default function RequestPopUp({
   const {
     formData,
     isSavedData,
+    isModalOpen,
+    modalMessage,
     handleChange,
     handleSubmit,
+    setIsModalOpen,
     handleCheckboxChange,
   } = usePrizeRequest(roomId);
 
@@ -63,6 +67,12 @@ export default function RequestPopUp({
             {prizeType ?? ''} 요청하기
           </button>
         </form>
+
+        <Modal
+          message={modalMessage}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
       </div>
     </div>
   );

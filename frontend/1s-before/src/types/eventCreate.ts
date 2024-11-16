@@ -22,6 +22,7 @@ export interface EventFormData {
 }
 
 export interface EventStoreState {
+  clearFormData: () => void;
   formData: EventFormData;
   setFormData: (
     data: EventFormData | ((prev: EventFormData) => EventFormData)
