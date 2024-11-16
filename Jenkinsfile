@@ -121,12 +121,11 @@ pipeline {
                 mattermostSend (
                     color: 'good',
                     message: """
-                    *:tada: 빌드 성공! :tada:*
-                    ### ${env.JOB_NAME} 
-                    #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Details>)
-                    """,
-                    endpoint: 'https://meeting.ssafy.com/hooks/b914jy3nbpbo3pezpqak97z3uh',
-                    channel: 'Participation_Jenkins'
+### *:tada: 빌드 성공! :tada:*
+${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Details>)
+""",
+                    endpoint: 'https://meeting.ssafy.com/hooks/s88btx34q7fzmcbp5fnxzdtq1o',
+                    channel: 'a404-jenkins'
                 )
             }
         }
@@ -135,12 +134,11 @@ pipeline {
                 mattermostSend (
                     color: 'danger',
                     message: """
-                    :sad_blob: 빌드 실패 :404_burn:
-                    ### ${env.JOB_NAME} 
-                    #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Details>)
-                    """,
-                    endpoint: 'https://meeting.ssafy.com/hooks/b914jy3nbpbo3pezpqak97z3uh',
-                    channel: 'Participation_Jenkins'
+### :sad_blob: 빌드 실패 :404_burn:
+${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Details>)
+""",
+                    endpoint: 'https://meeting.ssafy.com/hooks/s88btx34q7fzmcbp5fnxzdtq1o',
+                    channel: 'a404-jenkins'
                 )
             }
         }
