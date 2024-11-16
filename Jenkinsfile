@@ -30,11 +30,11 @@ pipeline {
         stage('Parallel Build & Deploy') {
             parallel {
                 stage('Frontend') {
-                    when {
-                        expression {
-                            sh(script: "git diff --name-only HEAD^ | grep '^frontend/'", returnStatus: true) == 0
-                        }
-                    }
+                    // when {
+                    //     expression {
+                    //         sh(script: "git diff --name-only HEAD^ | grep '^frontend/'", returnStatus: true) == 0
+                    //     }
+                    // }
                     stages {
                         stage('Build Frontend') {
                             steps {
