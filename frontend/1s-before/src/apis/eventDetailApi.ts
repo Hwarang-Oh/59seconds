@@ -1,11 +1,7 @@
 import api from '@/apis/commonAPI';
 import { isAxiosError } from 'axios';
-import {
-  EventData,
-  UnlockRoomResponse,
-  UnlockRoomRequest,
-} from '@/types/eventDetail';
-const EVENT_DETAIL_URL = '/v1/rooms';
+import { EventData, UnlockRoomResponse, UnlockRoomRequest } from '@/types/eventDetail';
+const EVENT_DETAIL_URL = '/rooms';
 
 export const fetchEventInfo = async (roomId: number): Promise<EventData> => {
   try {
