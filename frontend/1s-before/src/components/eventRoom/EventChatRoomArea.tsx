@@ -1,6 +1,6 @@
-import EventChatRoom from '@/components/eventRoom/EventChatRoom';
-import EventChatRoomHeader from '@/components/eventRoom/EventChatRoomHeader';
-import EventChatInput from '@/components/eventRoom/EventChatInput';
+import EventChatRoom from '@/components/eventRoom/chat/EventChatRoom';
+import EventChatRoomHeader from '@/components/eventRoom/chat/EventChatRoomHeader';
+import EventChatInput from '@/components/eventRoom/chat/EventChatInput';
 import { EventChatRoomAreaProps } from '@/types/eventRoom';
 
 export default function EventChatRoomArea({

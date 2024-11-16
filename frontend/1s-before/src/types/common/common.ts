@@ -5,6 +5,12 @@ export interface ToggleProps {
   handleToggle: () => void;
 }
 
+export interface MemberInfo {
+  memberId: number;
+  nickname: string;
+  creatorName: string;
+}
+
 export interface PageParamsType {
   query?: string;
   size: number;

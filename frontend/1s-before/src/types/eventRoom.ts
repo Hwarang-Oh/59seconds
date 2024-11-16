@@ -40,6 +40,7 @@ export interface EventStatusView {
   ranking: number;
   isWinner: boolean;
   prize?: PrizeInfo;
+  timeDifference: string;
   totalParticipants: number;
   currentProccessed: number;
 }
@@ -50,6 +51,7 @@ export interface EventWinOrLoseStateView {
   joinedAt: string;
   ranking: number;
   prize?: PrizeInfo;
+  timeDifference: string;
 }
 
 export interface CountdownTimerProps {
@@ -124,12 +126,15 @@ export interface EventRoomResultInfo extends EventRoomSubscription {
 export interface EventRoomResultViewInfo extends EventRoomResultInfo {
   isMine: boolean;
   prize?: PrizeInfo;
+  timeDifference: string;
 }
 
 export interface EventRoomAllResultProps {
   list: EventRoomResultViewInfo[];
   untilMyResult: EventRoomResultViewInfo[];
   myResult: EventRoomResultViewInfo;
+  calculateCurrentProcessed: (processed: number) => void;
+  addCalculatedCurrentProcessed: (processed: number) => void;
 }
 
 // Type : Subscription Type 정의

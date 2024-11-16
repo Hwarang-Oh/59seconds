@@ -1,17 +1,17 @@
 import { UserData, ParticipatedRoom, CreatedRoom } from '@/types/user';
+import { MemberInfo } from '@/types/common/common';
 import { isAxiosError } from 'axios';
 import api from '@/apis/commonAPI';
 const MEMBER_URL = '/v1/members';
 const OAUTH_URL = '/v1/oauth2';
 
 // IMP : Kakao Oauth 로그인
-export const fetchTokens = async (OauthCode: string): Promise<string> => {
+export const getLogin = async (OauthCode: string): Promise<MemberInfo> => {
   try {
     const response = await api.get(`${OAUTH_URL}/kakao/callback`, {
       params: { code: OauthCode },
       withCredentials: true,
     });
-    console.log(response.data);
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
@@ -21,7 +21,19 @@ export const fetchTokens = async (OauthCode: string): Promise<string> => {
   }
 };
 
-// IMP: 사용자 및 개설자 정보 GET
+// IMP : Kakao Oauth 로그아웃
+export const getLogout = async (): Promise<void> => {
+  try {
+    await api.post(`${OAUTH_URL}/logout`);
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      if (error.response?.status === 404) throw new Error('Not Found');
+      else throw error;
+    } else throw error;
+  }
+};
+
+// IMP: 개설자 정보 GET
 export const fetchCreatorInfo = async (): Promise<UserData> => {
   try {
     const response = await api.get(MEMBER_URL);

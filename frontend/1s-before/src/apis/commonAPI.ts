@@ -1,4 +1,4 @@
-import axios, { isAxiosError } from 'axios';
+import axios from 'axios';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -20,45 +20,6 @@ api.interceptors.request.use((config) => {
       }
     }
   }
-  return config;
-});
-
-/**
- * IMP : AccessToken 재발급을 위한 API
- */
-const REFRESH_URL = '/api/v1/auth/reissue';
-export const reissueToken = async (): Promise<string> => {
-  try {
-    const response = await axios.get(
-      `${REFRESH_URL}?providerId=${encodeURIComponent('providerId')}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'refresh-token': 'refreshToken',
-        },
-      }
-    );
-    let accessToken = response.data.data.accessToken;
-    // let accessTokenTime = getTokenExpiration(response.data.data.accessToken);
-    // setCookie('AccessToken', accessToken, {
-    //   maxAge: accessTokenTime,
-    //   secure: true,
-    // });
-    return accessToken;
-  } catch (error: unknown) {
-    if (isAxiosError(error)) {
-      if (error.response?.status === 404) throw new Error('Not Found');
-      else {
-        // removeCookie('AccessToken');
-        // removeCookie('RefreshToken');
-        // removeCookie('ProviderId');
-        throw new Error('refreshToken is expired, redirecting to login.');
-      }
-    } else throw error;
-  }
-};
- 
-api.interceptors.request.use(async (config) => {
   return config;
 });
 

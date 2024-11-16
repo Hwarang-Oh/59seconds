@@ -14,7 +14,7 @@ const TempPopup: FC<LoginPopUpProps> = ({ closePopUp }) => {
 
   const handleLogin = (): void => {
     if (memberId && nickname) {
-      setMember(Number(memberId), nickname);
+      setMember(Number(memberId), nickname, 'Hwarang');
       closePopUp();
     } else {
       alert('모든 필드를 입력해주세요.');

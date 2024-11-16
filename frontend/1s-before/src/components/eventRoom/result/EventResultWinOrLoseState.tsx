@@ -2,6 +2,7 @@ import Lottie from 'lottie-react';
 import Animation_Tada from '@/assets/Animation_Tada.json';
 import Animation_Prize from '@/assets/Animation_Prize.json';
 import Animation_Crying from '@/assets/Animation_Crying.json';
+import { Clock } from 'lucide-react';
 import { EventWinOrLoseStateView } from '@/types/eventRoom';
 import { formatTimeWithMilliseconds } from '@/utils/timeUtils';
 
@@ -10,6 +11,7 @@ export default function EventResultWinOrLoseState({
   isWinner,
   joinedAt,
   ranking,
+  timeDifference,
   prize,
 }: Readonly<EventWinOrLoseStateView>) {
   return (
@@ -32,7 +34,15 @@ export default function EventResultWinOrLoseState({
                   className='w-[100] h-[100] transform scale-x-[-1]'
                 />
               </div>
-              <p className='text-lg text-[#999999]'>기록 :{formatTimeWithMilliseconds(joinedAt)}</p>
+              <div className='flex items-center mt-1 text-gray-500'>
+                <Clock className='w-4 h-4 mr-2' />
+                <div className='flex gap-3 items-center'>
+                  <span className='font-mono'>{formatTimeWithMilliseconds(joinedAt)}</span>
+                  <span className='px-2 py-1 text-sm bg-red-100 text-red-600 rounded-full'>
+                    반응속도 : {timeDifference} 초
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
           <button className='bg-[#474972] rounded-xl text-white text-xl font-bold py-3 px-20'>
@@ -52,7 +62,15 @@ export default function EventResultWinOrLoseState({
                 </div>
                 <Lottie animationData={Animation_Crying} loop={true} className='w-20 h-20' />
               </div>
-              <p className='text-lg text-[#999999]'>기록 :{formatTimeWithMilliseconds(joinedAt)}</p>
+              <div className='flex items-center mt-1 text-gray-500'>
+                <Clock className='w-4 h-4 mr-2' />
+                <div className='flex gap-3 items-center'>
+                  <span className='font-mono'>{formatTimeWithMilliseconds(joinedAt)}</span>
+                  <span className='px-2 py-1 text-sm bg-red-100 text-red-600 rounded-full'>
+                    반응속도 : {timeDifference} 초
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
           <button className='bg-[#474972] rounded-xl text-white text-xl font-bold py-3 px-20'>
