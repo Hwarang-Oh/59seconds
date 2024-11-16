@@ -6,6 +6,7 @@ import { EventRoomResultViewInfo } from '@/types/eventRoom';
  * @param list : WebSocket을 통해 받은 EventRoom의 전체 Event Participation 결과 리스트
  * @param myResult : HTTP 요청을 통해 받은 나의 Event Participation 결과
  * @param untilMyResult : HTTP 요청을 통해 받은 나를 포함한 Event Participation 결과 이전의 리스트
+ * @param eventTime : Event 시간
  * @returnData frontSection, afterSection, expandedSection
  * @returnMethod handleExpand
  */

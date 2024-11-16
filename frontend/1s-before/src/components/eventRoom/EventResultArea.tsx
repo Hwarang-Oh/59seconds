@@ -9,6 +9,7 @@ export default function EventResultArea({
   ranking,
   isWinner,
   prize,
+  timeDifference,
   totalParticipants,
   currentProccessed,
 }: Readonly<EventStatusView>) {
@@ -35,6 +36,7 @@ export default function EventResultArea({
           ranking={ranking}
           joinedAt={joinedAt}
           isWinner={isWinner}
+          timeDifference={timeDifference}
           prize={prize}
         />
       )}

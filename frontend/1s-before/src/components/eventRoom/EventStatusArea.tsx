@@ -30,12 +30,13 @@ export default function EventStatusArea({
       className={`h-full max-h-[790px] px-7 rounded-md shadow-md border border-gray-300 shrink-0 ${getBackgroundColor()}`}>
       {isDrawing && (
         <EventResultArea
-          isPending={!myResult.isMine}
           eventId={eventId}
-          joinedAt={myResult.joinedAt}
-          ranking={myResult.ranking}
-          isWinner={myResult.isWinner}
           prize={myResult.prize}
+          ranking={myResult.ranking}
+          isPending={!myResult.isMine}
+          joinedAt={myResult.joinedAt}
+          isWinner={myResult.isWinner}
+          timeDifference={myResult.timeDifference}
           totalParticipants={totalParticipants}
           currentProccessed={currentProccessed}
         />

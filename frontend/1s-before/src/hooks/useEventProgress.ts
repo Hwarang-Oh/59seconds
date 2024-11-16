@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useMemberStore } from '@/store/memberStore';
 import { fetchEventInfo } from '@/apis/eventDetailApi';
 import { createPrizeRankingList } from '@/utils/prizeUtils';
+import { calculateTimeDifferenceWithMilliseconds } from '@/utils/timeUtils';
 import { eventParticipate, getFrontEventParticipationInfo } from '@/apis/eventAPI';
 import {
   PrizeInfo,
@@ -100,6 +101,7 @@ export const useEventProgress = () => {
     isMine: false,
     winnerName: '',
     prize: undefined,
+    timeDifference: '',
   });
 
   // IMP : ChatRoom의 크기를 확장하는 Method & Styles
@@ -122,10 +124,15 @@ export const useEventProgress = () => {
   // ! eventParticipate API는 요청자의 myRanking을 Params로 받아내지 않기에, Data 정합성 위험이 존재함
   // ! 정말 요청 시점에, 나보다 빠른 Ranking을 정확하게 가져올 수 있을까? 에 대한 의문
   const getUntilMyResult = async (eventId: number) => {
+    if (!eventInfo) return;
     try {
       const myResult = await eventParticipate({ eventId, memberId: member.memberId });
       const prize = findPrizeByRanking(myResult.ranking);
-      const processedMyResult = { ...myResult, isMine: true, prize };
+      const timeDifference = calculateTimeDifferenceWithMilliseconds(
+        eventInfo.eventTime,
+        myResult.joinedAt
+      );
+      const processedMyResult = { ...myResult, isMine: true, prize, timeDifference };
       const frontResults = await getFrontEventParticipationInfo(Number(eventId));
       // ! 요청자의 실제 Ranking보다 더 늦은 Ranking을 가진 결과를 가져올 Risk가 존재하기에, Filtering을 통해 처리
       const processedFrontResults = frontResults
@@ -133,6 +140,10 @@ export const useEventProgress = () => {
         .map((result) => ({
           ...result,
           isMine: false,
+          timeDifference: calculateTimeDifferenceWithMilliseconds(
+            eventInfo.eventTime,
+            result.joinedAt
+          ),
         }));
       // IMP : 내 결과를 포함한 이전 결과 리스트를 설정
       setUntilMyResult([...processedFrontResults, processedMyResult]);
@@ -158,9 +169,18 @@ export const useEventProgress = () => {
   // ! 그냥 WebSocket을 통해 받은 결과를 그대로 처리하는 방식으로 변경 => 항상 최신 결과만 Hook을 사용하는 Component에 넘김
   // TODO : 이렇게 된다면, 현재 얼마나 처리되었는 지 파악하기 어려워짐. ( WebSocket을 통해 가져오는 것이 계속 초기화 되기 때문임 )
   const getEventResult = (receivedEachEventResult: EventRoomResultInfo[]) => {
+    if (!eventInfo) return;
     const processedResults = receivedEachEventResult.map((result) => {
       const prize = findPrizeByRanking(result.ranking);
-      return { ...result, isMine: false, prize };
+      return {
+        ...result,
+        isMine: false,
+        prize,
+        timeDifference: calculateTimeDifferenceWithMilliseconds(
+          eventInfo.eventTime,
+          result.joinedAt
+        ),
+      };
     });
     setEventResult(processedResults);
   };
