@@ -18,6 +18,9 @@ export function usePrizeRequest(roomId: number) {
   const [detailedAddress, setDetailedAddress] = useState('');
   const [userData, setUserData] = useState<UserData | null>(null);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+
   // IMP: 사용자 정보 가져오고 수정하는 기능
   useEffect(() => {
     const fetchData = async () => {
@@ -74,10 +77,12 @@ export function usePrizeRequest(roomId: number) {
         ...formData,
         address: fullAddress,
       });
-      alert('정보가 성공적으로 저장되었습니다.');
+      setModalMessage('정보가 성공적으로 저장되었습니다.');
+      setIsModalOpen(true);
     } catch (error) {
       console.error('정보 저장 중 오류 발생:', error);
-      alert('정보 저장 중 오류가 발생했습니다.');
+      setModalMessage('정보 저장 중 오류가 발생했습니다.');
+      setIsModalOpen(true);
     }
   };
 
@@ -116,12 +121,15 @@ export function usePrizeRequest(roomId: number) {
     userData,
     formData,
     isSavedData,
+    isModalOpen,
+    modalMessage,
     showAddrModal,
     detailedAddress,
     setUserData,
     handleSubmit,
     handleChange,
     openAddrModal,
+    setIsModalOpen,
     closeAddrModal,
     handleCheckboxChange,
     handleAddressComplete,

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMemberStore } from '@/store/memberStore';
 import { ParticipatedRoom, CreatedRoom } from '@/types/user';
-import PrizeInfoPopUp from '@/components/mypage/PrizeInfoPopUp';
 import { fetchParticipatedRooms, fetchCreatedRooms } from '@/apis/memberAPI';
 
 export function useEventRoom() {

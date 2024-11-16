@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Modal from '@/components/common/alertModal';
 import { useState } from 'react';
 import { IoMdLock } from 'react-icons/io';
 import { IoEnterOutline } from 'react-icons/io5';
@@ -15,12 +16,15 @@ export default function EventRoomPart({
   const { prizes = [], startTime, endTime, unlockCount } = event;
   const {
     inputCode,
-    setInputCode,
     isCodeValid,
-    openWindow,
-    handleCodeSubmit,
-    handleKeyDown,
     lastUpdated,
+    isModalOpen,
+    modalMessage,
+    openWindow,
+    setInputCode,
+    handleKeyDown,
+    setIsModalOpen,
+    handleCodeSubmit,
     refreshUnlockCount,
   } = useEventDetail(id);
 
@@ -28,6 +32,11 @@ export default function EventRoomPart({
 
   return (
     <div className="max-w-sm">
+      <Modal
+        message={modalMessage}
+        onClose={() => setIsModalOpen(false)}
+        isOpen={isModalOpen}
+      />
       {!isCodeValid ? (
         <div className="flex flex-col items-center justify-center min-h-[50vh] bg-mainColor2 p-6 rounded-lg border">
           <IoMdLock className="text-mainColor1 mb-4" size={40} />
@@ -45,7 +54,7 @@ export default function EventRoomPart({
             />
             <IoEnterOutline
               className="text-mainColor1 pr-2 cursor-pointer"
-              size={20}
+              size={33}
               onClick={handleCodeSubmit}
             />
           </div>

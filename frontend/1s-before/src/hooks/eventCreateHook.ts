@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { useState, useEffect } from 'react';
+import { useMemberStore } from '@/store/memberStore';
 import { ProductOrCoupon } from '@/types/eventCreate';
 import { useEventCreateStore } from '@/store/eventCreateStore';
-import { createEvent } from '@/apis/eventAPI';
-import { useMemberStore } from '@/store/memberStore';
 
 export function useEventCreate() {
   const { member } = useMemberStore();
@@ -30,6 +29,8 @@ export function useEventCreate() {
   const [rectImageUrl, setRectImageUrl] = useState<string | undefined>(
     undefined
   );
+  const [modalMessage, setModalMessage] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // IMP: 제목 및 내용 생성 함수
   const handleInputChange = (e: { target: { name: string; value: any } }) => {
@@ -286,80 +287,81 @@ export function useEventCreate() {
           },
         }));
 
-        console.log(formData);
-
-        // 새로 생성된 Blob URL을 bannerImageUrl과 rectImageUrl로 업데이트
+        // IMP: 새로 생성된 Blob URL을 bannerImageUrl과 rectImageUrl로 업데이트
         const newBannerImageUrl = URL.createObjectURL(bannerBlob);
         const newRectImageUrl = URL.createObjectURL(rectangleBlob);
         setBannerImageUrl(newBannerImageUrl);
         setRectImageUrl(newRectImageUrl);
 
-        window.alert('자르기 성공!');
+        setModalMessage('이미지가 성공적으로 잘렸습니다!');
+        setIsModalOpen(true);
       }
     } finally {
       URL.revokeObjectURL(fileURL);
     }
   };
 
-  // IMP: formData를 JSON 형식에 맞게 변환 후 서버로 POST 요청하는 함수
-  const handleDetailSubmit = async (event: { preventDefault: () => void }) => {
+  const eventDetailValidCheck = async (event: {
+    preventDefault: () => void;
+  }): Promise<boolean> => {
     event.preventDefault();
 
+    if (!formData.eventInfo.title) {
+      setModalMessage('제목을 입력해주세요.');
+      setIsModalOpen(true);
+      return false;
+    }
+
+    if (!formData.eventInfo.description) {
+      setModalMessage('내용을 입력해주세요.');
+      setIsModalOpen(true);
+      return false;
+    }
+
     if (!formData.eventInfo.bannerImage || !formData.eventInfo.rectImage) {
-      alert('이미지를 자르고 다시 시도해 주세요.');
-      return;
+      setModalMessage('이미지를 자르고 다시 시도해 주세요.');
+      setIsModalOpen(true);
+      return false;
     }
 
-    const formDataToSend = new FormData();
-
-    const eventData = {
-      memberId: member?.memberId ?? 0,
-      eventInfo: {
-        title: formData.eventInfo.title,
-        description: formData.eventInfo.description,
-      },
-      productsOrCoupons: formData.productsOrCoupons.map((item, index) => ({
-        order: index + 1,
-        type: item.type,
-        name: item.name,
-        recommendedPeople: item.recommendedPeople,
-      })),
-      eventPeriod: {
-        start: new Date(formData.eventPeriod.start).toISOString(),
-        end: new Date(formData.eventPeriod.end).toISOString(),
-      },
-      participationCode: formData.participationCode,
-    };
-
-    const eventBlob = new Blob([JSON.stringify(eventData)], {
-      type: 'application/json',
-    });
-
-    formDataToSend.append('data', eventBlob);
-    formDataToSend.append('bannerImage', formData.eventInfo.bannerImage);
-    formDataToSend.append('rectImage', formData.eventInfo.rectImage);
-
-    try {
-      const response = await createEvent(formDataToSend);
-      console.log('이벤트 룸 생성:', response);
-    } catch (error) {
-      console.error('Error:', error);
+    if (!formData.eventPeriod.start || !formData.eventPeriod.end) {
+      setModalMessage('이벤트 기간을 설정해주세요.');
+      setIsModalOpen(true);
+      return false;
     }
+
+    if (formData.productsOrCoupons.length === 0) {
+      setModalMessage('상품 또는 쿠폰을 추가해주세요.');
+      setIsModalOpen(true);
+      return false;
+    }
+
+    if (!formData.participationCode) {
+      setModalMessage('참여 코드를 입력해주세요.');
+      setIsModalOpen(true);
+      return false;
+    }
+
+    return true;
   };
 
   return {
     formData,
     bannerCrop,
     bannerZoom,
+    isModalOpen,
+    rectImageUrl,
+    modalMessage,
     rectangleCrop,
     rectangleZoom,
-    rectImageUrl,
     bannerImageUrl,
     handleCrop,
+    setIsModalOpen,
+    setModalMessage,
     handleDateChange,
     handleFileChange,
     handleInputChange,
-    handleDetailSubmit,
+    eventDetailValidCheck,
     handleStartDateChange,
     handleBannerCropChange,
     handleBannerZoomChange,
