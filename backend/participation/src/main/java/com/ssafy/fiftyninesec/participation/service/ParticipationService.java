@@ -2,6 +2,7 @@ package com.ssafy.fiftyninesec.participation.service;
 
 import com.ssafy.fiftyninesec.ParticipationApplication;
 import com.ssafy.fiftyninesec.global.exception.CustomException;
+import com.ssafy.fiftyninesec.participation.client.dto.ParticipatedEventFeignResponseDto;
 import com.ssafy.fiftyninesec.participation.dto.response.EventRoomResponseDto;
 import com.ssafy.fiftyninesec.participation.dto.response.MemberResponseDto;
 import com.ssafy.fiftyninesec.participation.dto.response.ParticipationResponseDto;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -55,6 +57,20 @@ public class ParticipationService {
 
         return participations.stream()
                 .map(ParticipationResponseDto::of)
+                .collect(Collectors.toList());
+    }
+
+    // 특정 memeberId가 참여한 내역 조회 API
+    @Transactional(readOnly = true)
+    public List<ParticipatedEventFeignResponseDto> getParticipationsByMemberId(long memberId) {
+        List<Participation> participations = participationRepository.findByMemberId(memberId);
+
+        if (participations.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return participations.stream()
+                .map(ParticipatedEventFeignResponseDto::from)
                 .collect(Collectors.toList());
     }
 

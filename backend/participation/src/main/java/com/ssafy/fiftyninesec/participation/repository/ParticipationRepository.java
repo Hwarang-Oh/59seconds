@@ -10,5 +10,6 @@ import java.util.List;
 @Repository
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
     List<Participation> findByRoomIdOrderByRankingAsc(Long roomId);
+    List<Participation> findByMemberId(Long memberId);
     boolean existsByRoomIdAndMemberId(Long roomId, Long memberId);
 }

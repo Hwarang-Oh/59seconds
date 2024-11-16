@@ -1,9 +1,11 @@
 package com.ssafy.fiftyninesec.participation.controller;
 
+import com.ssafy.fiftyninesec.participation.client.dto.ParticipatedEventFeignResponseDto;
 import com.ssafy.fiftyninesec.participation.dto.request.ParticipationRequestDto;
 import com.ssafy.fiftyninesec.participation.dto.response.ParticipationResponseDto;
 import com.ssafy.fiftyninesec.participation.service.ParticipationService;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +31,15 @@ public class ParticipationController {
     public ResponseEntity<ParticipationResponseDto> createParticipation(@Valid @RequestBody ParticipationRequestDto request) {
         ParticipationResponseDto responseDto = participationService.saveParticipation(request.getEventId(), request.getMemberId());
         return ResponseEntity.ok(responseDto);
+    }
+
+    // 특정 memeberId가 참여한 내역 조회 API
+    @GetMapping
+    public ResponseEntity<List<ParticipatedEventFeignResponseDto>> getParticipationsByMemberId(
+            @RequestParam long memberId
+    ) {
+        List<ParticipatedEventFeignResponseDto> responseDtos = participationService.getParticipationsByMemberId(memberId);
+        return ResponseEntity.ok(responseDtos);
     }
 
     // 특정 roomId에 대한 ranking 초기화
