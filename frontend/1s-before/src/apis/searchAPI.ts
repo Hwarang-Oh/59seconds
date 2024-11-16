@@ -1,7 +1,7 @@
 import api from '@/apis/commonAPI';
 import { isAxiosError } from 'axios';
 import { PageType, SliceDetails, PageParamsType } from '@/types/common/common';
-const SEARCH_URL = 'v1/search';
+const SEARCH_URL = '/search';
 
 export const fetchSearchResults = async ({
   query,
