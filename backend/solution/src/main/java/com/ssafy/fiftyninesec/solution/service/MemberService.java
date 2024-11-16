@@ -3,6 +3,8 @@ package com.ssafy.fiftyninesec.solution.service;
 import com.ssafy.fiftyninesec.global.exception.CustomException;
 import com.ssafy.fiftyninesec.global.exception.ErrorCode;
 import com.ssafy.fiftyninesec.global.util.MinioUtil;
+import com.ssafy.fiftyninesec.solution.client.ParticipationServiceClient;
+import com.ssafy.fiftyninesec.solution.client.dto.ParticipatedEventFeignResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.response.CreatedEventResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.response.MemberResponseDto;
 import com.ssafy.fiftyninesec.solution.dto.request.MemberUpdateRequestDto;
@@ -30,6 +32,8 @@ import static com.ssafy.fiftyninesec.global.exception.ErrorCode.*;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
+
+    private final ParticipationServiceClient participationClient;
 
     private final MemberRepository memberRepository;
     private final RandomNicknameRepository randomNicknameRepository;
@@ -201,27 +205,33 @@ public class MemberService {
         }
     }
 
+// 나의 이벤트 조회 -------------------------------------------------------------------------------
+
     public List<CreatedEventResponseDto> getCreatedEventRooms(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
         // 생성일 내림차순
         Sort sort = Sort.by(Sort.Direction.DESC, "startTime");
-        List<EventRoom> events = eventRoomRepository.findByMember(member, sort);
+        List<EventRoom> eventRooms = eventRoomRepository.findByMember(member, sort);
 
-        return Optional.ofNullable(events)
-                .filter(eventList -> !eventList.isEmpty())
-                .map(eventList -> eventList.stream()
-                        .map(CreatedEventResponseDto::new)
-                        .collect(Collectors.toList()))
-                .orElse(Collections.emptyList());
+        if (eventRooms == null || eventRooms.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        log.info("생성한 이벤트 수 : {}", eventRooms.size());
+
+        return eventRooms.stream()
+                .map(CreatedEventResponseDto::from)
+                .collect(Collectors.toList());
     }
 
-    public List<ParticipatedEventResponseDto> getParticipatedEventRooms(Long memberId) {
+    public List<ParticipatedEventResponseDto> getParticipatedEventRooms(long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        List<Participation> participatedEvents = participationRepository.findByMemberId(memberId);
+        List<ParticipatedEventFeignResponseDto> participatedEvents = participationClient.getParticipationsByMemberId(memberId);
+
         if (participatedEvents.isEmpty()) {
             log.info("회원 ID {}: 참여한 이벤트가 없습니다.", memberId);
             return Collections.emptyList();
@@ -229,18 +239,22 @@ public class MemberService {
 
         log.info("참여한 이벤트 수 : {}", participatedEvents.size());
 
-        List<ParticipatedEventResponseDto> responseDtos = new ArrayList<>();
+        return participatedEvents.stream()
+                .map(participation -> createResponseDto(memberId, participation))
+                .filter(Objects::nonNull) // 실패한 항목 제외
+                .collect(Collectors.toList());
+    }
 
-        for (Participation participation : participatedEvents) {
-
+    private ParticipatedEventResponseDto createResponseDto(long memberId, ParticipatedEventFeignResponseDto participation) {
+        try {
             // 이벤트 정보 조회
-            EventRoom eventRoom = eventRoomRepository.findById(participation.getRoom().getId())
+            EventRoom eventRoom = eventRoomRepository.findById(participation.getRoomId())
                     .orElseThrow(() -> {
-                        log.error("회원 ID {}: 이벤트 ID {}를 찾을 수 없습니다.", memberId, participation.getRoom().getId());
+                        log.error("회원 ID {}: 이벤트 ID {}를 찾을 수 없습니다.", memberId, participation.getRoomId());
                         return new CustomException(EVENT_NOT_FOUND);
                     });
 
-            // 당첨된 경우에만 상품 정보 조회
+            // 당첨된 경우 상품 정보 조회
             Prize prize = null;
             if (participation.getIsWinner()) {
                 prize = prizeRepository.findByEventRoomAndRanking(eventRoom, participation.getRanking())
@@ -250,23 +264,10 @@ public class MemberService {
                             return new CustomException(PRIZE_NOT_FOUND);
                         });
             }
-
-            // DTO 생성 및 리스트에 추가
-            ParticipatedEventResponseDto dto = ParticipatedEventResponseDto.builder()
-                    .eventId(participation.getRoom().getId())
-                    .ranking(participation.getRanking())
-                    .isWinner(participation.getIsWinner())
-                    .title(eventRoom.getTitle())
-                    .bannerImage(eventRoom.getBannerImage())
-                    .totalParticipants(eventRoom.getUnlockCount())
-                    .prizeType(prize != null ? prize.getPrizeType() : null)
-                    .prizeName(prize != null ? prize.getPrizeName() : null)
-                    .startTime(eventRoom.getStartTime())
-                    .build();
-
-            responseDtos.add(dto);
+            return ParticipatedEventResponseDto.from(participation, eventRoom, prize);
+        } catch (CustomException ex) {
+            log.error("회원 ID {}: 처리 중 오류 발생 - {}", memberId, ex.getMessage());
         }
-
-        return responseDtos;
+        return null;
     }
 }

@@ -17,3 +17,6 @@ otel:
       protocol: grpc  # Specify the protocol as 'grpc'
   service:
     name: dreamsolution  # Set your service name
+participation-service:
+  url: http://k11a101.p.ssafy.io:9091/api
+  version: /v2

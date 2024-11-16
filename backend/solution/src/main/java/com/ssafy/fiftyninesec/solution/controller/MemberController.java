@@ -135,7 +135,7 @@ public class MemberController {
     @GetMapping("/participatedroom")
     public ResponseEntity<List<ParticipatedEventResponseDto>> getParticipatedEventRooms(
             HttpServletRequest request,
-            @RequestParam Long memberId
+            @RequestParam long memberId
     ) {
 //        List<ParticipatedEventResponseDto> events = memberService.getParticipatedEventRooms((Long) request.getAttribute("memberId"));
         List<ParticipatedEventResponseDto> events = memberService.getParticipatedEventRooms(memberId);

@@ -28,17 +28,18 @@ public class CreatedEventResponseDto {
 
     private LocalDateTime createdAt;
 
-    public CreatedEventResponseDto(EventRoom eventRoom) {
-        this.eventId = eventRoom.getId();
-        this.title = eventRoom.getTitle();
-        this.status = eventRoom.getStatus().name();
-        this.startTime = eventRoom.getStartTime();
-        this.endTime = eventRoom.getEndTime();
-        this.enterCode = eventRoom.getEnterCode();
-        this.unlockCount = (eventRoom.getUnlockCount());
-        this.bannerUrl = eventRoom.getBannerImage();
-        this.rectangleUrl = eventRoom.getRectangleImage();
-        this.createdAt = eventRoom.getCreatedAt();
+    public static CreatedEventResponseDto from(EventRoom eventRoom) {
+        return CreatedEventResponseDto.builder()
+                .eventId(eventRoom.getId())
+                .title(eventRoom.getTitle())
+                .status(eventRoom.getStatus().name())
+                .startTime(eventRoom.getStartTime())
+                .endTime(eventRoom.getEndTime())
+                .enterCode(eventRoom.getEnterCode())
+                .unlockCount(eventRoom.getUnlockCount())
+                .bannerUrl(eventRoom.getBannerImage())
+                .rectangleUrl(eventRoom.getRectangleImage())
+                .createdAt(eventRoom.getCreatedAt())
+                .build();
     }
-
 }
