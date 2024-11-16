@@ -37,9 +37,13 @@ export function useEventDetail(id: number) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
-  const isCodeValid = useEventStore((state) => state.isCodeValid);
-  const setIsCodeValid = useEventStore((state) => state.setCodeValid);
-  const setAuthenticated = useEventStore((state) => state.setAuthenticated);
+  const { eventStates, setEventState } = useEventStore();
+
+  // IMP: event store에서 현재 상태 가져오기
+  const currentEventState = eventStates[id] || {
+    isAuthenticated: false,
+    isCodeValid: false,
+  };
 
   const loadEventData = async () => {
     try {
@@ -82,8 +86,7 @@ export function useEventDetail(id: number) {
     try {
       const response = await postRoomUnlock(id, inputCode);
       if (response?.success) {
-        setIsCodeValid(true);
-        setAuthenticated(true);
+        setEventState(id, { isAuthenticated: true, isCodeValid: true });
         setModalMessage('방 잠금이 해제되었습니다.');
         setIsModalOpen(true);
       } else {
@@ -92,7 +95,7 @@ export function useEventDetail(id: number) {
       }
     } catch (error) {
       console.error('코드 제출 오류:', error);
-      setModalMessage('코드 제출 중 오류가 발생했습니다.');
+      setModalMessage('코드 검사 중 오류가 발생했습니다.');
       setIsModalOpen(true);
     }
   };
@@ -127,19 +130,19 @@ export function useEventDetail(id: number) {
   return {
     eventData,
     inputCode,
-    isCodeValid,
     lastUpdated,
-    isSharePopupOpen,
     isModalOpen,
     modalMessage,
+    isSharePopupOpen,
+    isCodeValid: currentEventState.isCodeValid,
     copyUrl,
     openWindow,
     setInputCode,
     handleKeyDown,
     openSharePopUp,
+    setIsModalOpen,
     closeSharePopUp,
     handleCodeSubmit,
     refreshUnlockCount,
-    setIsModalOpen,
   };
 }
