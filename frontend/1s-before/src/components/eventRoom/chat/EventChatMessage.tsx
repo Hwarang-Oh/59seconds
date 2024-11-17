@@ -22,7 +22,7 @@ export default function EventChatMessage({
         <p
           className={`py-2 px-4 leading-normal font-semibold text-base rounded-[20px] ${
             isMine
-              ? 'bg-blue-500 text-white' // 본인 메시지 스타일
+              ? 'bg-[#474972] text-[#FFE4D5]' // 본인 메시지 스타일
               : 'bg-[#C4C5D7] text-[#1C1C1E]' // 상대방 메시지 스타일
           }`}>
           {content}
