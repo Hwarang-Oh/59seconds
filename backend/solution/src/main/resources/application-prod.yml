@@ -18,5 +18,5 @@ otel:
   service:
     name: dreamsolution  # Set your service name
 participation-service:
-  url: http://k11a101.p.ssafy.io:9091/api
+  url: http://k11a404.p.ssafy.io:9091/api
   version: /v2
