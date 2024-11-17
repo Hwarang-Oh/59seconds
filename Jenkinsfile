@@ -11,7 +11,7 @@ pipeline {
         FRONTEND_DOCKERHUB_REPO = '404dreamsolutions/frontend'
         GITLAB_REPO = 'https://lab.ssafy.com/s11-final/S11P31A404.git'
         BRANCH = 'develop'
-        USER_SERVER_IP = '43.203.129.131'
+        USER_SERVER_IP = '59seconds.site'
         SPRING_PROFILE = 'prod'
     }
 
@@ -41,10 +41,10 @@ pipeline {
                                 dir('frontend/1s-before') {
                                     // 환경변수 직접 설정
                                     sh '''
-                                        echo "NEXT_PUBLIC_BASE_URL=http://43.203.129.131/api/v2" > .env
+                                        echo "NEXT_PUBLIC_BASE_URL=https://59seconds.site/api/v2" > .env
                                         echo "NEXT_PUBLIC_WEBSOCKET_URL=wss://k11a404.p.ssafy.io/api/v2/ws" >> .env
                                         echo "NEXT_PUBLIC_KAKAO_REST_API_KEY=d117153d60a3f48a68b2f2e166adc087" >> .env
-                                        echo "NEXT_PUBLIC_KAKAO_REDIRECT_URL=http://43.203.129.131" >> .env
+                                        echo "NEXT_PUBLIC_KAKAO_REDIRECT_URL=https://59seconds.site" >> .env
                                     '''
                                     sh 'npm install'
                                     sh 'npm run build'
