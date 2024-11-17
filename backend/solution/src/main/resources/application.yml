@@ -43,7 +43,7 @@ spring:
     redis:
       host: localhost
       port: 6379
-
+ 
   doc:
     api-docs:
       path: /api/v2/docs
