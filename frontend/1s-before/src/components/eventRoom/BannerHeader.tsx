@@ -1,16 +1,18 @@
 import Image from 'next/image';
+import Banner from '@/assets/defaultBanner.png';
+import { useState } from 'react';
 import { BannerHeaderProps } from '@/types/eventRoom';
-export default function BannerHeader({
-  bannerImage,
-}: Readonly<BannerHeaderProps>) {
+export default function BannerHeader({ bannerImage }: Readonly<BannerHeaderProps>) {
+  const [imageSrc, setImageSrc] = useState(bannerImage);
   return (
-    <div className="relative h-[170px] w-full mx-auto">
+    <div className='relative h-[170px] w-full mx-auto'>
       <Image
-        src={bannerImage}
-        alt="배너 이미지"
+        src={imageSrc}
+        alt='배너 이미지'
         fill
-        className="object-cover"
+        className='object-cover'
         quality={100}
+        onError={() => setImageSrc(Banner.src)}
       />
     </div>
   );
