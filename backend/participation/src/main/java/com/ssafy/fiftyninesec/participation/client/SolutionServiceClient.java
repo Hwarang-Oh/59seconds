@@ -6,6 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
 
@@ -13,7 +14,7 @@ import java.util.Optional;
 public interface SolutionServiceClient {
 
     @GetMapping("${solution-service.version}/members")
-    Optional<MemberResponseDto> getMember(@PathVariable Long memberId);
+    Optional<MemberResponseDto> getMember(@RequestHeader Long memberId);
 
     @GetMapping("${solution-service.version}/rooms/{roomId}")
     Optional<EventRoomResponseDto> getEventRoom(@PathVariable Long roomId);
