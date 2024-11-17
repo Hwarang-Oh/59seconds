@@ -1,5 +1,6 @@
-import Image from 'next/image';
 import Link from 'next/link';
+import Image from 'next/image';
+import Banner from '@/assets/defaultBanner.png';
 import PresentIcon from '@/components/icon/PresentIcon';
 import { useState, useEffect } from 'react';
 import { CardBannerProps } from '@/types/home';
@@ -12,6 +13,7 @@ export default function CardBanner({
   prizeCount,
   rectangleImage,
 }: Readonly<CardBannerProps>) {
+  const [imageSrc, setImageSrc] = useState(rectangleImage);
   const [timeRemaining, setTimeRemaining] = useState('');
   useEffect(() => {
     const updateTimeRemaining = () => {
@@ -27,7 +29,13 @@ export default function CardBanner({
     <Link href={`/event-detail/${eventId}`}>
       <div className='flex h-[185px] shadow-md'>
         <div className='relative w-[140px] overflow-hidden rounded-l-lg'>
-          <Image src={rectangleImage} alt={title} fill className='object-cover' />
+          <Image
+            src={imageSrc}
+            alt={title}
+            fill
+            className='object-cover'
+            onError={() => setImageSrc(Banner.src)}
+          />
         </div>
         <div className='flex flex-col w-[280px] justify-center px-5 gap-1 border rounded-r'>
           <p className='text-[16px] font-semibold' style={{ color: '#FF7262' }}>

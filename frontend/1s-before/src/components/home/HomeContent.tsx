@@ -34,15 +34,20 @@ export default function HomeContent({ popularEvents, deadlineEvents }: Readonly<
       }
     };
     loadCreatorData();
-  }, []);
+  }, [member.isLoggedIn]);
 
+  // TODO : 빈 Array의 결과에 대한 View를 추가해야 한다.
   return (
     <div>
       {member.isCreatorMode ? (
         <>
           <CreatorBanner bannerImage={bannerImage} />
           <div className='flex flex-col gap-20 px-7 py-20'>
-            <CreatorCardBannerGrid Banners={createdRooms} />
+            {createdRooms.length > 0 ? (
+              <CreatorCardBannerGrid Banners={createdRooms} />
+            ) : (
+              <div className='text-center py-10 text-gray-500'>생성한 방이 없습니다.</div>
+            )}
             <NormalBannerList Banners={popularEvents} />
           </div>
           <CreatorEventMakeBanner />
@@ -52,7 +57,11 @@ export default function HomeContent({ popularEvents, deadlineEvents }: Readonly<
           <LargeBannerCarousel Banners={popularEvents} />
           <div className='flex flex-col gap-20 px-7 py-20'>
             <NormalBannerList Banners={popularEvents} />
-            <CardBannerGrid Banners={deadlineEvents} />
+            {deadlineEvents.length > 0 ? (
+              <CardBannerGrid Banners={deadlineEvents} />
+            ) : (
+              <div className='text-center py-10 text-gray-500'>마감 임박 이벤트가 없습니다.</div>
+            )}
           </div>
         </>
       )}

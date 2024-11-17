@@ -1,7 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import Banner from '@/assets/defaultBanner.png';
 import DeadlineButton from '@/components/home/member/DeadlineButton';
 import ParticipantButton from '@/components/home/member/ParticipantButton';
+import { useState } from 'react';
 import { NormalBannerProps } from '@/types/home';
 export default function NormalBanner({
   eventId,
@@ -14,11 +16,19 @@ export default function NormalBanner({
   prizeCount,
   rectangleImage,
 }: Readonly<NormalBannerProps>) {
+  const [imageSrc, setImageSrc] = useState(rectangleImage);
   return (
     <div className='flex flex-col w-[240px]'>
       <Link href={`/event-detail/${eventId}`}>
         <div className='relative w-[240px] h-[320px] overflow-hidden rounded-lg'>
-          <Image src={rectangleImage} alt={title} fill className='object-cover' quality={100} />
+          <Image
+            src={imageSrc}
+            alt={title}
+            fill
+            className='object-cover'
+            quality={100}
+            onError={() => setImageSrc(Banner.src)}
+          />
           <div
             className='absolute bottom-3 left-4 text-white text-[60px] font-bold'
             style={{

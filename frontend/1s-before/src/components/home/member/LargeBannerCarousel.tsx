@@ -1,5 +1,6 @@
 'use client';
 import 'swiper/css';
+import Banner from '@/assets/defaultBanner.png';
 import LargeBanner from '@/components/home/member/LargeBanner';
 import { BannerCarouselProps } from '@/types/home';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -12,7 +13,11 @@ export default function LargeBannerCarousel({ Banners }: Readonly<BannerCarousel
     renderBullet: (index: number, className: string) => {
       const banner = Banners[index];
       return `<div key="bullet-${index}" class="${className} swiper-pagination-custom-bullet w-[52px] h-[52px] rounded-lg overflow-hidden relative inline-block mx-1 transition-transform duration-300 ease-in-out hover:scale-110">
-          <img src="${banner.rectangleImage}" alt="${banner.title}" class="object-cover w-full h-full" />
+          <img 
+          src="${banner.rectangleImage}" 
+          alt="${banner.title}" 
+          class="object-cover w-full h-full" 
+          onerror="this.src='${Banner.src}'" />
           <div class="absolute inset-0 bg-black opacity-30 transition-opacity duration-300"></div>
         </div>`;
     },
