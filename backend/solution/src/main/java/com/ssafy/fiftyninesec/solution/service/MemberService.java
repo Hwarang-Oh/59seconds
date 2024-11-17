@@ -230,8 +230,14 @@ public class MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
-        List<ParticipatedEventFeignResponseDto> participatedEvents = participationClient.getParticipationsByMemberId(memberId);
-
+        List<ParticipatedEventFeignResponseDto> participatedEvents = null;
+        try {
+            participatedEvents = participationClient.getParticipationsByMemberId(memberId);
+            log.debug("참여 이벤트 정보 수신: {}", participatedEvents);
+        } catch (Exception e) {
+            log.error("참여 이벤트 정보 요청 실패: memberId = {}, 에러 = {}", memberId, e.getMessage(), e);
+            throw new CustomException(PARTICIPATION_FETCH_FAILED);
+        }
         if (participatedEvents.isEmpty()) {
             log.info("회원 ID {}: 참여한 이벤트가 없습니다.", memberId);
             return Collections.emptyList();
