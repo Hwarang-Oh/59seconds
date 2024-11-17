@@ -13,5 +13,5 @@ otel:
     name: dreamsolution  # Set your service name
 
 solution-service:
-  url: http://k11a404.p.ssafy.io:9090/api
+  url: http://59seconds.site:9090/api
   version: /v2

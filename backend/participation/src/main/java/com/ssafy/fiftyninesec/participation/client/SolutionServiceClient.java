@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface SolutionServiceClient {
 
     @GetMapping("${solution-service.version}/members")
-    Optional<MemberResponseDto> getMember(@RequestHeader("memberId") Long memberId);
+    Optional<MemberResponseDto> getMember(@PathVariable Long memberId);
 
     @GetMapping("${solution-service.version}/rooms/{roomId}")
     Optional<EventRoomResponseDto> getEventRoom(@PathVariable Long roomId);
