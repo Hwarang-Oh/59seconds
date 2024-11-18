@@ -13,7 +13,8 @@ import { EventRoomResultViewInfo } from '@/types/eventRoom';
 export const useEventResult = (
   list: EventRoomResultViewInfo[],
   myResult: EventRoomResultViewInfo,
-  untilMyResult: EventRoomResultViewInfo[]
+  untilMyResult: EventRoomResultViewInfo[],
+  eventTime: string
 ) => {
   /**
    * IMP : EventRoom의 결과를 Section으로 나누어 관리
