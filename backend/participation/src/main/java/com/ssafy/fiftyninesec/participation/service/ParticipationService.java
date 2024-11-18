@@ -223,35 +223,20 @@ public class ParticipationService {
 
     private void sendParticipations(Long roomId, List<ParticipationResponseDto> participations, String lastProcessedKey) {
         if (!participations.isEmpty()) {
-            try {
-                // Ranking 순서대로 정렬
-                participations.sort(Comparator.comparing(ParticipationResponseDto::getRanking));
+            participations.sort(Comparator.comparing(ParticipationResponseDto::getRanking));
 
-                // 메시지 전송
-                messagingTemplate.convertAndSend(
-                        "/result/sub/participations/" + roomId,
-                        participations
-                );
+            messagingTemplate.convertAndSend(
+                    "/result/sub/participations/" + roomId,
+                    participations
+            );
 
-                // Redis에 마지막 처리된 Ranking 업데이트
-                int lastProcessedRanking = participations.get(participations.size() - 1).getRanking();
-                redisTemplate.opsForValue().set(
-                        lastProcessedKey,
-                        String.valueOf(lastProcessedRanking)
-                );
+            // Convert the Integer to String before storing
+            redisTemplate.opsForValue().set(
+                    lastProcessedKey,
+                    String.valueOf(participations.get(participations.size() - 1).getRanking())
+            );
 
-                log.info("[Scheduler] {}개의 참여 데이터를 전송 완료 (roomId: {}). 마지막 처리된 Ranking: {}",
-                        participations.size(), roomId, lastProcessedRanking);
-
-                // 업데이트된 값 확인 (디버깅용)
-                String updatedRanking = (String) redisTemplate.opsForValue().get(lastProcessedKey);
-                log.info("[Scheduler] Redis에 저장된 마지막 처리된 Ranking 확인 (roomId: {}): {}", roomId, updatedRanking);
-
-            } catch (Exception e) {
-                log.error("[Scheduler] 참여 데이터를 전송하거나 Redis 업데이트 중 오류 발생 (roomId: {}). Error: {}", roomId, e.getMessage(), e);
-            }
-        } else {
-            log.warn("[Scheduler] 전송할 참여 데이터가 없습니다 (roomId: {}).", roomId);
+            log.info("Sent {} participations for room {}", participations.size(), roomId);
         }
     }
 
