@@ -38,6 +38,17 @@ public class MemberController {
     }
 
     @PutMapping("/creatorName")
+    @Operation(summary = "참여자 이름 수정", description = "회원의 참여자 이름을 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "참여자 이름이 성공적으로 수정되었습니다."),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.")
+    })
+    public ResponseEntity<?> updateParticipateName(HttpServletRequest request, @RequestParam String participateName) {
+        memberService.updateField((Long) request.getAttribute("memberId"), "participateName", participateName);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/creatorName")
     @Operation(summary = "크리에이터 이름 수정", description = "회원의 크리에이터 이름을 수정합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "크리에이터 이름이 성공적으로 수정되었습니다."),
