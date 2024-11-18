@@ -20,7 +20,6 @@ const connect = ({
   subscriptions,
 }: Readonly<EventSocketProps>) => {
   if (stompClient?.connected) {
-    console.log('Already Connected, Adding New subscription');
     addSubscription({
       eventId,
       memberId,
@@ -40,7 +39,6 @@ const connect = ({
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
       onConnect: () => {
-        console.log('Connected to ' + eventId);
         addSubscription({
           eventId,
           memberId,
@@ -55,11 +53,9 @@ const connect = ({
         }
       },
       onDisconnect: () => {
-        console.log('Disconnected');
         handleDisconnect();
       },
       onWebSocketClose: () => {
-        console.log('WebSocket Closed');
         handleDisconnect();
       },
     });
@@ -100,7 +96,6 @@ const addEventRoomResultSubscription = ({
     const eventRoomResultSubscription = stompClient.subscribe(
       `/result/sub/participations/${eventId}`,
       (message) => {
-        console.log(JSON.parse(message.body));
         onEventRoomResultReceived(JSON.parse(message.body));
       }
     );
@@ -204,10 +199,8 @@ const disconnectFromEvent = (eventId: number) => {
     });
     sendLeaveEventRoom(eventId);
     activeEventIds.delete(eventId);
-    console.log(`Disconnected from event: ${eventId}`);
   }
   if (activeEventIds.size === 0) {
-    console.log('No active events, deactivating WebSocket connection');
     stompClient?.deactivate();
     stompClient = null;
   }

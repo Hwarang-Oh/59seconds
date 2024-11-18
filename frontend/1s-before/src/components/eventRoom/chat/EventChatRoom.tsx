@@ -8,7 +8,6 @@ export default function EventChatRoom({ messages }: Readonly<EventChatRoomProps>
   const { member } = useMemberStore();
 
   useEffect(() => {
-    console.log(messages);
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }

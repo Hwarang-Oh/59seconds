@@ -150,7 +150,18 @@ export default function EventRoomPart({ event, creator, id }: Readonly<EventIntr
 
           {/* 입장하기 버튼 */}
           <button
-            onClick={openWindow}
+            onClick={() => {
+              if (member.isLoggedIn) {
+                openWindow();
+                return;
+              }
+              const userConfirmed = window.confirm(
+                '✨ 로그인을 하셔야 궁극의 선착순 59초를 경험하실 수 있습니다 ✨\n로그인하시겠습니까?'
+              );
+              if (userConfirmed) {
+                openLoginPopUp();
+              }
+            }}
             className='w-full bg-mainColor1 text-white font-bold py-2 rounded-lg tracking-widest'>
             입장하기
           </button>

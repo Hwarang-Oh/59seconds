@@ -12,7 +12,6 @@ export const getLogin = async (OauthCode: string): Promise<MemberInfo> => {
       params: { code: OauthCode },
       withCredentials: true,
     });
-    console.log(response.data);
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {

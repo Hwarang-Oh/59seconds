@@ -56,7 +56,6 @@ export const getFrontEventParticipationInfo = async (
 ): Promise<EventRoomResultInfo[]> => {
   try {
     const response = await api.get(`${EVENT_PARTICIPATION_URL}/${eventId}/result`);
-    console.log(response.data);
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
