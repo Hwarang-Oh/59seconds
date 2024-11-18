@@ -200,6 +200,8 @@ public class ParticipationService {
                     if (dtoObj instanceof String) {
                         try {
                             ParticipationResponseDto participationDto = objectMapper.readValue((String) dtoObj, ParticipationResponseDto.class);
+                            log.info("[Scheduler] Redis에서 읽어온 lastProcessedRanking: {}", lastProcessedRanking);
+                            log.info("[Scheduler] 데이터 ranking: {}", participationDto.getRanking());
                             if (participationDto.getRanking() > lastProcessedRanking) {
                                 participations.add(participationDto);
                                 log.info("Added participation: {}", participationDto);
