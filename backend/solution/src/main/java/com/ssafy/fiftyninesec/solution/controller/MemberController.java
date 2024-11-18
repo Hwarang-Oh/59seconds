@@ -37,7 +37,7 @@ public class MemberController {
         return ResponseEntity.ok(memberService.getMemberInfo((Long) request.getAttribute("memberId")));
     }
 
-    @PutMapping("/creatorName")
+    @PutMapping("/participateName")
     @Operation(summary = "참여자 이름 수정", description = "회원의 참여자 이름을 수정합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "참여자 이름이 성공적으로 수정되었습니다."),
