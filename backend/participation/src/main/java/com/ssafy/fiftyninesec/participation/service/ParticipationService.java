@@ -133,10 +133,14 @@ public class ParticipationService {
             List<ParticipationResponseDto> lowerRankedParticipants = new ArrayList<>();
 
             for (Object obj : participants) {
-                if (obj instanceof ParticipationResponseDto) {
-                    ParticipationResponseDto dto = (ParticipationResponseDto) obj;
-                    if (dto.getRanking() < currentRanking.intValue()) { // 내 랭킹보다 낮은 경우
-                        lowerRankedParticipants.add(dto);
+                if (obj instanceof String) {
+                    try {
+                        ParticipationResponseDto dto = objectMapper.readValue((String) obj, ParticipationResponseDto.class);
+                        if (dto.getRanking() < currentRanking.intValue()) {
+                            lowerRankedParticipants.add(dto);
+                        }
+                    } catch (Exception e) {
+                        log.error("Error deserializing participation data: {}", e.getMessage());
                     }
                 }
             }
