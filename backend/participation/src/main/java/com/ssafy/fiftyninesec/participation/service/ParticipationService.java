@@ -173,7 +173,11 @@ public class ParticipationService {
             Long roomId = Long.parseLong(queueKey.substring(queueKey.lastIndexOf(':') + 1));
             String lastProcessedKey = LAST_PROCESSED_ID_PREFIX + roomId; // 표시된 마지막 등수에 대한 키
 
-            Integer lastProcessedRanking = (Integer) redisTemplate.opsForValue().get(lastProcessedKey);
+            String lastProcessedRankingStr = (String) redisTemplate.opsForValue().get(lastProcessedKey);
+            Integer lastProcessedRanking = 0;
+            if (lastProcessedRankingStr != null) {
+                lastProcessedRanking = Integer.parseInt(lastProcessedRankingStr);
+            }
             if (lastProcessedRanking == null) {
                 lastProcessedRanking = 0;
             }
