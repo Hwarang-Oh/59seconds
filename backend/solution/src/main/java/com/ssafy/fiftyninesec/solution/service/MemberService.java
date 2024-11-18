@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -147,9 +148,7 @@ public class MemberService {
 
         // 프로필 이미지 파일이 있으면 MinIO에 업로드하고 URL 설정
         if (updateDto.getProfileImage() != null && !updateDto.getProfileImage().isEmpty()) {
-            String bucketName = "profile-image";
-            String fullPath = updateDto.getProfileImage().getOriginalFilename();
-            String profileImageUrl = minioUtil.uploadImage(bucketName, fullPath, updateDto.getProfileImage());
+            String profileImageUrl = updateProfileImage(updateDto.getProfileImage());
             member.setProfileImage(profileImageUrl);
         }
 
@@ -213,6 +212,11 @@ public class MemberService {
         if (snsLink != null && !snsLink.matches("^(https?|ftp)://[^\\s/$.?#].[^\\s]*$")) {
             throw new CustomException(ErrorCode.INVALID_SNS_LINK);
         }
+    }
+
+    public String updateProfileImage(MultipartFile imageFile) {
+        String fileName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
+        return minioUtil.uploadImage("profile-image", fileName, imageFile);
     }
 
 // 나의 이벤트 조회 -------------------------------------------------------------------------------

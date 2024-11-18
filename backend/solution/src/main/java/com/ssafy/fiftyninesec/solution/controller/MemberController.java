@@ -89,12 +89,7 @@ public class MemberController {
     })
     public ResponseEntity<?> updateProfileImage(HttpServletRequest request, @RequestParam MultipartFile profileImage) {
         Long memberId = (Long) request.getAttribute("memberId");
-        String bucketName = "profile-image";
-        String fullPath = "profile-images/" + profileImage.getOriginalFilename();
-
-        // MinIO에 파일 업로드 및 URL 설정
-        String profileImageUrl = minioUtil.uploadImage(bucketName, fullPath, profileImage);
-
+        String profileImageUrl = memberService.updateProfileImage(profileImage);
         memberService.updateField(memberId, "profileImage", profileImageUrl);
         return ResponseEntity.ok().build();
     }
