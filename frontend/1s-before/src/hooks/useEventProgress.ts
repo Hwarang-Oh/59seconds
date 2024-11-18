@@ -102,7 +102,7 @@ export const useEventProgress = () => {
     eventId: 0,
     memberId: 0,
     ranking: 0,
-    isWinner: false,
+    winner: false,
     joinedAt: '',
     isMine: false,
     winnerName: '',
