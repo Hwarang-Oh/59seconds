@@ -216,9 +216,10 @@ public class ParticipationService {
                     participations
             );
 
+            // Convert the Integer to String before storing
             redisTemplate.opsForValue().set(
                     lastProcessedKey,
-                    participations.get(participations.size() - 1).getRanking()
+                    String.valueOf(participations.get(participations.size() - 1).getRanking())
             );
 
             log.info("Sent {} participations for room {}", participations.size(), roomId);
