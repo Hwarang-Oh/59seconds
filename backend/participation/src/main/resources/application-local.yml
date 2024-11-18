@@ -1,3 +1,9 @@
+mysql:
+  host: localhost
+
+redis:
+  host: localhost
+
 otel:
   metrics:
     exporter: none  # Disable metrics exporter

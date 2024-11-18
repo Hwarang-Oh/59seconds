@@ -67,7 +67,7 @@ public class ParticipationService {
                 .map(participation -> {
                     // 회원 정보 조회
                     Optional<MemberResponseDto> memberOpt = solutionServiceClient.getMember(participation.getMemberId());
-                    String winnerName = memberOpt.map(MemberResponseDto::getName).orElse(null);
+                    String winnerName = memberOpt.map(MemberResponseDto::getParticipateName).orElse(null);
 
                     return ParticipationResponseDto.of(participation, winnerName);
                 })
@@ -105,7 +105,8 @@ public class ParticipationService {
             EventRoomResponseDto eventRoom = solutionServiceClient.getEventRoom(roomId)
                     .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
-            log.info("Member ID: {}, Member Name: {}", memberId, member.getName());
+            log.info("Participation ID: {}, Participation Name: {}", memberId, member.getParticipateName());
+
             validateEventTiming(eventRoom);
             validateDuplicateParticipation(roomId, memberId);
 
@@ -126,7 +127,7 @@ public class ParticipationService {
 
             // Redis 큐에 참여 정보 저장
             String queueKey = PARTICIPATION_QUEUE_PREFIX + roomId;
-            ParticipationResponseDto responseDto = ParticipationResponseDto.of(savedParticipation, member.getName());
+            ParticipationResponseDto responseDto = ParticipationResponseDto.of(savedParticipation, member.getParticipateName());
             String jsonString = objectMapper.writeValueAsString(responseDto);
 
 // 저장할 키와 데이터를 로그로 출력
