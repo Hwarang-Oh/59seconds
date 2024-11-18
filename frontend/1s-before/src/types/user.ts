@@ -11,7 +11,7 @@ export interface UserData {
 export interface ParticipatedRoom {
   eventId: number;
   ranking: number;
-  isWinner: boolean;
+  winner: boolean;
   prizeType: string;
   prizeName: string;
   title: string;

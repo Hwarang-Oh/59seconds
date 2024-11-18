@@ -12,13 +12,10 @@ export function useEventRoom() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [createdRooms, setCreatedRooms] = useState<CreatedRoom[]>([]);
-  const [participatedRooms, setParticipatedRooms] = useState<
-    ParticipatedRoom[]
-  >([]);
+  const [participatedRooms, setParticipatedRooms] = useState<ParticipatedRoom[]>([]);
 
   // IMP: 참여한 이벤트 총 횟수와 우승 횟수 상태 정의
-  const [totalParticipatedCount, setTotalParticipatedCount] =
-    useState<number>(0);
+  const [totalParticipatedCount, setTotalParticipatedCount] = useState<number>(0);
   const [totalWinsCount, setTotalWinsCount] = useState<number>(0);
 
   const fetchParticipatedRoomData = async () => {
@@ -27,7 +24,7 @@ export function useEventRoom() {
       setParticipatedRooms(partRoomsData);
 
       setTotalParticipatedCount(partRoomsData.length);
-      setTotalWinsCount(partRoomsData.filter((room) => room.isWinner).length);
+      setTotalWinsCount(partRoomsData.filter((room) => room.winner).length);
     } catch (err) {
       setError('참여한 방 데이터를 가져오는 중 오류가 발생했습니다.');
     }

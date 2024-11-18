@@ -38,7 +38,7 @@ export interface EventStatusView {
   eventId: number;
   joinedAt: string;
   ranking: number;
-  isWinner: boolean;
+  winner: boolean;
   prize?: PrizeInfo;
   timeDifference: string;
   totalParticipants: number;
@@ -47,7 +47,7 @@ export interface EventStatusView {
 
 export interface EventWinOrLoseStateView {
   eventId: number;
-  isWinner: boolean;
+  winner: boolean;
   joinedAt: string;
   ranking: number;
   prize?: PrizeInfo;
@@ -120,7 +120,7 @@ export interface EventRoomResultInfo extends EventRoomSubscription {
   memberId: number;
   joinedAt: string;
   ranking: number;
-  isWinner: boolean;
+  winner: boolean;
   winnerName: string;
 }
 

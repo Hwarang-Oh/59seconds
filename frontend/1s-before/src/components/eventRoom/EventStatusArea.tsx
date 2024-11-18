@@ -21,7 +21,7 @@ export default function EventStatusArea({
   const [isTimerCompleted, setIsTimerCompleted] = useState(false);
   const getBackgroundColor = () => {
     if (myResult?.isMine) {
-      return myResult.isWinner ? 'bg-[#FFF9D5]' : 'bg-blue-200';
+      return myResult.winner ? 'bg-[#FFF9D5]' : 'bg-blue-200';
     }
   };
 
@@ -35,7 +35,7 @@ export default function EventStatusArea({
           ranking={myResult.ranking}
           isPending={!myResult.isMine}
           joinedAt={myResult.joinedAt}
-          isWinner={myResult.isWinner}
+          winner={myResult.winner}
           timeDifference={myResult.timeDifference}
           totalParticipants={totalParticipants}
           currentProccessed={currentProccessed}
