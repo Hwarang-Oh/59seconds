@@ -13,7 +13,7 @@ public class ParticipatedEventFeignResponseDto {
     private long roomId;
     private long memberId;
     private boolean isWinner;
-    private int ranking
+    private int ranking;
 
     public static ParticipatedEventFeignResponseDto from(Participation participation) {
         return ParticipatedEventFeignResponseDto.builder()
