@@ -15,8 +15,7 @@ export const useMemberLogin = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get('code');
-  const { member, setMember, clearMember, toggleCreatorMode } =
-    useMemberStore();
+  const { member, setMember, clearMember, toggleCreatorMode } = useMemberStore();
   const resetEventStates = useEventStore((state) => state.resetEventStates);
 
   // IMP : Login PopUp을 관리하는 State와 Method
@@ -65,9 +64,9 @@ export const useMemberLogin = () => {
     isCreatorMode: member?.isCreatorMode ?? false,
     isLoginPopUpOpen,
     handleToggle,
+    handleLogout,
     openLoginPopUp,
     closeLoginPopUp,
     handleKakaoLogin,
-    handleLogout,
   };
 };

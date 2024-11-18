@@ -16,7 +16,6 @@ export default function EventDetail() {
   const params = useParams();
   const { id } = params as { id: string };
   const [activeTab, setActiveTab] = useState('event');
-
   const { eventData } = useEventDetail(Number(id));
 
   if (!eventData) {

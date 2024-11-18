@@ -13,7 +13,7 @@ export default function EventStatusCountdownTimer({
       <CountdownCircleTimer
         isPlaying
         duration={remainingTimeInSeconds > 86400 ? remainingTimeInSeconds : 86400}
-        initialRemainingTime={0}
+        initialRemainingTime={remainingTimeInSeconds}
         size={240}
         strokeWidth={10}
         colors={['#474972', '#4CAF50', '#FFBB28', '#FF0000']}
