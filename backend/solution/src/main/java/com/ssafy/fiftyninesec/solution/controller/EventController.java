@@ -1,5 +1,6 @@
 package com.ssafy.fiftyninesec.solution.controller;
 
+import com.ssafy.fiftyninesec.solution.client.dto.UpdateEventStatusRequest;
 import com.ssafy.fiftyninesec.solution.dto.request.EventRoomRequestDto;
 import com.ssafy.fiftyninesec.solution.dto.request.RoomUnlockRequest;
 import com.ssafy.fiftyninesec.solution.dto.request.WinnerRequestDto;
@@ -135,6 +136,13 @@ public class EventController {
             @Parameter(description = "조회할 사용자의 멤버 ID") @RequestParam Long memberId) {
         String bannerUrl = eventService.getLatestBanner(memberId);
         return ResponseEntity.ok(bannerUrl);
+    }
+
+    @PutMapping("/{roomId}/status")
+    public ResponseEntity<Void> updateEventStatus(@PathVariable long roomId,
+                                                  @RequestBody UpdateEventStatusRequest status) {
+        eventService.updateEventStatus(roomId, status.getStatus());
+        return ResponseEntity.ok().build();
     }
 
     // TEST -----------------------------------------------------------------------------------------

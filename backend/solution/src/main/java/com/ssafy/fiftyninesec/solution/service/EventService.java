@@ -3,6 +3,7 @@ package com.ssafy.fiftyninesec.solution.service;
 import com.ssafy.fiftyninesec.global.exception.CustomException;
 import com.ssafy.fiftyninesec.search.repository.EventRoomSearchRepository;
 import com.ssafy.fiftyninesec.search.service.SearchService;
+import com.ssafy.fiftyninesec.solution.client.dto.UpdateEventStatusRequest;
 import com.ssafy.fiftyninesec.solution.dto.PrizeDto;
 import com.ssafy.fiftyninesec.solution.dto.WinnerInfoDto;
 import com.ssafy.fiftyninesec.solution.dto.request.EventRoomRequestDto;
@@ -52,7 +53,15 @@ public class EventService {
         log.info("Banner Image: {}", bannerImage.getOriginalFilename());
         log.info("Rectangle Image: {}", rectangleImage.getOriginalFilename());
 
-        EventRoom eventRoom = saveEventRoom(eventRoomRequestDto);
+        Member member = memberRepository.findById(eventRoomRequestDto.getMemberId())
+                .orElseThrow(()-> new CustomException(MEMBER_NOT_FOUND));
+
+        // 당첨 인원 합계
+        long winnerCnt = eventRoomRequestDto.getProductsOrCoupons().stream().
+                map(EventRoomRequestDto.ProductOrCoupon::getOrder)
+                .reduce(0, Integer::sum);
+
+        EventRoom eventRoom = saveEventRoom(eventRoomRequestDto, member, winnerCnt);
 
         // 이미지 서버에 업로드
         String bannerUrl = uploadImageAndGetUrl(bannerImage, eventRoom.getId(), "banner");
@@ -104,9 +113,7 @@ public class EventService {
         log.info("Updated event room: {}", eventRoom);
     }
 
-    private EventRoom saveEventRoom(EventRoomRequestDto eventRoomRequestDto) {
-        Member member = memberRepository.findById(eventRoomRequestDto.getMemberId())
-                .orElseThrow(()-> new CustomException(MEMBER_NOT_FOUND));
+    private EventRoom saveEventRoom(EventRoomRequestDto eventRoomRequestDto, Member member, long winnerCnt) {
 
         EventRoom eventRoom = EventRoom.builder()
                 .member(member)
@@ -125,6 +132,7 @@ public class EventService {
 
         return eventRoomRepository.save(eventRoom);
     }
+
 
     private void savePrizes(List<EventRoomRequestDto.ProductOrCoupon> productsOrCoupons, EventRoom eventroom) {
         productsOrCoupons.forEach(productOrCoupon -> {
@@ -267,6 +275,9 @@ public class EventService {
                 .build();
 
         winnerRepository.save(winner);
+
+        // 이벤트 방 번호로 winner를 조회했을 때, event.winnerCount(당첨인원)와 같으면 모든 사용자 입력
+        checkAndUpdateEventCompletion(room);
     }
 
     public EventRoomResponseDto getEventRoomInfo(Long roomId) {
@@ -314,6 +325,16 @@ public class EventService {
         }
     }
 
+
+    public void updateEventStatus(long roomId, EventStatus status) {
+        EventRoom event = eventRoomRepository.findById(roomId)
+                .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+        log.info("{}번 방 상태 변경 요청: {}", roomId, status);
+        event.setStatus(status);
+        eventRoomRepository.save(event);
+        log.info("{}번 방 상태 변경 완료", roomId);
+    }
+
     // -----------------------------------------------
 
     private void validatePageNumber(int page, int size) {
@@ -337,6 +358,13 @@ public class EventService {
     private int calculateRanking(EventRoom eventRoom, Page<EventRoom> eventRooms) {
         return (int) (eventRooms.getNumber() * eventRooms.getSize() +
                 eventRooms.getContent().indexOf(eventRoom) + 1);
+    }
+
+    private void checkAndUpdateEventCompletion(EventRoom room) {
+        long winnerCount = winnerRepository.countByRoomId(room.getId());
+        if (winnerCount == room.getWinnerNum()) {
+            updateEventStatus(room.getId(), EventStatus.COMPLETED);
+        }
     }
 
     // TEST ------------------------------------------
