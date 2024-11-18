@@ -60,14 +60,19 @@ public class ParticipationService {
     public List<ParticipationResponseDto> getParticipationsByRoomId(Long roomId) {
         List<Participation> participations = participationRepository.findByRoomIdOrderByRankingAsc(roomId);
 
-        if(participations.isEmpty())
+        if (participations.isEmpty())
             return Collections.emptyList();
 
         return participations.stream()
-                .map(ParticipationResponseDto::of)
+                .map(participation -> {
+                    // 회원 정보 조회
+                    Optional<MemberResponseDto> memberOpt = solutionServiceClient.getMember(participation.getMemberId());
+                    String winnerName = memberOpt.map(MemberResponseDto::getName).orElse(null);
+
+                    return ParticipationResponseDto.of(participation, winnerName);
+                })
                 .collect(Collectors.toList());
     }
-
     // 특정 memeberId가 참여한 내역 조회 API
     @Transactional(readOnly = true)
     public List<ParticipatedEventFeignResponseDto> getParticipationsByMemberId(long memberId) {
