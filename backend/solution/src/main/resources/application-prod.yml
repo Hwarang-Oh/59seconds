@@ -19,7 +19,7 @@ otel:
     name: dreamsolution  # Set your service name
 
 minio:
-  endpoint: https://k11a404.p.ssafy.io:8999    # participation의 서버에 업로드
+  endpoint: https://k11a404.p.ssafy.io:8998    # participation의 서버에 업로드 (API 포트)
 
 participation-service:
   url: http://k11a404.p.ssafy.io:9091/api
