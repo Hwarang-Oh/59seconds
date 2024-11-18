@@ -1,5 +1,7 @@
 package com.ssafy.fiftyninesec.participation.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.fiftyninesec.ParticipationApplication;
 import com.ssafy.fiftyninesec.global.exception.CustomException;
 import com.ssafy.fiftyninesec.participation.client.dto.ParticipatedEventFeignResponseDto;
@@ -46,6 +48,8 @@ public class ParticipationService {
     private final RedissonClient redissonClient;
     private final SimpMessagingTemplate messagingTemplate;
     private final RedisTemplate<String, Object> redisTemplate;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     // 기존 참여자들을 조회
     @Transactional(readOnly = true)
@@ -113,7 +117,8 @@ public class ParticipationService {
             // Redis 큐에 참여 정보 저장
             String queueKey = PARTICIPATION_QUEUE_PREFIX + roomId;
             ParticipationResponseDto responseDto = ParticipationResponseDto.of(savedParticipation, member.getName());
-            redisTemplate.opsForList().rightPush(queueKey, responseDto);
+            String jsonString = objectMapper.writeValueAsString(responseDto);
+            redisTemplate.opsForList().rightPush(queueKey, jsonString);
 
             // 자신의 랭킹보다 낮은 참여자 정보 가져오기
             List<Object> participants = redisTemplate.opsForList().range(queueKey, 0, -1);
@@ -135,6 +140,8 @@ public class ParticipationService {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new CustomException(LOCK_INTERRUPTED);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         } finally {
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();
@@ -165,8 +172,8 @@ public class ParticipationService {
             //redis에 쌓인 정보 모두
             while ((dto = redisTemplate.opsForList().leftPop(queueKey)) != null) {
                 try {
-                    if (dto instanceof LinkedHashMap) {
-                        ParticipationResponseDto participationDto = ParticipationResponseDto.from((LinkedHashMap<String, Object>) dto);
+                    if (dto instanceof String) {
+                        ParticipationResponseDto participationDto = objectMapper.readValue((String) dto, ParticipationResponseDto.class);
                         if (participationDto.getRanking() > lastProcessedRanking) {
                             participations.add(participationDto);
                             log.info("Added participation: {}", participationDto);
