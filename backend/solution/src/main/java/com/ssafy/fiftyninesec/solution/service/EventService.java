@@ -299,14 +299,16 @@ public class EventService {
         return responseDto;
     }
 
-    public String getLatestBanner(Long memberId) {
-        try {
-            EventRoom latestEventRoom = eventRoomRepository.findLatestEventByMemberId(memberId)
-                    .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
-            return String.format("/%d/banner.jpg", latestEventRoom.getId());
-        } catch (Exception e) {
-            log.error("Error while getting latest event banner: ", e);
-            throw new CustomException(IMAGE_NOT_FOUND);
+    public String getLatestBanner(long memberId) {
+        // 사용자가 이벤트를 한 번도 생성하지 않은 경우는 에러가 아니다.
+        EventRoom latestEventRoom = eventRoomRepository.findLatestEventByMemberId(memberId)
+                .orElse(null);
+
+        if (latestEventRoom != null) {
+            return latestEventRoom.getBannerImage();
+        } else {
+            log.warn("최신 배너가 없습니다. memberId: {}", memberId);
+            return minioUtil.DefaultBannerUrl;
         }
     }
 

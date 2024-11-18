@@ -16,6 +16,9 @@ public class MinioUtil {
 
     private final MinioConfig minioConfig;
     private MinioClient minioClient;
+    public final String DefaultBannerUrl = "https://k11a404.p.ssafy.io:8998/event-image/default/Default_Banner.png";
+    public final String DefaultRectangleUrl = "https://k11a404.p.ssafy.io:8998/event-image/default/Default_Rectangle.png";
+    public final String DefaultProfileUrl = "https://k11a404.p.ssafy.io:8998/profile-image/default/Default_Profile.png";
 
     public MinioUtil(MinioClient minioClient, MinioConfig minioConfig) {
         this.minioClient = minioClient;
