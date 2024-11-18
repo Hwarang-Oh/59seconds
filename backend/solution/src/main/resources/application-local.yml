@@ -11,6 +11,10 @@ otel:
       protocol: grpc  # Specify the protocol as 'grpc'
   service:
     name: dreamsolution  # Set your service name
+
+minio:
+  endpoint: http://localhost:9000    # 내부 Docker 네트워크용
+
 participation-service:
   url: http://localhost:9091/api
   version: /v2
