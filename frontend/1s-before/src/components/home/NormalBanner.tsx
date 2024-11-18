@@ -1,10 +1,12 @@
-import Image from 'next/image';
 import Link from 'next/link';
+import Image from 'next/image';
 import Banner from '@/assets/defaultBanner.png';
 import DeadlineButton from '@/components/home/member/DeadlineButton';
 import ParticipantButton from '@/components/home/member/ParticipantButton';
 import { useState } from 'react';
 import { NormalBannerProps } from '@/types/home';
+import { truncateDescription } from '@/utils/wordUtils';
+
 export default function NormalBanner({
   eventId,
   title,
@@ -41,14 +43,17 @@ export default function NormalBanner({
 
         {/* 내용 */}
         <div className='py-[5px]'>
-          <p className='text-lg font-bold whitespace-pre-line'>{title}</p>
+          <p
+            className='text-lg font-bold whitespace-pre-line'
+            dangerouslySetInnerHTML={{
+              __html: truncateDescription(title, 15),
+            }}></p>
           <p className='text-base'>
-            {mainPrize} 외 {prizeCount} 개의 상품
+            {truncateDescription(`${mainPrize} 외 ${prizeCount} 개의 상품`, 20)}
           </p>
           <p className='text-bse text-gray-400'>{new Date(endTime).toLocaleString()}</p>
         </div>
       </Link>
-      {/* 참가자 수와 마감 임박 배지 */}
       <div className='flex justify-start gap-5 items-center'>
         <ParticipantButton unlockCount={unlockCount} />
         {isDeadline && <DeadlineButton />}
