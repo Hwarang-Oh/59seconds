@@ -82,16 +82,18 @@ export function useEventOwner() {
     formData.append('creatorName', ownerData.creatorName);
 
     try {
-      const result = await putCreatorInfo(formData);
-      console.log('이름 저장 성공:', result);
+      await putCreatorInfo(formData);
+      setModalMessage('이름을 업데이트하였습니다.');
+      setIsModalOpen(true);
     } catch (error) {
-      console.error('이름 저장 중 오류 발생:', error);
+      setModalMessage('이름을 업데이트에 실패하였습니다.');
+      setIsModalOpen(true);
     }
   };
 
   // IMP: 폼 데이터 검증
   const validateOwnerData = (): boolean => {
-    const requiredFields = ['creatorName', 'creatorIntroduce', 'snsLink'];
+    const requiredFields = ['creatorName', 'snsLink'];
     for (const field of requiredFields) {
       if (!ownerData[field as keyof UserData]) {
         setModalMessage(`${field}을(를) 입력해주세요.`);
@@ -115,10 +117,11 @@ export function useEventOwner() {
         formData.append('profileImage', ownerData.profileImage);
       }
 
-      const result = await putCreatorInfo(formData);
+      await putCreatorInfo(formData);
       return true;
     } catch (error) {
-      console.error('정보 수정 중 오류 발생:', error);
+      setModalMessage('정보 수정에 실패했습니다.');
+      setIsModalOpen(true);
       return false;
     }
   };

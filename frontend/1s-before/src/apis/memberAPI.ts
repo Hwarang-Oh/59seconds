@@ -50,18 +50,14 @@ export const putCreatorInfo = async (formData: FormData): Promise<string> => {
     const response = await api.put(`${MEMBER_URL}/update-from-event`, formData);
 
     if (response.status === 200) {
-      console.log('업데이트 성공');
       return '업데이트 성공';
     } else {
-      console.error('업데이트 실패');
       return '업데이트 실패';
     }
   } catch (error) {
     if (isAxiosError(error)) {
-      console.error('API 오류:', error.message);
       return 'API 오류 발생';
     } else {
-      console.error('알 수 없는 오류:', error);
       return '알 수 없는 오류 발생';
     }
   }
@@ -142,7 +138,9 @@ export const putProfileImage = async (profileImage: File): Promise<string> => {
 };
 
 // IMP: 개설자 소개 업데이트
-export const putCreatorIntroduce = async (creatorIntroduce: string): Promise<string> => {
+export const putCreatorIntroduce = async (
+  creatorIntroduce: string
+): Promise<string> => {
   try {
     const response = await api.put(`${MEMBER_URL}/creatorIntroduce`, null, {
       params: { creatorIntroduce },
@@ -168,11 +166,16 @@ export const putSnsLink = async (snsLink: string): Promise<string> => {
 };
 
 // IMP: 참여한 이벤트 호출
-export const fetchParticipatedRooms = async (memberId: number): Promise<ParticipatedRoom[]> => {
+export const fetchParticipatedRooms = async (
+  memberId: number
+): Promise<ParticipatedRoom[]> => {
   try {
-    const response = await api.get<ParticipatedRoom[]>(`${MEMBER_URL}/participatedroom`, {
-      params: { memberId },
-    });
+    const response = await api.get<ParticipatedRoom[]>(
+      `${MEMBER_URL}/participatedroom`,
+      {
+        params: { memberId },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error('참여한 방 가져오기 실패:', error);
@@ -181,12 +184,13 @@ export const fetchParticipatedRooms = async (memberId: number): Promise<Particip
 };
 
 // IMP: 생성한 이벤트 방 정보 호출
-export const fetchCreatedRooms = async (memberId: number): Promise<CreatedRoom[]> => {
+export const fetchCreatedRooms = async (
+  memberId: number
+): Promise<CreatedRoom[]> => {
   try {
     const response = await api.get<CreatedRoom[]>(`${MEMBER_URL}/createdroom`, {
       params: { memberId },
     });
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('개설한 방 가져오기 실패:', error);

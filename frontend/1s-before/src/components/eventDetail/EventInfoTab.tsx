@@ -11,7 +11,7 @@ import { TbAlertTriangleFilled } from 'react-icons/tb';
 
 export default function EventInfoTab() {
   return (
-    <div className="p-6 mx-auto">
+    <div className="p-6 max-w-screen-lg mx-auto">
       <h2 className="text-xl font-bold mb-4">이벤트 이용 정보</h2>
       <div className="flex items-start mb-10">
         <TbAlertTriangleFilled

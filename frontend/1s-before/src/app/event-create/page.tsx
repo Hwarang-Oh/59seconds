@@ -40,8 +40,6 @@ export default function EventCreate() {
       const isDetailValid = await eventDetailValidCheck(event);
       const isUserValid = validateOwnerData();
 
-      console.log('유효성 검사 결과:', { isDetailValid, isUserValid });
-
       // IMP: 하나라도 실패하면 종료
       if (!isDetailValid || !isUserValid) {
         setModalMessage('입력된 정보를 다시 확인해주세요.');
@@ -94,8 +92,6 @@ export default function EventCreate() {
       }
 
       const eventResponse = await createEvent(formDataToSend);
-
-      console.log('이벤트가 생성되었습니다', eventResponse);
 
       setModalMessage('이벤트가 성공적으로 생성되었습니다!');
       setIsModalOpen(true);

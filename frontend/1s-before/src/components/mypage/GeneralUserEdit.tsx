@@ -1,11 +1,19 @@
+import Modal from '@/components/common/alertModal';
 import { SetStateAction, useState } from 'react';
 import { useUserEdit } from '@/hooks/userEditHook';
 import { useEventRoom } from '@/hooks/eventRoomHook';
 import { FaPhoneAlt, FaEdit, FaMapMarkerAlt } from 'react-icons/fa';
 
 export default function GeneralUserEdit() {
-  const { userData, updateParticipateName, updateAddress, updatePhone } =
-    useUserEdit();
+  const {
+    userData,
+    isModalOpen,
+    modalMessage,
+    updatePhone,
+    updateAddress,
+    setIsModalOpen,
+    updateParticipateName,
+  } = useUserEdit();
   const { totalWinsCount, totalParticipatedCount } = useEventRoom();
 
   // 각각의 필드를 위한 수정 상태 추가
@@ -19,7 +27,7 @@ export default function GeneralUserEdit() {
   const [localAddress, setLocalAddress] = useState(userData.address);
 
   if (!userData) {
-    return <p className="mb-10">Loading...</p>; // 로딩 상태 또는 null 반환
+    return <p className="mb-10">로딩 중...</p>;
   }
 
   // 수정 버튼 클릭 핸들러
@@ -176,6 +184,12 @@ export default function GeneralUserEdit() {
           <p className="text-gray-700">{userData.address}</p>
         )}
       </section>
+
+      <Modal
+        message={modalMessage}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }
