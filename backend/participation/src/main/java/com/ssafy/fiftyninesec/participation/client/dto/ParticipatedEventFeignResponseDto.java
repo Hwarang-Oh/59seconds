@@ -1,6 +1,5 @@
 package com.ssafy.fiftyninesec.participation.client.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.fiftyninesec.participation.entity.Participation;
 import lombok.Builder;
 import lombok.Data;

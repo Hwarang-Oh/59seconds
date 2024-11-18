@@ -1,7 +1,6 @@
 package com.ssafy.fiftyninesec.participation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.fiftyninesec.participation.entity.Participation;
 import lombok.*;
 
@@ -20,7 +19,6 @@ public class ParticipationResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime joinedAt;
     private int ranking;
-    @JsonProperty("winner")
     private boolean isWinner;
     private String winnerName;
 
