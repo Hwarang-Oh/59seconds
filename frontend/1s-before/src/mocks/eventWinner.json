@@ -1,0 +1,50 @@
+{
+  "response": {
+    "winners": [
+      {
+        "winnerName": "홍길동",
+        "prize": null,
+        "address": null,
+        "phone": null,
+        "ranking": 1
+      },
+      {
+        "winnerName": "김철수",
+        "prize": "맥북",
+        "address": "서울시 서초구",
+        "phone": "010-2345-6789",
+        "ranking": 2
+      },
+      {
+        "winnerName": "이영희",
+        "prize": "맥북",
+        "address": null,
+        "phone": null,
+        "ranking": 3
+      },
+      {
+        "winnerName": "박민수",
+        "prize": "맥북",
+        "address": "서울시 강동구",
+        "phone": "010-4567-8901",
+        "ranking": 4
+      },
+      {
+        "winnerName": "최지훈",
+        "prize": null,
+        "address": null,
+        "phone": null,
+        "ranking": 5
+      },
+      {
+        "winnerName": "정수빈",
+        "prize": "맥북",
+        "address": "서울시 강북구",
+        "phone": "010-6789-0123",
+        "ranking": 6
+      }
+    ],
+    "message": "당첨자 목록을 성공적으로 조회했습니다.",
+    "success": true
+  }
+}

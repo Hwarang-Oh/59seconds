@@ -1,0 +1,426 @@
+[
+  {
+    "eventId": 1,
+    "memberId": 1,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 1,
+    "isWinner": true,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 2,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 2,
+    "isWinner": true,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 3,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 3,
+    "isWinner": true,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 4,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 4,
+    "isWinner": true,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 5,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 5,
+    "isWinner": true,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 6,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 6,
+    "isWinner": true,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 7,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 7,
+    "isWinner": true,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 8,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 8,
+    "isWinner": true,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 9,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 9,
+    "isWinner": true,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 10,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 10,
+    "isWinner": true,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 11,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 11,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 12,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 12,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 13,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 13,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 14,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 14,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 15,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 15,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 16,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 16,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 17,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 17,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 18,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 18,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 19,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 19,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 20,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 20,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 21,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 21,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 22,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 22,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 23,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 23,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 24,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 24,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 25,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 25,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 26,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 26,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 27,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 27,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 28,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 28,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 29,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 29,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 30,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 30,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 31,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 31,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 32,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 32,
+    "isWinner": false,
+    "isMine": true
+  },
+  {
+    "eventId": 1,
+    "memberId": 33,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 33,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 34,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 34,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 35,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 35,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 36,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 36,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 37,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 37,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 38,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 38,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 39,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 39,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 40,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 40,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 41,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 41,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 42,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 42,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 43,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 43,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 44,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 44,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 45,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 45,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 46,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 46,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 47,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 47,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 48,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 48,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 49,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 49,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 50,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 50,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 51,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 51,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 52,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 52,
+    "isWinner": false,
+    "isMine": false
+  },
+  {
+    "eventId": 1,
+    "memberId": 53,
+    "joinedAt": "2024-11-08T12:00:00Z",
+    "ranking": 53,
+    "isWinner": false,
+    "isMine": false
+  }
+]

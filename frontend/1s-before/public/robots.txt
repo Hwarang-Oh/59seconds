@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://59seconds.site/sitemap.xml

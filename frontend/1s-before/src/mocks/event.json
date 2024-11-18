@@ -1,0 +1,324 @@
+{
+  "event": [
+    {
+      "id": 1,
+      "eventInfo": {
+        "title": "도경수가 뿌린다 이벤트",
+        "description": "구독자 500만명 달성을 기념하여 감사한 마음을 담아 상품을 준비했습니다.",
+        "bannerImage": "/image/KyungSoo.jpg",
+        "rectImage": "/image/KyungSoo.jpg"
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "맥북 에어",
+          "recommendedPeople": 2
+        },
+        {
+          "order": 2,
+          "type": "쿠폰",
+          "name": "스타벅스",
+          "recommendedPeople": 1
+        }
+      ],
+      "eventPeriod": {
+        "start": "2024-11-05T02:30:00.070Z",
+        "end": "2024-11-06T02:30:00.000Z"
+      },
+      "participationCode": "됴"
+    },
+    {
+      "id": 1730778917877,
+      "eventInfo": {
+        "title": "test",
+        "description": "test",
+        "bannerImage": {},
+        "rectImage": {}
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "test",
+          "recommendedPeople": 1
+        }
+      ],
+      "eventPeriod": {
+        "start": "2024-11-05T02:30:00.070Z",
+        "end": "2024-11-06T02:30:00.000Z"
+      },
+      "participationCode": "test"
+    },
+    {
+      "id": 1730781186150,
+      "eventInfo": {
+        "title": "test",
+        "description": "test",
+        "bannerImage": {},
+        "rectImage": {}
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "test",
+          "recommendedPeople": 1
+        }
+      ],
+      "eventPeriod": {
+        "start": "2024-11-07T04:30:00.000Z",
+        "end": "2024-11-16T04:30:00.000Z"
+      },
+      "participationCode": "test"
+    },
+    {
+      "id": 1730782315723,
+      "eventInfo": {
+        "title": "test2",
+        "description": "test2",
+        "bannerImage": {},
+        "rectImage": {}
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "쿠폰",
+          "name": "test2",
+          "recommendedPeople": 2
+        }
+      ],
+      "eventPeriod": {
+        "start": "2024-11-05T04:00:00.787Z",
+        "end": "2024-11-06T04:00:00.000Z"
+      },
+      "participationCode": "test2"
+    },
+    {
+      "id": 1730881461595,
+      "eventInfo": {
+        "title": "",
+        "description": "",
+        "bannerImage": null,
+        "rectImage": null
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "",
+          "recommendedPeople": 0
+        }
+      ],
+      "eventPeriod": {
+        "start": "",
+        "end": ""
+      },
+      "participationCode": ""
+    },
+    {
+      "id": 1730882185571,
+      "eventInfo": {
+        "title": "",
+        "description": "",
+        "bannerImage": null,
+        "rectImage": null
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "",
+          "recommendedPeople": 0
+        }
+      ],
+      "eventPeriod": {
+        "start": "",
+        "end": ""
+      },
+      "participationCode": ""
+    },
+    {
+      "id": 1730940318206,
+      "eventInfo": {
+        "title": "test",
+        "description": "<p>ddd<strong>d  dfdf</strong></p>",
+        "bannerImage": {},
+        "rectImage": {}
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "test",
+          "recommendedPeople": 0
+        }
+      ],
+      "eventPeriod": {
+        "start": "2024-11-04T00:00:00.000Z",
+        "end": "2024-10-31T23:30:00.000Z"
+      },
+      "participationCode": "test"
+    },
+    {
+      "id": 1730940377089,
+      "eventInfo": {
+        "title": "test",
+        "description": "<h2>ddd<strong>d  dfdf</strong></h2><p></p><h2>하이!</h2>",
+        "bannerImage": {},
+        "rectImage": {}
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "test",
+          "recommendedPeople": 0
+        }
+      ],
+      "eventPeriod": {
+        "start": "2024-11-04T00:00:00.000Z",
+        "end": "2024-10-31T23:30:00.000Z"
+      },
+      "participationCode": "test"
+    },
+    {
+      "id": 1730941778465,
+      "eventInfo": {
+        "title": "",
+        "description": "<p><span data-name=\"savoring_food\" data-type=\"emoji\">😋</span><span data-name=\"grinning_face_with_sweat\" data-type=\"emoji\">😅</span><strong>ㅇㄹㅇㄹ</strong></p>",
+        "bannerImage": null,
+        "rectImage": null
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "",
+          "recommendedPeople": 0
+        }
+      ],
+      "eventPeriod": {
+        "start": "",
+        "end": ""
+      },
+      "participationCode": ""
+    },
+    {
+      "id": 1730944420326,
+      "eventInfo": {
+        "title": "",
+        "description": "",
+        "bannerImage": {},
+        "rectImage": {}
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "",
+          "recommendedPeople": 0
+        }
+      ],
+      "eventPeriod": {
+        "start": "",
+        "end": ""
+      },
+      "participationCode": ""
+    },
+    {
+      "id": 1730944420327
+    },
+    {
+      "id": 1730944420328
+    },
+    {
+      "id": 1730951914737,
+      "eventInfo": {
+        "title": "test",
+        "description": "<p>test</p>",
+        "bannerImage": null,
+        "rectImage": null
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "test",
+          "recommendedPeople": 0
+        }
+      ],
+      "eventPeriod": {
+        "start": "",
+        "end": ""
+      },
+      "participationCode": "test"
+    },
+    {
+      "id": 1730952258912,
+      "eventInfo": {
+        "title": "",
+        "description": "",
+        "bannerImage": {},
+        "rectImage": {}
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "",
+          "recommendedPeople": 0
+        }
+      ],
+      "eventPeriod": {
+        "start": "",
+        "end": ""
+      },
+      "participationCode": ""
+    },
+    {
+      "id": 1730952347378,
+      "eventInfo": {
+        "title": "",
+        "description": "",
+        "bannerImage": {},
+        "rectImage": {}
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "",
+          "recommendedPeople": 0
+        }
+      ],
+      "eventPeriod": {
+        "start": "",
+        "end": ""
+      },
+      "participationCode": ""
+    },
+    {
+      "id": 1730952363200,
+      "eventInfo": {
+        "title": "",
+        "description": "",
+        "bannerImage": {},
+        "rectImage": {}
+      },
+      "productsOrCoupons": [
+        {
+          "order": 1,
+          "type": "상품",
+          "name": "",
+          "recommendedPeople": 0
+        }
+      ],
+      "eventPeriod": {
+        "start": "",
+        "end": ""
+      },
+      "participationCode": ""
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+otel:
+  metrics:
+    exporter: none  # Disable metrics exporter
+  logs:
+    exporter: none  # Disable logs exporter
+  traces:
+    exporter: otlp  # Use OTLP exporter for traces
+  exporter:
+    otlp:
+      endpoint: "http://43.201.247.235:4317"  # Include 'http://' to make it a valid URL
+      protocol: grpc  # Specify the protocol as 'grpc'
+  service:
+    name: dreamsolution  # Set your service name
+
+solution-service:
+  url: http://59seconds.site:9090/api
+  version: /v2

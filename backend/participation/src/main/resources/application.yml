@@ -1,0 +1,59 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v2
+  
+spring:
+  application:
+    name: participation-service
+  profiles:
+    active: local
+  config:
+    import: application-secret.yml
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+  datasource:
+    url: jdbc:mysql://${mysql.host}:${mysql.port}/${mysql.database}?useUnicode=true&serverTimezone=Asia/Seoul
+    username: ${mysql.username}
+    password: ${mysql.password}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        jdbc:
+          time_zone: Asia/Seoul
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
+
+  data:
+    elasticsearch:
+      client:
+        rest:
+          uris: ${spring.elasticsearch.uris}
+          username: ${spring.elasticsearch.username}
+          password: ${spring.elasticsearch.password}
+  doc:
+    api-docs:
+      path: /api/v2/docs
+    swagger-ui:
+      path: /api/v2/swagger-ui.html
+
+  jackson:
+    time-zone: Asia/Seoul
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus  # prometheus 엔드포인트 활성화
+  endpoint:
+    prometheus:
+      enabled: true  # prometheus 메트릭 활성화
