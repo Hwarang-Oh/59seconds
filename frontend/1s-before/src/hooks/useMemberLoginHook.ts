@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useMemberStore } from '@/store/memberStore';
 import { getLogin, getLogout } from '@/apis/memberAPI';
+import { useEventStore } from '@/store/eventStore';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 /**
@@ -14,7 +15,9 @@ export const useMemberLogin = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const code = searchParams.get('code');
-  const { member, setMember, clearMember, toggleCreatorMode } = useMemberStore();
+  const { member, setMember, clearMember, toggleCreatorMode } =
+    useMemberStore();
+  const resetEventStates = useEventStore((state) => state.resetEventStates);
 
   // IMP : Login PopUp을 관리하는 State와 Method
   const [isLoginPopUpOpen, setIsLoginPopUpOpen] = useState(false);
@@ -53,6 +56,8 @@ export const useMemberLogin = () => {
   const handleLogout = () => {
     getLogout();
     clearMember();
+    resetEventStates();
+    router.push('/');
   };
 
   return {
