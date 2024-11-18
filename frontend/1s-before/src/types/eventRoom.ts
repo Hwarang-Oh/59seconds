@@ -134,6 +134,7 @@ export interface EventRoomAllResultProps {
   list: EventRoomResultViewInfo[];
   untilMyResult: EventRoomResultViewInfo[];
   myResult: EventRoomResultViewInfo;
+  eventTime: string;
   calculateCurrentProcessed: (processed: number) => void;
   addCalculatedCurrentProcessed: (processed: number) => void;
 }
