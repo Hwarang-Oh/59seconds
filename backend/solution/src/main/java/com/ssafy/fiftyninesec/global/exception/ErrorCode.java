@@ -30,6 +30,7 @@ public enum ErrorCode {
     // 필드 유효성 검사 관련 에러
     INVALID_FIELD_NAME(HttpStatus.BAD_REQUEST, "잘못된 형식의 필드 이름입니다."),
     INVALID_CREATOR_NAME(HttpStatus.BAD_REQUEST, "잘못된 형식의 creatorName입니다. 이름은 비어 있을 수 없으며 최대 50자까지 가능합니다."),
+    INVALID_PARTICIPATE_NAME(HttpStatus.BAD_REQUEST, "잘못된 형식의 participateName 입니다. 이름은 비어 있을 수 없으며 최대 50자까지 가능합니다." ),
     INVALID_ADDRESS(HttpStatus.BAD_REQUEST, "잘못된 형식의 주소입니다. 주소는 최대 255자까지 가능합니다."),
     INVALID_PHONE(HttpStatus.BAD_REQUEST, "잘못된 형식의 전화번호입니다. 올바른 형식: 010-0000-0000"),
     INVALID_PROFILE_IMAGE(HttpStatus.BAD_REQUEST, "잘못된 형식의 프로필 이미지 경로입니다. 경로는 최대 100자까지 가능합니다."),
@@ -45,9 +46,8 @@ public enum ErrorCode {
     ALREADY_PARTICIPATED(HttpStatus.BAD_REQUEST, "이미 참여한 이벤트입니다."),
 
     // 테스트 참여 실패 에러
-    PARTICIPATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "참여 처리 중 오류가 발생했습니다."),
     PARTICIPATION_FETCH_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Participation Service와 통신에 실패했습니다."),
-    ;
+    PARTICIPATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "참여 처리 중 오류가 발생했습니다.");
     private final HttpStatus httpStatus;
     private final String message;
 }

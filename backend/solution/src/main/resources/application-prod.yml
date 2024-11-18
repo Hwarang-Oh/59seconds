@@ -22,5 +22,5 @@ minio:
   endpoint: http://minio:8999    # 내부 Docker 네트워크용
 
 participation-service:
-  url: http://k11a101.p.ssafy.io:9091/api
+  url: http://k11a404.p.ssafy.io:9091/api
   version: /v2

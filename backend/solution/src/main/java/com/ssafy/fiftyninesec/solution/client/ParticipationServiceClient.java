@@ -10,6 +10,6 @@ import java.util.List;
 @FeignClient(name = "participation-service", url = "${participation-service.url}")
 public interface ParticipationServiceClient {
 
-    @GetMapping("${participation-service.version}")
+    @GetMapping("${participation-service.version}/participations")
     List<ParticipatedEventFeignResponseDto> getParticipationsByMemberId(@RequestParam long memberId);
 }

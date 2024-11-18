@@ -89,8 +89,10 @@ public class MemberService {
 
         // 유효성 검사 및 필드 업데이트
         switch (fieldName) {
+            case "participateName":
+                validateParticipateName(fieldValue);
+                member.setParticipateName(fieldValue);
             case "creatorName":
-                log.info("들어옴");
                 validateCreatorName(fieldValue);
                 member.setCreatorName(fieldValue);
                 break;
@@ -165,6 +167,14 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    private void validateParticipateName(String participateName) {
+        if (participateName == null || participateName.isBlank()) {
+            throw new CustomException(ErrorCode.INVALID_PARTICIPATE_NAME);
+        }
+        if (participateName.length() > 50) {
+            throw new CustomException(INVALID_PARTICIPATE_NAME);
+        }
+    }
 
     private void validateCreatorName(String creatorName) {
         if (creatorName == null || creatorName.isBlank()) {
@@ -238,7 +248,6 @@ public class MemberService {
             log.error("참여 이벤트 정보 요청 실패: memberId = {}, 에러 = {}", memberId, e.getMessage(), e);
             throw new CustomException(PARTICIPATION_FETCH_FAILED);
         }
-
         if (participatedEvents.isEmpty()) {
             log.info("회원 ID {}: 참여한 이벤트가 없습니다.", memberId);
             return Collections.emptyList();
