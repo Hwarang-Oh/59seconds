@@ -34,6 +34,7 @@ export default function PrizeInfoPopUp({
         setLoading(true);
         try {
           const data = await getWinnerInfo(roomId);
+          console.log(data);
           setWinnerInfo(data.winners || []);
           setError(null);
         } catch (err) {
