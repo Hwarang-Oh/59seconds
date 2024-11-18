@@ -298,4 +298,14 @@ public class ParticipationService {
         }
     }
 
+    //lastProcessedRanking 초기화
+    public void resetLastProcessedRanking(Long roomId) {
+        String lastProcessedKey = LAST_PROCESSED_ID_PREFIX + roomId;
+
+        // Redis에 값을 0으로 설정
+        redisTemplate.opsForValue().set(lastProcessedKey, "0");
+
+        // 로그 출력
+        log.info("[Service] Last processed ranking for room {} has been reset to 0.", roomId);
+    }
 }

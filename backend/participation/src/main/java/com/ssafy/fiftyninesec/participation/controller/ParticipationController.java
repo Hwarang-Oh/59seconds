@@ -7,6 +7,7 @@ import com.ssafy.fiftyninesec.participation.service.ParticipationService;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,5 +61,18 @@ public class ParticipationController {
     public ResponseEntity<String> resetTestCounter() {
         participationService.resetTestRanking();
         return ResponseEntity.ok("Test ranking counter has been reset.");
+    }
+
+
+    //lastProcessedRanking 초기화
+    @PostMapping("/reset-ranking/{roomId}")
+    public ResponseEntity<String> resetLastProcessedRanking(@PathVariable Long roomId) {
+        try {
+            participationService.resetLastProcessedRanking(roomId);
+            return ResponseEntity.ok("Last processed ranking for room " + roomId + " has been reset to 0.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to reset last processed ranking for room " + roomId + ". Error: " + e.getMessage());
+        }
     }
 }
