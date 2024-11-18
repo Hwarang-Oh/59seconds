@@ -9,12 +9,12 @@ export default function EventResultEachResult({
   eventId,
   memberId,
   joinedAt,
-  isWinner,
+  winner,
   winnerName,
   timeDifference,
 }: Readonly<EventRoomResultViewInfo>) {
-  const getResultStyle = (ranking: number, isWinner: boolean) => {
-    if (!isWinner) {
+  const getResultStyle = (ranking: number, winner: boolean) => {
+    if (!winner) {
       return {
         icon: AlertCircle,
         color: 'text-gray-400',
@@ -39,7 +39,7 @@ export default function EventResultEachResult({
     }
   };
 
-  const { icon: ResultIcon, color, bg, borderColor } = getResultStyle(ranking, isWinner);
+  const { icon: ResultIcon, color, bg, borderColor } = getResultStyle(ranking, winner);
 
   return (
     <div
@@ -73,7 +73,7 @@ export default function EventResultEachResult({
       </div>
 
       <div className='flex items-center gap-2'>
-        {isWinner ? (
+        {winner ? (
           <>
             <div className={`px-3 py-1 rounded-full ${color} ${bg} font-medium`}>당첨</div>
             <div className='flex flex-col items-center text-sm text-gray-600 gap-1'>
