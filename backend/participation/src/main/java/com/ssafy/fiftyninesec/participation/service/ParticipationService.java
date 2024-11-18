@@ -174,34 +174,37 @@ public class ParticipationService {
             String lastProcessedKey = LAST_PROCESSED_ID_PREFIX + roomId; // 표시된 마지막 등수에 대한 키
 
             String lastProcessedRankingStr = (String) redisTemplate.opsForValue().get(lastProcessedKey);
-            Integer lastProcessedRanking = 0;
+            int lastProcessedRanking = 0;
             if (lastProcessedRankingStr != null) {
-                lastProcessedRanking = Integer.parseInt(lastProcessedRankingStr);
-            }
-            if (lastProcessedRanking == null) {
-                lastProcessedRanking = 0;
-            }
-
-            List<ParticipationResponseDto> participations = new ArrayList<>();
-            Object dto;
-
-            //redis에 쌓인 정보 모두
-            while ((dto = redisTemplate.opsForList().leftPop(queueKey)) != null) {
                 try {
-                    if (dto instanceof String) {
-                        ParticipationResponseDto participationDto = objectMapper.readValue((String) dto, ParticipationResponseDto.class);
-                        if (participationDto.getRanking() > lastProcessedRanking) {
-                            participations.add(participationDto);
-                            log.info("Added participation: {}", participationDto);
-                        }
-                    }
-                } catch (Exception e) {
-                    log.error("Error converting participation data: {} - Error: {}", dto, e.getMessage());
+                    lastProcessedRanking = Integer.parseInt(lastProcessedRankingStr);
+                } catch (NumberFormatException e) {
+                    log.error("Invalid lastProcessedRanking value: {}", lastProcessedRankingStr, e);
+                    lastProcessedRanking = 0;
                 }
             }
 
-            // 웹소켓으로 참여 정보 전송
-            sendParticipations(roomId, participations, lastProcessedKey);
+            List<Object> dtos = redisTemplate.opsForList().range(queueKey, 0, -1);
+            List<ParticipationResponseDto> participations = new ArrayList<>();
+
+            if (dtos != null && !dtos.isEmpty()) {
+                for (Object dtoObj : dtos) {
+                    if (dtoObj instanceof String) {
+                        try {
+                            ParticipationResponseDto participationDto = objectMapper.readValue((String) dtoObj, ParticipationResponseDto.class);
+                            if (participationDto.getRanking() > lastProcessedRanking) {
+                                participations.add(participationDto);
+                                log.info("Added participation: {}", participationDto);
+                            }
+                        } catch (Exception e) {
+                            log.error("Error converting participation data: {} - Error: {}", dtoObj, e.getMessage());
+                        }
+                    }
+                }
+
+                // 웹소켓으로 참여 정보 전송
+                sendParticipations(roomId, participations, lastProcessedKey);
+            }
         }
     }
 
