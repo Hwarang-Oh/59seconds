@@ -127,6 +127,7 @@ public class ParticipationService {
                     }
                 }
             }
+            log.info("Lower Ranked Participants for room {}: {}", roomId, lowerRankedParticipants);
 
             messagingTemplate.convertAndSend("/result/sub/participations/" + roomId, lowerRankedParticipants);
 
