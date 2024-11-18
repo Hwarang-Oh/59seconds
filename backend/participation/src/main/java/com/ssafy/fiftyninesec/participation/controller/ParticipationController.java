@@ -65,7 +65,7 @@ public class ParticipationController {
 
 
     //lastProcessedRanking 초기화
-    @PostMapping("/reset-ranking/{roomId}")
+    @PostMapping("/reset-processedranking/{roomId}")
     public ResponseEntity<String> resetLastProcessedRanking(@PathVariable Long roomId) {
         try {
             participationService.resetLastProcessedRanking(roomId);
