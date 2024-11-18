@@ -93,6 +93,7 @@ public class MemberService {
             case "participateName":
                 validateParticipateName(fieldValue);
                 member.setParticipateName(fieldValue);
+                break;
             case "creatorName":
                 validateCreatorName(fieldValue);
                 member.setCreatorName(fieldValue);
