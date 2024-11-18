@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -174,6 +175,7 @@ public class ParticipationService {
 
     @Scheduled(fixedRate = PARTICIPATION_QUEUE_RATE)
     public void processParticipationQueue() {
+        log.error("[Scheduler] 스케줄러 실행 시작");
         Set<String> queueKeys = redisTemplate.keys(PARTICIPATION_QUEUE_PREFIX + "*");
 
         if (queueKeys == null || queueKeys.isEmpty()) {
@@ -212,7 +214,6 @@ public class ParticipationService {
                         }
                     }
                 }
-
                 // 웹소켓으로 참여 정보 전송
                 sendParticipations(roomId, participations, lastProcessedKey);
             }
@@ -295,6 +296,16 @@ public class ParticipationService {
         } catch (Exception e) {
             log.error("Error in test participation: ", e);
             throw new CustomException(PARTICIPATION_FAILED);
+        }
+    }
+
+    public void flushDatabase() {
+        try {
+            redisTemplate.getConnectionFactory().getConnection().flushDb(); // Redis 데이터 초기화
+            log.info("Redis FLUSHDB executed successfully.");
+        } catch (Exception e) {
+            log.error("Failed to execute FLUSHDB on Redis: ", e);
+            throw new RuntimeException("Redis FLUSHDB failed.", e);
         }
     }
 

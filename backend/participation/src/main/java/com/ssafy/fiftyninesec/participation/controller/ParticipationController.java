@@ -7,6 +7,7 @@ import com.ssafy.fiftyninesec.participation.service.ParticipationService;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,5 +61,15 @@ public class ParticipationController {
     public ResponseEntity<String> resetTestCounter() {
         participationService.resetTestRanking();
         return ResponseEntity.ok("Test ranking counter has been reset.");
+    }
+
+    @PostMapping("/flushdb")
+    public ResponseEntity<String> flushDatabase() {
+        try {
+            participationService.flushDatabase();
+            return ResponseEntity.ok("Redis database has been flushed successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to flush Redis database. Error: " + e.getMessage());
+        }
     }
 }
