@@ -89,7 +89,7 @@ public class MemberController {
     })
     public ResponseEntity<?> updateProfileImage(HttpServletRequest request, @RequestParam MultipartFile profileImage) {
         Long memberId = (Long) request.getAttribute("memberId");
-        String profileImageUrl = memberService.updateProfileImage(profileImage);
+        String profileImageUrl = memberService.updateProfileImageFile(memberId, profileImage);
         memberService.updateField(memberId, "profileImage", profileImageUrl);
         return ResponseEntity.ok().build();
     }

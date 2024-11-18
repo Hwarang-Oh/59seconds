@@ -148,7 +148,7 @@ public class MemberService {
 
         // 프로필 이미지 파일이 있으면 MinIO에 업로드하고 URL 설정
         if (updateDto.getProfileImage() != null && !updateDto.getProfileImage().isEmpty()) {
-            String profileImageUrl = updateProfileImage(updateDto.getProfileImage());
+            String profileImageUrl = updateProfileImageFile(memberId, updateDto.getProfileImage());
             member.setProfileImage(profileImageUrl);
         }
 
@@ -214,8 +214,14 @@ public class MemberService {
         }
     }
 
-    public String updateProfileImage(MultipartFile imageFile) {
-        String fileName = UUID.randomUUID().toString() + "_" + imageFile.getOriginalFilename();
+    public String updateProfileImageFile(long memberId, MultipartFile imageFile) {
+        String originalFilename = imageFile.getOriginalFilename();
+
+        String extension = originalFilename != null && originalFilename.contains(".") ?
+                originalFilename.substring(originalFilename.lastIndexOf(".")) : ".jpg";  // 기본 확장자 .jpg
+
+        String fileName = memberId + extension;
+
         return minioUtil.uploadImage("profile-image", fileName, imageFile);
     }
 
