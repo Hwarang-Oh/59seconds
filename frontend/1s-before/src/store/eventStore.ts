@@ -14,19 +14,24 @@ interface EventState {
     eventId: number,
     state: { isAuthenticated: boolean; isCodeValid: boolean }
   ) => void;
+  resetEventStates: () => void;
 }
 
 // RES: 분리해서 저장
 export const useEventStore = create<EventState>()(
   persist(
     (set) => ({
-      eventStates: {}, // 이벤트별 상태 초기화
+      eventStates: {},
       setEventState: (eventId, state) =>
         set((prevState) => ({
           eventStates: {
             ...prevState.eventStates,
-            [eventId]: state, // 특정 이벤트 방 상태 업데이트
+            [eventId]: state,
           },
+        })),
+      resetEventStates: () =>
+        set(() => ({
+          eventStates: {},
         })),
     }),
     {
