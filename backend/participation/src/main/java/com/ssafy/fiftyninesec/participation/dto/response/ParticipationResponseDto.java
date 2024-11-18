@@ -1,5 +1,6 @@
 package com.ssafy.fiftyninesec.participation.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ssafy.fiftyninesec.participation.entity.Participation;
 import lombok.*;
 
@@ -15,6 +16,7 @@ import java.util.LinkedHashMap;
 public class ParticipationResponseDto {
     private long eventId;
     private long memberId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime joinedAt;
     private int ranking;
     private boolean isWinner;
