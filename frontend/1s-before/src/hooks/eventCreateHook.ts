@@ -1,11 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useState, useEffect } from 'react';
-import { useMemberStore } from '@/store/memberStore';
 import { ProductOrCoupon } from '@/types/eventCreate';
 import { useEventCreateStore } from '@/store/eventCreateStore';
 
 export function useEventCreate() {
-  const { member } = useMemberStore();
   const { formData, setFormData } = useEventCreateStore();
   const [bannerZoom, setBannerZoom] = useState(1);
   const [rectangleZoom, setRectangleZoom] = useState(1);
@@ -31,6 +29,9 @@ export function useEventCreate() {
   );
   const [modalMessage, setModalMessage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [eventErrorMessage, setEventErrorMessage] = useState<string | null>(
+    null
+  );
 
   // IMP: 제목 및 내용 생성 함수
   const handleInputChange = (e: { target: { name: string; value: any } }) => {
@@ -307,41 +308,36 @@ export function useEventCreate() {
     event.preventDefault();
 
     if (!formData.eventInfo.title) {
-      setModalMessage('제목을 입력해주세요.');
-      setIsModalOpen(true);
+      setEventErrorMessage('제목을 입력해주세요.');
       return false;
     }
 
     if (!formData.eventInfo.description) {
-      setModalMessage('내용을 입력해주세요.');
-      setIsModalOpen(true);
+      setEventErrorMessage('내용을 입력해주세요.');
       return false;
     }
 
     if (!formData.eventInfo.bannerImage || !formData.eventInfo.rectImage) {
-      setModalMessage('이미지를 자르고 다시 시도해 주세요.');
-      setIsModalOpen(true);
+      setEventErrorMessage('이미지를 자르고 다시 시도해 주세요.');
       return false;
     }
 
     if (!formData.eventPeriod.start || !formData.eventPeriod.end) {
-      setModalMessage('이벤트 기간을 설정해주세요.');
-      setIsModalOpen(true);
+      setEventErrorMessage('이벤트 기간을 설정해주세요.');
       return false;
     }
 
     if (formData.productsOrCoupons.length === 0) {
-      setModalMessage('상품 또는 쿠폰을 추가해주세요.');
-      setIsModalOpen(true);
+      setEventErrorMessage('상품 또는 쿠폰을 추가해주세요.');
       return false;
     }
 
     if (!formData.participationCode) {
-      setModalMessage('참여 코드를 입력해주세요.');
-      setIsModalOpen(true);
+      setEventErrorMessage('참여 코드를 입력해주세요.');
       return false;
     }
 
+    setEventErrorMessage(null);
     return true;
   };
 
@@ -355,12 +351,14 @@ export function useEventCreate() {
     rectangleCrop,
     rectangleZoom,
     bannerImageUrl,
+    eventErrorMessage,
     handleCrop,
     setIsModalOpen,
     setModalMessage,
     handleDateChange,
     handleFileChange,
     handleInputChange,
+    setEventErrorMessage,
     eventDetailValidCheck,
     handleStartDateChange,
     handleBannerCropChange,

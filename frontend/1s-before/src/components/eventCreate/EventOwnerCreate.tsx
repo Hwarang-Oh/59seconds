@@ -96,9 +96,6 @@ export default function EventOwnerCreate() {
           >
             소개글
           </label>
-          <button type="button" className="text-blue-500 text-sm font-bold">
-            수정
-          </button>
         </div>
         <div className="border p-2 rounded">
           <Tiptap

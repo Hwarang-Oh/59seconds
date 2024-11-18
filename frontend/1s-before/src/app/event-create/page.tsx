@@ -16,10 +16,12 @@ export default function EventCreate() {
   const router = useRouter();
   const { member } = useMemberStore();
   const { formData } = useEventCreateStore();
-  const { validateOwnerData, handleUserSubmit } = useEventOwner();
+  const { validateOwnerData, handleUserSubmit, userErrorMessage } =
+    useEventOwner();
   const {
     isModalOpen,
     modalMessage,
+    eventErrorMessage,
     setIsModalOpen,
     setModalMessage,
     eventDetailValidCheck,
@@ -42,7 +44,13 @@ export default function EventCreate() {
 
       // IMP: 하나라도 실패하면 종료
       if (!isDetailValid || !isUserValid) {
-        setModalMessage('입력된 정보를 다시 확인해주세요.');
+        const combinedErrorMessage = [eventErrorMessage, userErrorMessage]
+          .filter(Boolean)
+          .join(' ');
+
+        setModalMessage(
+          combinedErrorMessage || '입력되지 않은 정보가 있습니다.'
+        );
         setIsModalOpen(true);
         return;
       }
@@ -55,7 +63,6 @@ export default function EventCreate() {
         return;
       }
 
-      // IMP: 모든 유효성 검사가 통과된 후에만 API 호출
       const formDataToSend = new FormData();
 
       const eventData = {
@@ -91,7 +98,7 @@ export default function EventCreate() {
         formDataToSend.append('rectImage', formData.eventInfo.rectImage);
       }
 
-      const eventResponse = await createEvent(formDataToSend);
+      await createEvent(formDataToSend);
 
       setModalMessage('이벤트가 성공적으로 생성되었습니다!');
       setIsModalOpen(true);
