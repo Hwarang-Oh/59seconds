@@ -29,7 +29,8 @@ export default function EventRoomPart({ event, creator, id }: Readonly<EventIntr
   const [showTooltip, setShowTooltip] = useState(false);
 
   // IMP : Login 관련 Logic 추가
-  const { isLoginPopUpOpen, openLoginPopUp, handleKakaoLogin, closeLoginPopUp } = useMemberLogin();
+  const { member, isLoginPopUpOpen, openLoginPopUp, handleKakaoLogin, closeLoginPopUp } =
+    useMemberLogin();
 
   return (
     <div className='max-w-sm'>
@@ -46,6 +47,7 @@ export default function EventRoomPart({ event, creator, id }: Readonly<EventIntr
               onChange={(e) => setInputCode(e.target.value)}
               onKeyDown={handleKeyDown}
               onFocus={(e) => {
+                if (member.isLoggedIn) return;
                 const userConfirmed = window.confirm(
                   '✨ 로그인을 하셔야 궁극의 선착순 59초를 경험하실 수 있습니다 ✨\n로그인하시겠습니까?'
                 );
