@@ -89,8 +89,10 @@ public class MemberService {
 
         // 유효성 검사 및 필드 업데이트
         switch (fieldName) {
+            case "participateName":
+                validateParticipateName(fieldValue);
+                member.setParticipateName(fieldValue);
             case "creatorName":
-                log.info("들어옴");
                 validateCreatorName(fieldValue);
                 member.setCreatorName(fieldValue);
                 break;
@@ -165,6 +167,14 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    private void validateParticipateName(String participateName) {
+        if (participateName == null || participateName.isBlank()) {
+            throw new CustomException(ErrorCode.INVALID_PARTICIPATE_NAME);
+        }
+        if (participateName.length() > 50) {
+            throw new CustomException(INVALID_PARTICIPATE_NAME);
+        }
+    }
 
     private void validateCreatorName(String creatorName) {
         if (creatorName == null || creatorName.isBlank()) {
