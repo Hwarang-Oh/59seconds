@@ -25,7 +25,7 @@ public interface EventRoomRepository extends JpaRepository<EventRoom, Long> {
             SELECT e \
             FROM EventRoom e \
             WHERE e.endTime <= :endDateTime\s\
-            AND (e.status = 'NOT_STARTED' OR e.status = 'COMPLETED') \
+            AND (e.status = 'ONGOING') \
             ORDER BY e.endTime ASC""")
     List<EventRoom> findDeadlineEventsByUpcoming(@Param("endDateTime") LocalDateTime endDateTime, Pageable pageable);
 
