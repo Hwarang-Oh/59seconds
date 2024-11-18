@@ -18,7 +18,8 @@ export default function HeaderInfo() {
     handleLogout,
   } = useMemberLogin();
 
-  const [isTempPopupOpen, setIsTempPopupOpen] = useState(false);
+  // TODO : 임시 로그인을 없애려면, 주석 처리
+  // const [isTempPopupOpen, setIsTempPopupOpen] = useState(false);
 
   return (
     <>
@@ -43,11 +44,12 @@ export default function HeaderInfo() {
           </>
         ) : (
           <>
-            <button
+            {/* 임시 로그인을 없애기 위해서는 해당 button을 주석처리하세요. */}
+            {/* <button
               className='text-[15px] font-normal leading-[18px] text-[#474972] cursor-pointer bg-transparent border-none p-0'
               onClick={() => setIsTempPopupOpen(true)}>
               임시로그인
-            </button>
+            </button> */}
             <button
               className='text-[15px] font-normal leading-[18px] text-[#474972] cursor-pointer bg-transparent border-none p-0'
               onClick={openLoginPopUp}>
@@ -60,7 +62,8 @@ export default function HeaderInfo() {
       {isLoginPopUpOpen && (
         <LoginPopUp handleKakaoLogin={handleKakaoLogin} closePopUp={closeLoginPopUp} />
       )}
-      {isTempPopupOpen && <TempPopup closePopUp={() => setIsTempPopupOpen(false)} />}
+      // TODO : 임시로그인을 없애기 위해서는 주석처리하세요.
+      {/* {isTempPopupOpen && <TempPopup closePopUp={() => setIsTempPopupOpen(false)} />} */}
     </>
   );
 }
