@@ -136,12 +136,12 @@ public class ParticipationService {
             String jsonString = objectMapper.writeValueAsString(responseDto);
 
 // 저장할 키와 데이터를 로그로 출력
-            log.info("Redis에 저장할 키: {}", queueKey);
-            log.info("Redis에 저장할 데이터: {}", jsonString);
+            //log.info("Redis에 저장할 키: {}", queueKey);
+            //log.info("Redis에 저장할 데이터: {}", jsonString);
 
 // Redis에 JSON 문자열로 저장
             Long result = redisTemplate.opsForList().rightPush(queueKey, jsonString);
-            log.info("Redis에 데이터 저장 결과 (리스트 길이): {}", result);
+            //log.info("Redis에 데이터 저장 결과 (리스트 길이): {}", result);
 
             // 자신의 랭킹보다 낮은 참여자 정보 가져오기
             List<Object> participants = redisTemplate.opsForList().range(queueKey, 0, -1);
@@ -158,7 +158,7 @@ public class ParticipationService {
                 }
             }
 
-            log.info("Lower Ranked Participants for room {}: {}", roomId, lowerRankedParticipants);
+            //log.info("Lower Ranked Participants for room {}: {}", roomId, lowerRankedParticipants);
 
             return responseDto;
         } catch (InterruptedException e) {
@@ -175,7 +175,7 @@ public class ParticipationService {
 
     @Scheduled(fixedRate = PARTICIPATION_QUEUE_RATE)
     public void processParticipationQueue() {
-        log.error("[Scheduler] 스케줄러 실행 시작");
+        //log.info("[Scheduler] 스케줄러 실행 시작");
         Set<String> queueKeys = redisTemplate.keys(PARTICIPATION_QUEUE_PREFIX + "*");
 
         if (queueKeys == null || queueKeys.isEmpty()) {
