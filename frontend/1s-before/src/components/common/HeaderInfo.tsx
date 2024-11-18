@@ -62,7 +62,7 @@ export default function HeaderInfo() {
       {isLoginPopUpOpen && (
         <LoginPopUp handleKakaoLogin={handleKakaoLogin} closePopUp={closeLoginPopUp} />
       )}
-      // TODO : 임시로그인을 없애기 위해서는 주석처리하세요.
+      {/* 임시로그인을 없애기 위해서는 주석처리하세요. */}
       {/* {isTempPopupOpen && <TempPopup closePopUp={() => setIsTempPopupOpen(false)} />} */}
     </>
   );
