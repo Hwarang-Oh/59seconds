@@ -1,23 +1,18 @@
 import { useState, useEffect } from 'react';
 import { UserData } from '@/types/user';
+import { useEventOwnerStore } from '@/store/eventOwnerStore';
 import { putCreatorInfo, fetchCreatorInfo } from '@/apis/memberAPI';
 
 export function useEventOwner() {
-  const [ownerData, setOwnerData] = useState<UserData>({
-    participateName: '',
-    creatorName: '',
-    address: '',
-    phone: '',
-    profileImage: '',
-    creatorIntroduce: '',
-    snsLink: '',
-  });
+  const { ownerData, setOwnerData } = useEventOwnerStore();
 
   const [imageUrl, setImageUrl] = useState<string>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
-  // IMP: profileImage가 File일 때 URL 생성, 문자열일 때 그대로 사용
+  const [userErrorMessage, setUserErrorMessage] = useState<string | null>(null);
+
+  // 이미지 처리: File 또는 URL
   useEffect(() => {
     if (ownerData.profileImage instanceof File) {
       const url = URL.createObjectURL(ownerData.profileImage);
@@ -60,66 +55,67 @@ export function useEventOwner() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setOwnerData((prev) => ({ ...prev, [name]: value }));
+    setOwnerData({ [name]: value } as Partial<UserData>);
   };
 
   const handleEditorChange = (content: string) => {
-    setOwnerData((prev) => ({
-      ...prev,
+    setOwnerData({
       creatorIntroduce: content,
-    }));
+    } as Partial<UserData>);
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setOwnerData((prev) => ({ ...prev, profileImage: file }));
+      setOwnerData({ profileImage: file } as Partial<UserData>);
     }
   };
 
-  const handleSaveCreatorName = async () => {
-    const formData = new FormData();
-    formData.append('creatorName', ownerData.creatorName);
-
-    try {
-      await putCreatorInfo(formData);
-      setModalMessage('이름을 업데이트하였습니다.');
-      setIsModalOpen(true);
-    } catch (error) {
-      setModalMessage('이름을 업데이트에 실패하였습니다.');
-      setIsModalOpen(true);
-    }
-  };
-
-  // IMP: 폼 데이터 검증
   const validateOwnerData = (): boolean => {
     const requiredFields = ['creatorName', 'snsLink'];
     for (const field of requiredFields) {
       if (!ownerData[field as keyof UserData]) {
-        setModalMessage(`${field}을(를) 입력해주세요.`);
-        setIsModalOpen(true);
+        setUserErrorMessage(`${field}을(를) 입력해주세요.`);
         return false;
       }
     }
+
+    setUserErrorMessage(null);
     return true;
   };
 
   const handleUserSubmit = async (): Promise<boolean> => {
     try {
       const formData = new FormData();
-      Object.entries(ownerData).forEach(([key, value]) => {
-        if (value && key !== 'profileImage') {
-          formData.append(key, value as string);
-        }
-      });
 
+      // 1. updateDto 생성
+      const updateDto = {
+        participateName: ownerData.participateName,
+        creatorName: ownerData.creatorName,
+        address: ownerData.address,
+        phone: ownerData.phone,
+        creatorIntroduce: ownerData.creatorIntroduce,
+        snsLink: ownerData.snsLink,
+      };
+
+      // 2. updateDto를 Blob으로 변환하여 FormData에 추가
+      const updateDtoBlob = new Blob([JSON.stringify(updateDto)], {
+        type: 'application/json',
+      });
+      formData.append('updateDto', updateDtoBlob);
+
+      // 3. profileImage 추가 (파일이 있을 경우만)
       if (ownerData.profileImage instanceof File) {
         formData.append('profileImage', ownerData.profileImage);
       }
 
+      // 4. API 호출
       await putCreatorInfo(formData);
+      setModalMessage('정보가 성공적으로 수정되었습니다.');
+      setIsModalOpen(true);
       return true;
     } catch (error) {
+      console.error('정보 수정 실패:', error);
       setModalMessage('정보 수정에 실패했습니다.');
       setIsModalOpen(true);
       return false;
@@ -127,10 +123,11 @@ export function useEventOwner() {
   };
 
   return {
-    ownerData,
     imageUrl,
+    ownerData,
     isModalOpen,
     modalMessage,
+    userErrorMessage,
     setIsModalOpen,
     getProfileImageSrc,
     handleInputChange,
@@ -138,6 +135,5 @@ export function useEventOwner() {
     handleImageChange,
     handleUserSubmit,
     validateOwnerData,
-    handleSaveCreatorName,
   };
 }

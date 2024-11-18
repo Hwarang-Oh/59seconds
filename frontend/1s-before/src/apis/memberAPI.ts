@@ -47,7 +47,15 @@ export const fetchCreatorInfo = async (): Promise<UserData> => {
 // IMP: 개설자 정보 수정
 export const putCreatorInfo = async (formData: FormData): Promise<string> => {
   try {
-    const response = await api.put(`${MEMBER_URL}/update-from-event`, formData);
+    const response = await api.put(
+      `${MEMBER_URL}/update-from-event`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
 
     if (response.status === 200) {
       return '업데이트 성공';
