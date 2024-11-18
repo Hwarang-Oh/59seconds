@@ -57,7 +57,7 @@ public class EventService {
                 .orElseThrow(()-> new CustomException(MEMBER_NOT_FOUND));
 
         // 당첨 인원 합계
-        long winnerCnt = eventRoomRequestDto.getProductsOrCoupons().stream().
+        int winnerCnt = eventRoomRequestDto.getProductsOrCoupons().stream().
                 map(EventRoomRequestDto.ProductOrCoupon::getOrder)
                 .reduce(0, Integer::sum);
 
@@ -113,7 +113,7 @@ public class EventService {
         log.info("Updated event room: {}", eventRoom);
     }
 
-    private EventRoom saveEventRoom(EventRoomRequestDto eventRoomRequestDto, Member member, long winnerCnt) {
+    private EventRoom saveEventRoom(EventRoomRequestDto eventRoomRequestDto, Member member, int winnerCnt) {
 
         EventRoom eventRoom = EventRoom.builder()
                 .member(member)
@@ -126,7 +126,7 @@ public class EventService {
                 .bannerImage(eventRoomRequestDto.getEventInfo().getBannerImage())
                 .rectangleImage(eventRoomRequestDto.getEventInfo().getRectImage())
                 .createdAt(LocalDateTime.now())
-                .winnerNum(0)
+                .winnerNum(winnerCnt)
                 .unlockCount(0)
                 .build();
 
