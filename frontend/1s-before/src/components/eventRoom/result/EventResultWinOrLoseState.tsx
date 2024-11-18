@@ -10,7 +10,7 @@ import { formatTimeWithMilliseconds } from '@/utils/timeUtils';
 
 export default function EventResultWinOrLoseState({
   eventId,
-  isWinner,
+  winner,
   joinedAt,
   ranking,
   timeDifference,
@@ -23,7 +23,7 @@ export default function EventResultWinOrLoseState({
 
   return (
     <>
-      {isWinner ? (
+      {winner ? (
         <div className='flex flex-col items-center gap-[105px] mt-[-40px]'>
           <div className='text-center'>
             <div className='flex flex-col items-center justify-center gap-6'>

@@ -7,7 +7,7 @@ export default function EventResultArea({
   eventId,
   joinedAt,
   ranking,
-  isWinner,
+  winner,
   prize,
   timeDifference,
   totalParticipants,
@@ -35,7 +35,7 @@ export default function EventResultArea({
           eventId={eventId}
           ranking={ranking}
           joinedAt={joinedAt}
-          isWinner={isWinner}
+          winner={winner}
           timeDifference={timeDifference}
           prize={prize}
         />

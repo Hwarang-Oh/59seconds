@@ -44,7 +44,7 @@ export const useMemberLogin = () => {
   // IMP : KakaoLoginCallBack => Kakao로부터 받은 AuthCode를 이용해, Member의 정보를 가져옵니다.
   const handleKakaoLoginCallBack = async (authCode: string) => {
     try {
-      const { memberId, nickname, creatorName } = await getLogin(authCode);
+      const { memberId, participateName: nickname, creatorName } = await getLogin(authCode);
       setMember(memberId, nickname, creatorName);
       router.replace(window.location.pathname);
     } catch (error) {

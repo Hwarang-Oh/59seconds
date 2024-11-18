@@ -54,18 +54,24 @@ export const useEventProgress = () => {
           prizes: eventInfo.prizes,
         });
         setPrizeList(createPrizeRankingList(eventInfo.prizes));
+
+        WebsocketAPI.connect({
+          eventId: Number(eventId),
+          memberId: memberId,
+          onEventRoomInfoReceived: (eventRoomInfo) => setEventStatus(eventRoomInfo),
+          onMessageReceived: (messageInfo) =>
+            setMessages((prevMessages) => [...prevMessages, messageInfo]),
+          onEventRoomResultReceived: (eventRoomResult) =>
+            getEventResult(
+              eventRoomResult,
+              createPrizeRankingList(eventInfo.prizes),
+              eventInfo.endTime
+            ),
+          subscriptions: ['eventRoomInfo', 'eventRoomMessage', 'eventRoomResult'],
+        });
       });
 
       // * WebSocket : EventRoom의 정보를 실시간으로 가져옵니다.
-      WebsocketAPI.connect({
-        eventId: Number(eventId),
-        memberId: memberId,
-        onEventRoomInfoReceived: (eventRoomInfo) => setEventStatus(eventRoomInfo),
-        onMessageReceived: (messageInfo) =>
-          setMessages((prevMessages) => [...prevMessages, messageInfo]),
-        onEventRoomResultReceived: (eventRoomResult) => getEventResult(eventRoomResult),
-        subscriptions: ['eventRoomInfo', 'eventRoomMessage', 'eventRoomResult'],
-      });
 
       // IMP : CleanUp => EventRoom을 나갈 때, 해당 Room에 대한 WebSocket을 해제합니다.
       return () => WebsocketAPI.disconnectFromEvent(Number(eventId));
@@ -96,7 +102,7 @@ export const useEventProgress = () => {
     eventId: 0,
     memberId: 0,
     ranking: 0,
-    isWinner: false,
+    winner: false,
     joinedAt: '',
     isMine: false,
     winnerName: '',
@@ -169,18 +175,19 @@ export const useEventProgress = () => {
   // IMP : WebSocket을 통해 받은 Event Participation의 결과 Array를 처리하는 Method ( Recent )
   // ! 그냥 WebSocket을 통해 받은 결과를 그대로 처리하는 방식으로 변경 => 항상 최신 결과만 Hook을 사용하는 Component에 넘김
   // TODO : 이렇게 된다면, 현재 얼마나 처리되었는 지 파악하기 어려워짐. ( WebSocket을 통해 가져오는 것이 계속 초기화 되기 때문임 )
-  const getEventResult = (receivedEachEventResult: EventRoomResultInfo[]) => {
-    if (!eventInfo) return;
+  const getEventResult = (
+    receivedEachEventResult: EventRoomResultInfo[],
+    prizeList: PrizeInfo[],
+    eventTime: string
+  ) => {
     const processedResults = receivedEachEventResult.map((result) => {
-      const prize = findPrizeByRanking(result.ranking);
+      const prize = prizeList.find((prize) => prize.ranking === result.ranking);
+      const timeDifference = calculateTimeDifferenceWithMilliseconds(eventTime, result.joinedAt);
       return {
         ...result,
         isMine: false,
         prize,
-        timeDifference: calculateTimeDifferenceWithMilliseconds(
-          eventInfo.eventTime,
-          result.joinedAt
-        ),
+        timeDifference,
       };
     });
     setEventResult(processedResults);
