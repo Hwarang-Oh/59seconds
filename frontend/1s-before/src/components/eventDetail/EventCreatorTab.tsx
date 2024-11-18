@@ -8,7 +8,7 @@ export default function EventCreatorTab({
   creator,
 }: Readonly<EventCreatorTabProps>) {
   return (
-    <div className="p-6 mx-auto">
+    <div className="p-6 max-w-screen-lg mx-auto">
       <h2 className="text-xl font-bold mb-4">주최자 정보</h2>
       <div className="flex items-center my-6">
         <div className="flex flex-col items-center">

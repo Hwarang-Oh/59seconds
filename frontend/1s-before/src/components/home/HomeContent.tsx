@@ -12,7 +12,10 @@ import { getCreatorBanner } from '@/apis/eventAPI';
 import { fetchCreatedRooms } from '@/apis/memberAPI';
 import { useMemberStore } from '@/store/memberStore';
 
-export default function HomeContent({ popularEvents, deadlineEvents }: Readonly<HomeContentProps>) {
+export default function HomeContent({
+  popularEvents,
+  deadlineEvents,
+}: Readonly<HomeContentProps>) {
   const { member } = useMemberStore();
   const [createdRooms, setCreatedRooms] = useState<CreatedRoom[]>([]);
   const [bannerImage, setBannerImage] = useState<string>(''); // 배너 이미지 상태 추가
@@ -42,11 +45,13 @@ export default function HomeContent({ popularEvents, deadlineEvents }: Readonly<
       {member.isCreatorMode ? (
         <>
           <CreatorBanner bannerImage={bannerImage} />
-          <div className='flex flex-col gap-20 px-7 py-20'>
+          <div className="flex flex-col gap-20 px-7 py-20">
             {createdRooms.length > 0 ? (
               <CreatorCardBannerGrid Banners={createdRooms} />
             ) : (
-              <div className='text-center py-10 text-gray-500'>생성한 방이 없습니다.</div>
+              <div className="text-center py-10 text-gray-500">
+                생성한 방이 없습니다.
+              </div>
             )}
             <NormalBannerList Banners={popularEvents} />
           </div>
@@ -55,12 +60,14 @@ export default function HomeContent({ popularEvents, deadlineEvents }: Readonly<
       ) : (
         <>
           <LargeBannerCarousel Banners={popularEvents} />
-          <div className='flex flex-col gap-20 px-7 py-20'>
+          <div className="flex flex-col gap-20 px-7 py-20">
             <NormalBannerList Banners={popularEvents} />
             {deadlineEvents.length > 0 ? (
               <CardBannerGrid Banners={deadlineEvents} />
             ) : (
-              <div className='text-center py-10 text-gray-500'>마감 임박 이벤트가 없습니다.</div>
+              <div className="text-center py-10 text-gray-500">
+                마감 임박 이벤트가 없습니다.
+              </div>
             )}
           </div>
         </>

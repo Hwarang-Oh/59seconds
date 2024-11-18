@@ -24,7 +24,6 @@ export const getCreatorBanner = async (memberId: number): Promise<string> => {
     const response = await api.get(`${EVENT_URL}/my-latest-banner`, {
       params: { memberId },
     });
-    console.log(response.data);
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
@@ -43,7 +42,6 @@ export const eventParticipate = async ({
       eventId,
       memberId,
     });
-    console.log('myResult', response.data);
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
@@ -57,8 +55,9 @@ export const getFrontEventParticipationInfo = async (
   eventId: number
 ): Promise<EventRoomResultInfo[]> => {
   try {
-    const response = await api.get(`${EVENT_PARTICIPATION_URL}/${eventId}/result`);
-    console.log('MyFrontResult', response.data);
+    const response = await api.get(
+      `${EVENT_PARTICIPATION_URL}/${eventId}/result`
+    );
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
@@ -105,9 +104,15 @@ export const getDeadlineEvents = async (): Promise<DeadlineEventTypes[]> => {
   }
 };
 
-export const postWinnerUserInfo = async (roomId: number, userInfo: WinnerUserInfo) => {
+export const postWinnerUserInfo = async (
+  roomId: number,
+  userInfo: WinnerUserInfo
+) => {
   try {
-    const response = await api.post(`${EVENT_URL}/${roomId}/userInfo`, userInfo);
+    const response = await api.post(
+      `${EVENT_URL}/${roomId}/userInfo`,
+      userInfo
+    );
     return response.data;
   } catch (error) {
     if (isAxiosError(error)) {
@@ -118,7 +123,10 @@ export const postWinnerUserInfo = async (roomId: number, userInfo: WinnerUserInf
 
 export const getWinnerInfo = async (roomId: number) => {
   try {
-    const response = await api.post(`${EVENT_URL}/${roomId}/winners`, getWinnerInfo);
+    const response = await api.post(
+      `${EVENT_URL}/${roomId}/winners`,
+      getWinnerInfo
+    );
     return response.data;
   } catch (error) {
     if (isAxiosError(error)) {
