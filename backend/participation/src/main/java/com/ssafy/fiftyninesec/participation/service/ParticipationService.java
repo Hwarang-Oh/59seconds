@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -294,14 +295,14 @@ public class ParticipationService {
         }
     }
 
-    //lastProcessedRanking 초기화
-    public void resetLastProcessedRanking(Long roomId) {
-        String lastProcessedKey = LAST_PROCESSED_ID_PREFIX + roomId;
-
-        // Redis에 값을 0으로 설정
-        redisTemplate.opsForValue().set(lastProcessedKey, "0");
-
-        // 로그 출력
-        log.info("[Service] Last processed ranking for room {} has been reset to 0.", roomId);
+    public void flushDatabase() {
+        try {
+            redisTemplate.getConnectionFactory().getConnection().flushDb(); // Redis 데이터 초기화
+            log.info("Redis FLUSHDB executed successfully.");
+        } catch (Exception e) {
+            log.error("Failed to execute FLUSHDB on Redis: ", e);
+            throw new RuntimeException("Redis FLUSHDB failed.", e);
+        }
     }
+
 }

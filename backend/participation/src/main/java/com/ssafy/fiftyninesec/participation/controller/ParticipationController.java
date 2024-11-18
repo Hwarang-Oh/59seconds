@@ -63,16 +63,13 @@ public class ParticipationController {
         return ResponseEntity.ok("Test ranking counter has been reset.");
     }
 
-
-    //lastProcessedRanking 초기화
-    @PostMapping("/reset-processedranking/{roomId}")
-    public ResponseEntity<String> resetLastProcessedRanking(@PathVariable Long roomId) {
+    @PostMapping("/flushdb")
+    public ResponseEntity<String> flushDatabase() {
         try {
-            participationService.resetLastProcessedRanking(roomId);
-            return ResponseEntity.ok("Last processed ranking for room " + roomId + " has been reset to 0.");
+            participationService.flushDatabase();
+            return ResponseEntity.ok("Redis database has been flushed successfully.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to reset last processed ranking for room " + roomId + ". Error: " + e.getMessage());
+            return ResponseEntity.status(500).body("Failed to flush Redis database. Error: " + e.getMessage());
         }
     }
 }
