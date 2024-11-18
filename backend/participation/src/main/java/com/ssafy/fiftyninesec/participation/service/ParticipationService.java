@@ -122,7 +122,11 @@ public class ParticipationService {
             String queueKey = PARTICIPATION_QUEUE_PREFIX + roomId;
             ParticipationResponseDto responseDto = ParticipationResponseDto.of(savedParticipation, member.getName());
             String jsonString = objectMapper.writeValueAsString(responseDto);
-            redisTemplate.opsForList().rightPush(queueKey, jsonString);
+            // 저장할 키와 데이터를 로그로 출력
+            log.info("Redis에 저장할 키: {}", queueKey);
+            log.info("Redis에 저장할 데이터: {}", jsonString);
+            Long result = redisTemplate.opsForList().rightPush(queueKey, jsonString);
+            log.info("Redis에 데이터 저장 결과 (리스트 길이): {}", result);
 
             // 자신의 랭킹보다 낮은 참여자 정보 가져오기
             List<Object> participants = redisTemplate.opsForList().range(queueKey, 0, -1);
