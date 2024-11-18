@@ -1,3 +1,9 @@
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
 otel:
   metrics:
     exporter: none  # Disable metrics exporter
