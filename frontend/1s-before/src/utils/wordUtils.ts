@@ -1,11 +1,11 @@
 export function truncateHtmlByTotalLength(html: string, maxLength: number): string {
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  const paragraphs = Array.from(doc.body.querySelectorAll('p'));
+  const regex = /<p>(.*?)<\/p>/g; // 모든 <p> 태그 추출
+  let match;
   let totalLength = 0;
   let truncatedHtml = '';
 
-  for (const p of paragraphs) {
-    const textContent = p.textContent ?? '';
+  while ((match = regex.exec(html)) !== null) {
+    const textContent = match[1]; // <p> 내용 추출
     if (totalLength + textContent.length <= maxLength) {
       truncatedHtml += `<p>${textContent}</p>`;
       totalLength += textContent.length;

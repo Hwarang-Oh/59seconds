@@ -19,23 +19,20 @@ export default function LargeBanner({
   const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    if (imageRef.current) {
+    if (typeof window !== 'undefined' && imageRef.current) {
       const colorThief = new ColorThief();
 
-      // 이미지가 로드된 후 주요 색상 추출
       const handleLoad = () => {
         const dominantColor = colorThief.getColor(imageRef.current!);
         const [r, g, b] = dominantColor;
 
-        // 명도 계산하여 텍스트 색상 결정
         const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-        setTextColor(luminance > 160 ? 'black' : 'white');
+        const luminanceThreshold = 160;
+        setTextColor(luminance > luminanceThreshold ? 'black' : 'white');
       };
 
-      // 이미지 로드 이벤트 리스너 등록
       imageRef.current.addEventListener('load', handleLoad);
 
-      // 정리 함수
       return () => {
         imageRef.current?.removeEventListener('load', handleLoad);
       };
