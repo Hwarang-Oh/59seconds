@@ -121,38 +121,39 @@ public class ParticipationService {
             // Redis 큐에 참여 정보 저장
             String queueKey = PARTICIPATION_QUEUE_PREFIX + roomId;
             ParticipationResponseDto responseDto = ParticipationResponseDto.of(savedParticipation, member.getName());
+            String jsonString = objectMapper.writeValueAsString(responseDto);
 
-            // 저장할 키와 데이터를 로그로 출력
+// 저장할 키와 데이터를 로그로 출력
             log.info("Redis에 저장할 키: {}", queueKey);
-            log.info("Redis에 저장할 데이터: {}", responseDto);
+            log.info("Redis에 저장할 데이터: {}", jsonString);
 
-            // RedisTemplate을 사용하여 객체를 직접 저장
-            Long result = redisTemplate.opsForList().rightPush(queueKey, responseDto);
+// Redis에 JSON 문자열로 저장
+            Long result = redisTemplate.opsForList().rightPush(queueKey, jsonString);
             log.info("Redis에 데이터 저장 결과 (리스트 길이): {}", result);
 
             // 자신의 랭킹보다 낮은 참여자 정보 가져오기
             List<Object> participants = redisTemplate.opsForList().range(queueKey, 0, -1);
             List<ParticipationResponseDto> lowerRankedParticipants = new ArrayList<>();
 
-            assert participants != null;
-            for (Object obj : participants) {
-                if (obj instanceof LinkedHashMap) {
-                    try {
-                        // LinkedHashMap을 ParticipationResponseDto로 변환
-                        ParticipationResponseDto dto = objectMapper.convertValue(obj, ParticipationResponseDto.class);
+            if (participants != null) {
+                for (Object obj : participants) {
+                    if (obj instanceof String) {
+                        ParticipationResponseDto dto = objectMapper.readValue((String) obj, ParticipationResponseDto.class);
                         if (dto.getRanking() < currentRanking.intValue()) {
                             lowerRankedParticipants.add(dto);
                         }
-                    } catch (Exception e) {
-                        log.error("Error converting participation data: {}", e.getMessage());
                     }
                 }
             }
+
             log.info("Lower Ranked Participants for room {}: {}", roomId, lowerRankedParticipants);
+
             return responseDto;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new CustomException(LOCK_INTERRUPTED);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         } finally {
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();

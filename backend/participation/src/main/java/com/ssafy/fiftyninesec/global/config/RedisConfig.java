@@ -64,10 +64,9 @@ public class RedisConfig {
 
         // RedisTemplate의 직렬화기 설정
         template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(jsonSerializer);
+        template.setValueSerializer(new StringRedisSerializer()); // 값을 String으로 직렬화
         template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(jsonSerializer);
-
+        template.setHashValueSerializer(new StringRedisSerializer());
         template.afterPropertiesSet();
         return template;
     }
