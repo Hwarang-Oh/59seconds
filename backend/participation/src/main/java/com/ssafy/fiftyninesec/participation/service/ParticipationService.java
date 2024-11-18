@@ -170,50 +170,75 @@ public class ParticipationService {
 
     @Scheduled(fixedRate = PARTICIPATION_QUEUE_RATE)
     public void processParticipationQueue() {
+        log.info("[Scheduler] 스케줄러 실행 시작");
+
+        // Redis에서 참여 큐 조회
         Set<String> queueKeys = redisTemplate.keys(PARTICIPATION_QUEUE_PREFIX + "*");
+        log.info("[Scheduler] 발견된 참여 큐 키: {}", queueKeys);
 
         if (queueKeys == null || queueKeys.isEmpty()) {
+            log.warn("[Scheduler] 참여 큐가 비어 있습니다.");
             return;
         }
 
         for (String queueKey : queueKeys) {
+            log.info("[Scheduler] 처리 중인 큐 키: {}", queueKey);
+
             Long roomId = Long.parseLong(queueKey.substring(queueKey.lastIndexOf(':') + 1));
-            String lastProcessedKey = LAST_PROCESSED_ID_PREFIX + roomId; // 표시된 마지막 등수에 대한 키
+            log.info("[Scheduler] 현재 처리 중인 roomId: {}", roomId);
+
+            String lastProcessedKey = LAST_PROCESSED_ID_PREFIX + roomId;
+            log.info("[Scheduler] lastProcessedKey: {}", lastProcessedKey);
 
             String lastProcessedRankingStr = (String) redisTemplate.opsForValue().get(lastProcessedKey);
+            log.info("[Scheduler] lastProcessedRankingStr: {}", lastProcessedRankingStr);
+
             int lastProcessedRanking = 0;
             if (lastProcessedRankingStr != null) {
                 try {
                     lastProcessedRanking = Integer.parseInt(lastProcessedRankingStr);
                 } catch (NumberFormatException e) {
-                    log.error("Invalid lastProcessedRanking value: {}", lastProcessedRankingStr, e);
-                    lastProcessedRanking = 0;
+                    log.error("[Scheduler] lastProcessedRanking 변환 실패: {}", lastProcessedRankingStr, e);
                 }
             }
+            log.info("[Scheduler] 마지막 처리된 등수: {}", lastProcessedRanking);
 
             List<Object> dtos = redisTemplate.opsForList().range(queueKey, 0, -1);
+            log.info("[Scheduler] Redis 큐 데이터: {}", dtos);
+
             List<ParticipationResponseDto> participations = new ArrayList<>();
 
             if (dtos != null && !dtos.isEmpty()) {
                 for (Object dtoObj : dtos) {
+                    log.info("[Scheduler] 처리 중인 큐 데이터: {}", dtoObj);
+
                     if (dtoObj instanceof String) {
                         try {
                             ParticipationResponseDto participationDto = objectMapper.readValue((String) dtoObj, ParticipationResponseDto.class);
+                            log.info("[Scheduler] 변환된 ParticipationResponseDto: {}", participationDto);
+
                             if (participationDto.getRanking() > lastProcessedRanking) {
                                 participations.add(participationDto);
-                                log.info("Added participation: {}", participationDto);
+                                log.info("[Scheduler] 추가된 Participation: {}", participationDto);
                             }
                         } catch (Exception e) {
-                            log.error("Error converting participation data: {} - Error: {}", dtoObj, e.getMessage());
+                            log.error("[Scheduler] ParticipationResponseDto 변환 오류: {}", dtoObj, e);
                         }
+                    } else {
+                        log.warn("[Scheduler] 예상치 못한 데이터 타입: {}", dtoObj.getClass().getName());
                     }
                 }
-
-                // 웹소켓으로 참여 정보 전송
-                sendParticipations(roomId, participations, lastProcessedKey);
+            } else {
+                log.warn("[Scheduler] 큐에서 데이터가 비어 있습니다. key: {}", queueKey);
             }
+
+            log.info("[Scheduler] 전송할 Participation 데이터: {}", participations);
+            sendParticipations(roomId, participations, lastProcessedKey);
         }
+
+        log.info("[Scheduler] 스케줄러 실행 종료");
     }
+
 
 // -----------------------------------------------------------------------------------------------------
 
