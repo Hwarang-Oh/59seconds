@@ -123,8 +123,11 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청입니다."),
             @ApiResponse(responseCode = "404", description = "회원 정보를 찾을 수 없습니다.")
     })
-    public ResponseEntity<?> updatePartialFields(HttpServletRequest request, @RequestBody MemberUpdateRequestDto updateDto) {
-        memberService.updatePartialFields((Long) request.getAttribute("memberId"), updateDto);
+    public ResponseEntity<?> updatePartialFields(
+            HttpServletRequest request,
+            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
+            @RequestPart(value = "updateDto") MemberUpdateRequestDto updateDto) {
+        memberService.updatePartialFields((Long) request.getAttribute("memberId"), updateDto, profileImage);
         return ResponseEntity.ok().build();
     }
 

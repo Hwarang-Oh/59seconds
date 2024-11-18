@@ -125,39 +125,53 @@ public class MemberService {
     }
 
     @Transactional
-    public void updatePartialFields(Long memberId, MemberUpdateRequestDto updateDto) {
+    public void updatePartialFields(Long memberId,
+                                    MemberUpdateRequestDto updateDto,
+                                    MultipartFile profileImage)
+    {
+        log.info("회원 정보 업데이트 시작. memberId: {}", memberId);
+
         // 회원 정보 조회
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+                .orElseThrow(() -> {
+                    log.error("회원 정보 조회 실패. memberId: {}", memberId);
+                    return new CustomException(MEMBER_NOT_FOUND);
+                });
 
         // 각 필드에 대해 유효성 검사 및 업데이트 수행
         if (updateDto.getCreatorName() != null) {
+            log.info("CreatorName 업데이트: {}", updateDto.getCreatorName());
             validateCreatorName(updateDto.getCreatorName());
             member.setCreatorName(updateDto.getCreatorName());
         }
 
         if (updateDto.getAddress() != null) {
+            log.info("Address 업데이트: {}", updateDto.getAddress());
             validateAddress(updateDto.getAddress());
             member.setAddress(updateDto.getAddress());
         }
 
         if (updateDto.getPhone() != null) {
+            log.info("Phone 업데이트: {}", updateDto.getPhone());
             validatePhone(updateDto.getPhone());
             member.setPhone(updateDto.getPhone());
         }
 
         // 프로필 이미지 파일이 있으면 MinIO에 업로드하고 URL 설정
-        if (updateDto.getProfileImage() != null && !updateDto.getProfileImage().isEmpty()) {
-            String profileImageUrl = updateProfileImageFile(memberId, updateDto.getProfileImage());
+        if (profileImage != null) {
+            String profileImageUrl = updateProfileImageFile(memberId, profileImage);
+            log.info("ProfileImage 업데이트: {}", profileImageUrl);
             member.setProfileImage(profileImageUrl);
         }
 
         if (updateDto.getCreatorIntroduce() != null) {
+            log.info("CreatorIntroduce 업데이트: {}", updateDto.getCreatorIntroduce());
             validateCreatorIntroduce(updateDto.getCreatorIntroduce());
             member.setCreatorIntroduce(updateDto.getCreatorIntroduce());
         }
 
         if (updateDto.getSnsLink() != null) {
+            log.info("SnsLink 업데이트: {}", updateDto.getSnsLink());
             validateSnsLink(updateDto.getSnsLink());
             member.setSnsLink(updateDto.getSnsLink());
         }

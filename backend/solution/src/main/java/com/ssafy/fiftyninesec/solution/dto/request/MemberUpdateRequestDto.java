@@ -11,7 +11,6 @@ public class MemberUpdateRequestDto {
     private String creatorName;
     private String address;
     private String phone;
-    private MultipartFile profileImage;
     private String creatorIntroduce;
     private String snsLink;
 }
