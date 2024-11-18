@@ -4,9 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.ssafy.fiftyninesec.ParticipationApplication;
 import com.ssafy.fiftyninesec.global.exception.CustomException;
+import com.ssafy.fiftyninesec.participation.client.dto.EventStatus;
 import com.ssafy.fiftyninesec.participation.client.dto.ParticipatedEventFeignResponseDto;
+import com.ssafy.fiftyninesec.participation.client.dto.UpdateEventStatusRequest;
 import com.ssafy.fiftyninesec.participation.dto.response.EventRoomResponseDto;
 import com.ssafy.fiftyninesec.participation.dto.response.MemberResponseDto;
 import com.ssafy.fiftyninesec.participation.dto.response.ParticipationResponseDto;
@@ -19,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -124,6 +124,10 @@ public class ParticipationService {
                     .build();
 
             Participation savedParticipation = participationRepository.save(participation);
+
+            if(currentRanking!= null && currentRanking == eventRoom.getWinnerNum()) {
+                solutionServiceClient.updateEventStatus(roomId, new UpdateEventStatusRequest(EventStatus.COMPLETED_NO_WINNER_INFO));
+            }
 
             // Redis 큐에 참여 정보 저장
             String queueKey = PARTICIPATION_QUEUE_PREFIX + roomId;
