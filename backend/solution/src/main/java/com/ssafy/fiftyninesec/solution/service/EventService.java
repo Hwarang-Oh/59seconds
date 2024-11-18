@@ -236,12 +236,14 @@ public class EventService {
         if (events.isEmpty()) {
             log.warn("마감 임박 이벤트가 없습니다");
             return Collections.emptyList();
-        }
+    }
+        log.info("마감 임박 이벤트 개수: {}", events.size());
+
 
         return events.stream()
                 .map(eventRoom -> DeadlineEventResponseDto.of(
                         eventRoom,
-                        getPrizeByRanking(eventRoom, 1),
+                        getPrizeByRanking(eventRoom, 1), // 1등 상품명
                         getPrizeCount(eventRoom.getId())
                 ))
                 .collect(Collectors.toList());
