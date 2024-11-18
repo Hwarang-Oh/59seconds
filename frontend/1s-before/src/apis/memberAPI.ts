@@ -12,6 +12,7 @@ export const getLogin = async (OauthCode: string): Promise<MemberInfo> => {
       params: { code: OauthCode },
       withCredentials: true,
     });
+    console.log(response.data);
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
@@ -47,15 +48,11 @@ export const fetchCreatorInfo = async (): Promise<UserData> => {
 // IMP: 개설자 정보 수정
 export const putCreatorInfo = async (formData: FormData): Promise<string> => {
   try {
-    const response = await api.put(
-      `${MEMBER_URL}/update-from-event`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-    );
+    const response = await api.put(`${MEMBER_URL}/update-from-event`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
     if (response.status === 200) {
       return '업데이트 성공';
@@ -146,9 +143,7 @@ export const putProfileImage = async (profileImage: File): Promise<string> => {
 };
 
 // IMP: 개설자 소개 업데이트
-export const putCreatorIntroduce = async (
-  creatorIntroduce: string
-): Promise<string> => {
+export const putCreatorIntroduce = async (creatorIntroduce: string): Promise<string> => {
   try {
     const response = await api.put(`${MEMBER_URL}/creatorIntroduce`, null, {
       params: { creatorIntroduce },
@@ -174,16 +169,11 @@ export const putSnsLink = async (snsLink: string): Promise<string> => {
 };
 
 // IMP: 참여한 이벤트 호출
-export const fetchParticipatedRooms = async (
-  memberId: number
-): Promise<ParticipatedRoom[]> => {
+export const fetchParticipatedRooms = async (memberId: number): Promise<ParticipatedRoom[]> => {
   try {
-    const response = await api.get<ParticipatedRoom[]>(
-      `${MEMBER_URL}/participatedroom`,
-      {
-        params: { memberId },
-      }
-    );
+    const response = await api.get<ParticipatedRoom[]>(`${MEMBER_URL}/participatedroom`, {
+      params: { memberId },
+    });
     return response.data;
   } catch (error) {
     console.error('참여한 방 가져오기 실패:', error);
@@ -192,9 +182,7 @@ export const fetchParticipatedRooms = async (
 };
 
 // IMP: 생성한 이벤트 방 정보 호출
-export const fetchCreatedRooms = async (
-  memberId: number
-): Promise<CreatedRoom[]> => {
+export const fetchCreatedRooms = async (memberId: number): Promise<CreatedRoom[]> => {
   try {
     const response = await api.get<CreatedRoom[]>(`${MEMBER_URL}/createdroom`, {
       params: { memberId },
