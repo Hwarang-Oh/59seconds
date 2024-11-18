@@ -20,7 +20,6 @@ public class ParticipationResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime joinedAt;
     private int ranking;
-    @JsonProperty("isWinner")
     private boolean isWinner;
     private String winnerName;
 

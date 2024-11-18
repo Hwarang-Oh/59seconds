@@ -12,9 +12,8 @@ public class ParticipatedEventFeignResponseDto {
     private long participationId;
     private long roomId;
     private long memberId;
-    @JsonProperty("isWinner")
     private boolean isWinner;
-    private int ranking;
+    private int ranking
 
     public static ParticipatedEventFeignResponseDto from(Participation participation) {
         return ParticipatedEventFeignResponseDto.builder()
