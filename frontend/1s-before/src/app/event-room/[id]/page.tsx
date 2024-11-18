@@ -1,9 +1,10 @@
 'use client';
+import DoubleUpIcon from '@/components/icon/DoubleUpIcon';
 import BannerHeader from '@/components/eventRoom/BannerHeader';
 import EventStatusArea from '@/components/eventRoom/EventStatusArea';
 import EventChatRoomArea from '@/components/eventRoom/EventChatRoomArea';
 import EventResultAllResult from '@/components/eventRoom/EventResultAllResult';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useEventProgress } from '@/hooks/useEventProgress';
 
 /**
@@ -33,29 +34,34 @@ export default function EventRoom() {
   const competitionRate =
     eventInfo && eventStatus ? (eventStatus.userCount ?? 0) / eventInfo.winnerNum : 0;
   const [currentProccessed, setCurrentProccessed] = useState(0);
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
   const calculateCurrentProcessed = (processed: number) => setCurrentProccessed(processed);
   const addCalculatedCurrentProcessed = (processed: number) =>
     setCurrentProccessed((prev) => prev + processed);
 
-  const pageContainerRef = useRef<HTMLDivElement>(null);
-  const resultContainerRef = useRef<HTMLDivElement>(null);
-
-  // 스크롤을 아래로 이동하는 함수
-  const scrollToBottom = () => {
-    if (pageContainerRef.current) {
-      pageContainerRef.current.scrollTop = pageContainerRef.current.scrollHeight;
-    }
-  };
   useEffect(() => {
-    if (!resultContainerRef.current) return;
-    const observer = new ResizeObserver(() => scrollToBottom());
-    observer.observe(resultContainerRef.current);
+    // 스크롤 이벤트 핸들러
+    const handleScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      setShowScrollToTop(scrollY > 300); // 스크롤 위치에 따라 버튼 표시
+    };
 
-    return () => observer.disconnect(); // 컴포넌트 언마운트 시 정리
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
+  const scrollToTop = () => {
+    // 페이지 맨 위로 이동
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
   return (
-    <div ref={pageContainerRef} className='flex flex-col max-w-screen-xl mx-auto px-7'>
+    <div className='flex flex-col max-w-screen-xl mx-auto px-7'>
       {eventInfo && (
         <div className='flex flex-col w-full gap-12 mb-7'>
           <BannerHeader bannerImage={eventInfo.bannerImage} />
@@ -63,9 +69,7 @@ export default function EventRoom() {
             [{eventInfo.creatorName}] <span className='font-bold'>{eventInfo.title}</span>
           </div>
           <div className='flex gap-5'>
-            <div
-              ref={resultContainerRef}
-              className={`transition-all duration-300 ${getStatusAreaWidth()}`}>
+            <div className={`transition-all duration-300 ${getStatusAreaWidth()}`}>
               <EventStatusArea
                 myResult={myResult}
                 isDrawing={isDrawing}
@@ -82,6 +86,7 @@ export default function EventRoom() {
                 list={eventResult}
                 untilMyResult={untilMyResult}
                 myResult={myResult}
+                eventTime={eventInfo.eventTime}
                 calculateCurrentProcessed={calculateCurrentProcessed}
                 addCalculatedCurrentProcessed={addCalculatedCurrentProcessed}
               />
@@ -96,6 +101,14 @@ export default function EventRoom() {
             </div>
           </div>
         </div>
+      )}
+      {/* 위로 가기 버튼 */}
+      {showScrollToTop && (
+        <button
+          onClick={scrollToTop}
+          className='fixed bottom-1 right-5 p-2 bg-[#474972] text-white rounded-full shadow-md'>
+          <DoubleUpIcon />
+        </button>
       )}
     </div>
   );

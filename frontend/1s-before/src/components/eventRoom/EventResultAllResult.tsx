@@ -8,17 +8,23 @@ export default function EventResultAllResult({
   list,
   myResult,
   untilMyResult,
+  eventTime,
   calculateCurrentProcessed,
   addCalculatedCurrentProcessed,
 }: Readonly<EventRoomAllResultProps>) {
   const { frontSection, afterSection, expandedSection, handleExpand } = useEventResult(
     list,
     myResult,
-    untilMyResult
+    untilMyResult,
+    eventTime
   );
 
   useEffect(() => {
     calculateCurrentProcessed(frontSection.length);
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: 'smooth',
+    });
   }, [frontSection]);
 
   useEffect(() => {

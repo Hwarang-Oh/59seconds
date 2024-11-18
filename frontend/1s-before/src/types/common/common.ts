@@ -7,7 +7,7 @@ export interface ToggleProps {
 
 export interface MemberInfo {
   memberId: number;
-  nickname: string;
+  participateName: string;
   creatorName: string;
 }
 
