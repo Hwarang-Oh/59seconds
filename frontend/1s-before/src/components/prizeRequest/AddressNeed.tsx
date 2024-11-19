@@ -42,7 +42,7 @@ export default function AddressNeed({ roomId }: Readonly<{ roomId: number }>) {
           placeholder="상세 주소를 입력하세요"
           onChange={handleChange}
           className="border p-2 rounded w-full"
-          disabled={isSavedData}
+          disabled={false}
         />
       </div>
       {showAddrModal && (
