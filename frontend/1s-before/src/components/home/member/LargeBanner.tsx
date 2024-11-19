@@ -21,20 +21,30 @@ export default function LargeBanner({
   useEffect(() => {
     if (typeof window !== 'undefined' && imageRef.current) {
       const colorThief = new ColorThief();
+      const image = imageRef.current;
 
       const handleLoad = () => {
-        const dominantColor = colorThief.getColor(imageRef.current!);
-        const [r, g, b] = dominantColor;
+        try {
+          const dominantColor = colorThief.getColor(image);
+          console.log('Dominant color:', dominantColor);
 
-        const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-        const luminanceThreshold = 160;
-        setTextColor(luminance > luminanceThreshold ? 'black' : 'white');
+          const [r, g, b] = dominantColor;
+          const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+          const luminanceThreshold = 160;
+          setTextColor(luminance > luminanceThreshold ? 'black' : 'white');
+        } catch (error) {
+          console.error('Color extraction failed:', error);
+        }
       };
 
-      imageRef.current.addEventListener('load', handleLoad);
+      if (image.complete) {
+        handleLoad();
+      } else {
+        image.addEventListener('load', handleLoad);
+      }
 
       return () => {
-        imageRef.current?.removeEventListener('load', handleLoad);
+        image.removeEventListener('load', handleLoad);
       };
     }
   }, [imageSrc]);
@@ -65,11 +75,27 @@ export default function LargeBanner({
       <Link href={`/event-detail/${eventId}`}>
         <div className="absolute inset-y-10 left-[200px] flex">
           <div
-            className="relative z-10 p-4 text-left"
+            className="relative z-10 p-4 text-left drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
             style={{ color: textColor }} // 동적으로 텍스트 색상 설정
           >
-            <p className="text-[40px] font-bold whitespace-pre-line">{title}</p>
-            <div className="mt-2 font-semibold whitespace-pre-line">
+            <p
+              className="text-[40px] w-[130vh] font-bold whitespace-pre-line"
+              style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 2, // 최대 두 줄로 제한
+                WebkitBoxOrient: 'vertical',
+              }}
+            >
+              {title}
+            </p>
+            <div
+              className="mt-2 font-semibold whitespace-pre-line overflow-hidden text-ellipsis w-[500px]"
+              style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 6, // 최대 세 줄로 제한
+                WebkitBoxOrient: 'vertical',
+              }}
+            >
               {parse(truncateHtmlByTotalLength(description, 120))}
             </div>
             <p className="mt-4 text-[20px] font-semibold">
