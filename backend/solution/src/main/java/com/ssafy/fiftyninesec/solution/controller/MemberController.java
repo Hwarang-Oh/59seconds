@@ -136,6 +136,7 @@ public class MemberController {
             HttpServletRequest request,
             @RequestParam Long memberId
     ) {
+        log.info("memberId:{}", memberId);
         List<CreatedEventResponseDto> events = memberService.getCreatedEventRooms((Long) request.getAttribute("memberId"));
 //        List<CreatedEventResponseDto> events = memberService.getCreatedEventRooms(memberId);
         return ResponseEntity.ok(events);
@@ -146,6 +147,7 @@ public class MemberController {
             HttpServletRequest request,
             @RequestParam long memberId
     ) {
+        log.info("memberId:{}", memberId);
         List<ParticipatedEventResponseDto> events = memberService.getParticipatedEventRooms((Long) request.getAttribute("memberId"));
 //        List<ParticipatedEventResponseDto> events = memberService.getParticipatedEventRooms(memberId);
         return ResponseEntity.ok(events);
