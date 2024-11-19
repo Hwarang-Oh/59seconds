@@ -97,6 +97,7 @@ public class ParticipationService {
         try {
             boolean isLocked = lock.tryLock(LOCK_WAIT_TIME, LOCK_LEASE_TIME, TimeUnit.MILLISECONDS);
             if (!isLocked) {
+                log.warn("Lock acquisition failed for roomId: {}, memberId: {}", roomId, memberId);
                 throw new CustomException(LOCK_ACQUISITION_FAILED);
             }
 
@@ -116,7 +117,7 @@ public class ParticipationService {
             Long currentRanking = redisTemplate.opsForValue().increment(rankingKey);
             boolean isWinner = (currentRanking <= eventRoom.getWinnerNum());
 
-            log.info("{}이벤트 방의 참여자 결과(isWinner): {}", roomId, isWinner);
+            log.info("{}번 방의 참여자 결과(isWinner): {}", roomId, isWinner);
 
             // 2. Participation 객체 생성 및 저장
             Participation participation = Participation.builder()
@@ -165,12 +166,15 @@ public class ParticipationService {
             return responseDto;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            log.error("[Lock] Lock interrupted - RoomId: {}, MemberId: {}", roomId, memberId, e);
             throw new CustomException(LOCK_INTERRUPTED);
         } catch (JsonProcessingException e) {
+            log.error("[Error] JSON processing failed - RoomId: {}, MemberId: {}", roomId, memberId, e);
             throw new RuntimeException(e);
         } finally {
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();
+                log.info("[Lock] Released lock - RoomId: {}, MemberId: {}", roomId, memberId);
             }
         }
     }
