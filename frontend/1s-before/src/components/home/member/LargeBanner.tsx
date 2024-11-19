@@ -79,10 +79,10 @@ export default function LargeBanner({
             style={{ color: textColor }} // 동적으로 텍스트 색상 설정
           >
             <p
-              className="text-[40px] w-[130vh] font-bold whitespace-pre-line"
+              className="text-[40px] w-[140vh] font-bold whitespace-pre-line"
               style={{
                 display: '-webkit-box',
-                WebkitLineClamp: 2, // 최대 두 줄로 제한
+                WebkitLineClamp: 2,
                 WebkitBoxOrient: 'vertical',
               }}
             >
@@ -92,7 +92,7 @@ export default function LargeBanner({
               className="mt-2 font-semibold whitespace-pre-line overflow-hidden text-ellipsis w-[500px]"
               style={{
                 display: '-webkit-box',
-                WebkitLineClamp: 6, // 최대 세 줄로 제한
+                WebkitLineClamp: 6,
                 WebkitBoxOrient: 'vertical',
               }}
             >
