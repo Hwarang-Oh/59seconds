@@ -3,6 +3,7 @@ import AddressNeed from './AddressNeed';
 import Modal from '@/components/common/alertModal';
 import { RequestPopUpProps } from '@/types/common/common';
 import { usePrizeRequest } from '@/hooks/prizeRequestHook';
+import { useWinnerInfoStore } from '@/store/winnerInfoStore';
 
 export default function RequestPopUp({
   roomId,
@@ -16,9 +17,9 @@ export default function RequestPopUp({
     modalMessage,
     handleChange,
     handleSubmit,
-    setIsModalOpen,
     handleCheckboxChange,
   } = usePrizeRequest(roomId);
+  const { setIsModalOpen } = useWinnerInfoStore();
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
@@ -71,7 +72,10 @@ export default function RequestPopUp({
         <Modal
           message={modalMessage}
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            onClose();
+          }}
         />
       </div>
     </div>

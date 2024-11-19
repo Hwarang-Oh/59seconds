@@ -1,27 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { fetchCreatorInfo } from '@/apis/memberAPI';
 import { postWinnerUserInfo } from '@/apis/eventAPI';
+import { useWinnerInfoStore } from '@/store/winnerInfoStore';
 import { useMemberStore } from '@/store/memberStore';
-import { UserData, WinnerUserInfo } from '@/types/user';
+
 export function usePrizeRequest(roomId: number) {
+  const {
+    formData,
+    isSavedData,
+    showAddrModal,
+    detailedAddress,
+    userData,
+    isModalOpen,
+    modalMessage,
+    setFormData,
+    setIsSavedData,
+    setShowAddrModal,
+    setDetailedAddress,
+    setUserData,
+    setIsModalOpen,
+    setModalMessage,
+  } = useWinnerInfoStore();
   const { member } = useMemberStore();
-  const [formData, setFormData] = useState<WinnerUserInfo>({
-    memberId: 0,
-    winnerName: '',
-    address: '',
-    phone: '',
-    ranking: 0,
-  });
-  const [isSavedData, setIsSavedData] = useState(false);
-  const [showAddrModal, setShowAddrModal] = useState(false);
 
-  const [detailedAddress, setDetailedAddress] = useState('');
-  const [userData, setUserData] = useState<UserData | null>(null);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
-
-  // IMP: 사용자 정보 가져오고 수정하는 기능
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -42,20 +43,20 @@ export function usePrizeRequest(roomId: number) {
       }
     };
     fetchData();
-  }, []);
+  }, [member, setFormData, setIsSavedData, setDetailedAddress, setUserData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     if (name === 'detailedAddress') {
       setDetailedAddress(value);
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData({ [name]: value });
     }
   };
 
   const handleCheckboxChange = () => {
     if (!isSavedData && userData) {
-      // IMP: 체크박스가 체크될 때 기존 정보를 formData에 설정
       setFormData({
         memberId: member?.memberId ?? 0,
         winnerName: userData.participateName || '',
@@ -68,17 +69,41 @@ export function usePrizeRequest(roomId: number) {
     setIsSavedData(!isSavedData);
   };
 
+  const openAddrModal = () => setShowAddrModal(true);
+
+  const closeAddrModal = () => setShowAddrModal(false);
+
+  const handleAddressComplete = async (data: any) => {
+    let fullAddress = data.address;
+    let extraAddress = '';
+
+    const { addressType, bname, buildingName } = data;
+
+    if (addressType === 'R') {
+      if (bname) extraAddress += bname;
+      if (buildingName)
+        extraAddress += `${extraAddress ? ', ' : ''}${buildingName}`;
+      fullAddress += extraAddress ? ` (${extraAddress})` : '';
+    }
+
+    setFormData({ address: fullAddress });
+    setDetailedAddress('');
+    setShowAddrModal(false);
+    setIsSavedData(false);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const fullAddress = `${formData.address} ${detailedAddress}`.trim();
+
     try {
       const response = await postWinnerUserInfo(roomId, {
         ...formData,
         address: fullAddress,
       });
 
-      if (response.status === 200 || response.status === 201) {
+      if (response?.status === 200 || response?.status === 201) {
         setModalMessage('정보가 성공적으로 전송되었습니다.');
       } else {
         throw new Error('정보 전송 실패');
@@ -96,50 +121,16 @@ export function usePrizeRequest(roomId: number) {
     }
   };
 
-  const openAddrModal = () => {
-    setShowAddrModal(true);
-  };
-
-  const closeAddrModal = () => {
-    setShowAddrModal(false);
-  };
-
-  const handleAddressComplete = async (data: any) => {
-    let fullAddress = data.address;
-    let extraAddress = '';
-
-    const { addressType, bname, buildingName } = data;
-
-    if (addressType === 'R') {
-      if (bname) extraAddress += bname;
-      if (buildingName)
-        extraAddress += `${extraAddress ? ', ' : ''}${buildingName}`;
-      fullAddress += extraAddress ? ` (${extraAddress})` : '';
-    }
-
-    setFormData({
-      ...formData,
-      address: fullAddress,
-      phone: formData.phone,
-    });
-    setDetailedAddress('');
-    setShowAddrModal(false);
-    setIsSavedData(false);
-  };
-
   return {
-    userData,
     formData,
     isSavedData,
     isModalOpen,
     modalMessage,
     showAddrModal,
     detailedAddress,
-    setUserData,
     handleSubmit,
     handleChange,
     openAddrModal,
-    setIsModalOpen,
     closeAddrModal,
     handleCheckboxChange,
     handleAddressComplete,
