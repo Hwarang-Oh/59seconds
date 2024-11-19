@@ -118,7 +118,7 @@ public class ParticipationService {
             Long currentRanking = redisTemplate.opsForValue().increment(rankingKey);
             boolean isWinner = (currentRanking <= eventRoom.getWinnerNum());
 
-            log.info("{}번 방의 참여자 결과: {} (isWinner = {}): {}", roomId, currentRanking, isWinner, eventRoom);
+            log.info("{}번 방의 참여자 결과: {} => isWinner: {}, event.getWinnerCnt(): {}", roomId, currentRanking, isWinner, eventRoom.getWinnerNum());
 
             // 2. Participation 객체 생성 및 저장
             Participation participation = Participation.builder()
