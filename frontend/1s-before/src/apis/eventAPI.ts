@@ -110,7 +110,7 @@ export const postWinnerUserInfo = async (
 ) => {
   try {
     const response = await api.post(
-      `${EVENT_URL}/${roomId}/userInfo`,
+      `${EVENT_URL}/${roomId}/userinfo`,
       userInfo
     );
     return response.data;
