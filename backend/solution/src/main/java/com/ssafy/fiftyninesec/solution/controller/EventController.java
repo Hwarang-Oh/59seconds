@@ -111,7 +111,7 @@ public class EventController {
     @PostMapping("/{roomId}/userinfo")
     public ResponseEntity<Void> saveWinner(
             @Parameter(description = "우승자 정보를 저장할 이벤트 룸 ID") @PathVariable Long roomId,
-            @Valid @RequestBody WinnerRequestDto requestDto) {
+            @RequestBody WinnerRequestDto requestDto) {
         eventService.saveWinner(roomId, requestDto);
         return ResponseEntity.ok().build();
     }

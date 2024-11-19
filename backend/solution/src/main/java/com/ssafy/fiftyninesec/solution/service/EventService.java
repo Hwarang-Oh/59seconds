@@ -274,11 +274,17 @@ public class EventService {
 
     @Transactional
     public void saveWinner(Long roomId, WinnerRequestDto requestDto) {
+        log.info("당첨자 입력 정보: {}", requestDto.toString());
+        log.info("이벤트룸 ID 조회 시작: {}", roomId);
+
         EventRoom room = eventRoomRepository.findById(roomId)
                 .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
+        log.info("이벤트룸 조회 완료 - 이벤트명: {}, 상태: {}", room.getTitle(), room.getStatus());
 
+        log.info("회원 ID 조회 시작: {}", requestDto.getMemberId());
         Member member = memberRepository.findById(requestDto.getMemberId())
                 .orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        log.info("당첨자 입력 정보: {}", requestDto.toString());
 
         Winner winner = Winner.builder()
                 .room(room)
