@@ -113,7 +113,7 @@ export const postWinnerUserInfo = async (
       `${EVENT_URL}/${roomId}/userinfo`,
       userInfo
     );
-    return response.data;
+    return response;
   } catch (error) {
     if (isAxiosError(error)) {
       console.error(error.message);
