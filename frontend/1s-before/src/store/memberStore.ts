@@ -27,10 +27,11 @@ export const useMemberStore = create<MemberStore>()(
   persist(
     (set) => ({
       member:
-        typeof window !== 'undefined' && sessionStorage.getItem('member-storage')
+        typeof window !== 'undefined' &&
+        sessionStorage.getItem('member-storage')
           ? JSON.parse(sessionStorage.getItem('member-storage') as string)
           : {
-              memberId: 0,
+              memberId: -1,
               nickname: '',
               creatorName: '',
               isCreatorMode: false,
@@ -38,12 +39,18 @@ export const useMemberStore = create<MemberStore>()(
             },
       setMember: (memberId, nickname, creatorName, isCreatorMode = false) =>
         set({
-          member: { memberId, nickname, creatorName, isCreatorMode, isLoggedIn: true },
+          member: {
+            memberId,
+            nickname,
+            creatorName,
+            isCreatorMode,
+            isLoggedIn: true,
+          },
         }),
       clearMember: () =>
         set({
           member: {
-            memberId: 0,
+            memberId: -1,
             nickname: '',
             creatorName: '',
             isCreatorMode: false,
@@ -52,7 +59,10 @@ export const useMemberStore = create<MemberStore>()(
         }),
       toggleCreatorMode: () =>
         set((state) => ({
-          member: { ...state.member, isCreatorMode: !state.member.isCreatorMode },
+          member: {
+            ...state.member,
+            isCreatorMode: !state.member.isCreatorMode,
+          },
         })),
     }),
     {
@@ -64,7 +74,8 @@ export const useMemberStore = create<MemberStore>()(
                 const storedValue = sessionStorage.getItem(name);
                 return storedValue ? JSON.parse(storedValue) : null;
               },
-              setItem: (name, value) => sessionStorage.setItem(name, JSON.stringify(value)),
+              setItem: (name, value) =>
+                sessionStorage.setItem(name, JSON.stringify(value)),
               removeItem: (name) => sessionStorage.removeItem(name),
             }
           : undefined,
