@@ -114,6 +114,9 @@ public class ParticipationService {
             // 1. 랭킹 생성
             String rankingKey = RANKING_KEY_PREFIX + roomId;
             Long currentRanking = redisTemplate.opsForValue().increment(rankingKey);
+            boolean isWinner = (currentRanking <= eventRoom.getWinnerNum());
+
+            log.info("{}이벤트 방의 참여자 결과(isWinner): {}", roomId, isWinner);
 
             // 2. Participation 객체 생성 및 저장
             Participation participation = Participation.builder()
@@ -121,7 +124,7 @@ public class ParticipationService {
                     .memberId(memberId)
                     .joinedAt(LocalDateTime.now())
                     .ranking(currentRanking.intValue())
-                    .isWinner(currentRanking <= eventRoom.getWinnerNum())
+                    .isWinner(isWinner)
                     .build();
 
             Participation savedParticipation = participationRepository.save(participation);
@@ -129,7 +132,6 @@ public class ParticipationService {
             if(currentRanking!= null && currentRanking == eventRoom.getWinnerNum()) {
                 solutionServiceClient.updateEventStatus(roomId, new UpdateEventStatusRequest(EventStatus.COMPLETED_NO_WINNER_INFO));
             }
-
             // Redis 큐에 참여 정보 저장
             String queueKey = PARTICIPATION_QUEUE_PREFIX + roomId;
             ParticipationResponseDto responseDto = ParticipationResponseDto.of(savedParticipation, member.getParticipateName());
