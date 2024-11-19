@@ -55,7 +55,9 @@ export const getFrontEventParticipationInfo = async (
   eventId: number
 ): Promise<EventRoomResultInfo[]> => {
   try {
-    const response = await api.get(`${EVENT_PARTICIPATION_URL}/${eventId}/result`);
+    const response = await api.get(
+      `${EVENT_PARTICIPATION_URL}/${eventId}/result`
+    );
     return response.data;
   } catch (error: unknown) {
     if (isAxiosError(error)) {
@@ -102,9 +104,15 @@ export const getDeadlineEvents = async (): Promise<DeadlineEventTypes[]> => {
   }
 };
 
-export const postWinnerUserInfo = async (roomId: number, userInfo: WinnerUserInfo) => {
+export const postWinnerUserInfo = async (
+  roomId: number,
+  userInfo: WinnerUserInfo
+) => {
   try {
-    const response = await api.post(`${EVENT_URL}/${roomId}/userInfo`, userInfo);
+    const response = await api.post(
+      `${EVENT_URL}/${roomId}/userInfo`,
+      userInfo
+    );
     return response.data;
   } catch (error) {
     if (isAxiosError(error)) {
@@ -115,7 +123,7 @@ export const postWinnerUserInfo = async (roomId: number, userInfo: WinnerUserInf
 
 export const getWinnerInfo = async (roomId: number) => {
   try {
-    const response = await api.post(`${EVENT_URL}/${roomId}/winners`, getWinnerInfo);
+    const response = await api.get(`${EVENT_URL}/${roomId}/winners`);
     return response.data;
   } catch (error) {
     if (isAxiosError(error)) {
