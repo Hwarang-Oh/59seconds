@@ -135,7 +135,15 @@ public class EventService {
 
 
     private void savePrizes(List<EventRoomRequestDto.ProductOrCoupon> productsOrCoupons, EventRoom eventroom) {
+        log.info("Saving prizes - Input products/coupons size: {}", productsOrCoupons.size());
+
         productsOrCoupons.forEach(productOrCoupon -> {
+            log.info("Processing product/coupon - type: {}, name: {}, order: {}, recommendedPeople: {}",
+                    productOrCoupon.getType(),
+                    productOrCoupon.getName(),
+                    productOrCoupon.getOrder(),
+                    productOrCoupon.getRecommendedPeople());
+
             Prize prize = Prize.builder()
                     .eventRoom(eventroom)
                     .prizeType(productOrCoupon.getType())
@@ -143,7 +151,14 @@ public class EventService {
                     .ranking(productOrCoupon.getOrder())
                     .winnerCount(productOrCoupon.getRecommendedPeople())
                     .build();
-            prizeRepository.save(prize);
+
+            Prize savedPrize = prizeRepository.save(prize);
+            log.info("Saved prize - id: {}, name: {}, type: {}, ranking: {}, winnerCount: {}",
+                    savedPrize.getId(),
+                    savedPrize.getPrizeName(),
+                    savedPrize.getPrizeType(),
+                    savedPrize.getRanking(),
+                    savedPrize.getWinnerCount());
         });
     }
 
