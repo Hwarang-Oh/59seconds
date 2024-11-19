@@ -73,15 +73,25 @@ export function usePrizeRequest(roomId: number) {
 
     const fullAddress = `${formData.address} ${detailedAddress}`.trim();
     try {
-      await postWinnerUserInfo(roomId, {
+      const response = await postWinnerUserInfo(roomId, {
         ...formData,
         address: fullAddress,
       });
-      setModalMessage('정보가 성공적으로 저장되었습니다.');
+
+      if (response.status === 200 || response.status === 201) {
+        setModalMessage('정보가 성공적으로 전송되었습니다.');
+      } else {
+        throw new Error('정보 전송 실패');
+      }
+
       setIsModalOpen(true);
-    } catch (error) {
-      console.error('정보 저장 중 오류 발생:', error);
-      setModalMessage('정보 저장 중 오류가 발생했습니다.');
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.status === 404
+          ? '이벤트를 찾을 수 없습니다.'
+          : '정보 전송 중 오류가 발생했습니다.';
+
+      setModalMessage(errorMessage);
       setIsModalOpen(true);
     }
   };
