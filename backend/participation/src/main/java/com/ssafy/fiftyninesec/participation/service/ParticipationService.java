@@ -107,6 +107,7 @@ public class ParticipationService {
             EventRoomResponseDto eventRoom = solutionServiceClient.getEventRoom(roomId)
                     .orElseThrow(() -> new CustomException(EVENT_NOT_FOUND));
 
+            log.info("{]번방 이벤트 정보: {}", roomId, eventRoom);
             log.info("Participation ID: {}, Participation Name: {}", memberId, member.getParticipateName());
 
             validateEventTiming(eventRoom);
