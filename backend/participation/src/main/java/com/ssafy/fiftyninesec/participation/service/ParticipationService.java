@@ -274,6 +274,13 @@ public class ParticipationService {
 
 // TEST -----------------------------------------------------------------------------------------------------
 
+    // rankingCounter 초기화를 위한 메서드 추가
+    @Transactional
+    public void resetParticipation(Long roomId) {
+        deleteEventRanking(roomId);
+        participationRepository.deleteByRoomId(roomId);
+    }
+
     // db 개입 없이 ws 테스트
     // 새로운 참여자를 저장하고 WebSocket으로 알림 전송
     @Transactional

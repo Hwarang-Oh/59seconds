@@ -63,6 +63,13 @@ public class ParticipationController {
         return ResponseEntity.ok("Test ranking counter has been reset.");
     }
 
+    // 이벤트 참여 기록 초기화
+    @DeleteMapping("/test/reset/{roomId}")
+    public ResponseEntity<String> resetParticipation(@PathVariable Long roomId) {
+        participationService.resetParticipation(roomId);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/flushdb")
     public ResponseEntity<String> flushDatabase() {
         try {
