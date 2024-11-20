@@ -78,11 +78,17 @@ export default function EventCreate() {
           recommendedPeople: item.recommendedPeople,
         })),
         eventPeriod: {
-          start: new Date(formData.eventPeriod.start).toISOString(),
-          end: new Date(formData.eventPeriod.end).toISOString(),
+          start: new Date(
+            new Date(formData.eventPeriod.start).getTime() + 9 * 60 * 60 * 1000
+          ).toISOString(),
+          end: new Date(
+            new Date(formData.eventPeriod.end).getTime() + 9 * 60 * 60 * 1000
+          ).toISOString(),
         },
         participationCode: formData.participationCode,
       };
+
+      console.log(eventData);
 
       const eventBlob = new Blob([JSON.stringify(eventData)], {
         type: 'application/json',

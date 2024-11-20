@@ -48,6 +48,7 @@ export function useEventDetail(id: number) {
   const loadEventData = async () => {
     try {
       const data = await fetchEventInfo(id);
+      console.log('이벤트 데이터는?!', data);
       setEventData(data);
     } catch (error) {
       console.error('이벤트 정보 로드 오류:', error);
