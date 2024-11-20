@@ -232,8 +232,26 @@ export default function EventDetailCreate() {
               dateFormat="Pp"
               className="p-2 border rounded w-full"
               minDate={today}
-              minTime={new Date(today.setHours(0, 0, 0, 0))}
-              maxTime={new Date(today.setHours(23, 59, 59, 999))}
+              minTime={
+                new Date(
+                  today.getFullYear(),
+                  today.getMonth(),
+                  today.getDate(),
+                  0,
+                  0,
+                  0
+                )
+              }
+              maxTime={
+                new Date(
+                  today.getFullYear(),
+                  today.getMonth(),
+                  today.getDate(),
+                  23,
+                  59,
+                  59
+                )
+              }
             />
           </div>
           <span>~</span>
@@ -257,13 +275,34 @@ export default function EventDetailCreate() {
               }
               minTime={
                 formData.eventPeriod.start &&
-                formData.eventPeriod.end &&
                 new Date(formData.eventPeriod.start).toDateString() ===
                   new Date(formData.eventPeriod.end).toDateString()
-                  ? new Date(formData.eventPeriod.start)
-                  : new Date(today.setHours(0, 0, 0, 0))
+                  ? new Date(
+                      new Date(formData.eventPeriod.start).getFullYear(),
+                      new Date(formData.eventPeriod.start).getMonth(),
+                      new Date(formData.eventPeriod.start).getDate(),
+                      new Date(formData.eventPeriod.start).getHours(),
+                      new Date(formData.eventPeriod.start).getMinutes()
+                    )
+                  : new Date(
+                      today.getFullYear(),
+                      today.getMonth(),
+                      today.getDate(),
+                      0,
+                      0,
+                      0
+                    )
               }
-              maxTime={new Date(today.setHours(23, 59, 59, 999))}
+              maxTime={
+                new Date(
+                  today.getFullYear(),
+                  today.getMonth(),
+                  today.getDate(),
+                  23,
+                  59,
+                  59
+                )
+              }
             />
           </div>
         </div>

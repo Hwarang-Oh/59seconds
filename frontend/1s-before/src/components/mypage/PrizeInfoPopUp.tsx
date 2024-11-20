@@ -143,7 +143,7 @@ export default function PrizeInfoPopUp({
               </table>
             </div>
             {totalPages > 0 && (
-              <>
+              <div className="flex items-center justify-center">
                 <button
                   onClick={handlePrevPage}
                   disabled={currentPage === 1}
@@ -169,7 +169,7 @@ export default function PrizeInfoPopUp({
                 >
                   <FaCaretRight />
                 </button>
-              </>
+              </div>
             )}
           </>
         )}
