@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 import { useState, useEffect } from 'react';
 import { ProductOrCoupon } from '@/types/eventCreate';
@@ -65,24 +66,30 @@ export function useEventCreate() {
   };
 
   // IMP: 날짜 변경을 위함 함수
-  const handleDateChange = (field: any, date: any) => {
+  const handleDateChange = (field: string, date: Date | null) => {
+    if (!date) return;
+
+    // dayjs로 로컬 시간 기준 ISO 8601 변환
+    const formattedDate = dayjs(date).format('YYYY-MM-DDTHH:mm');
+
     setFormData((prevFormData) => ({
       ...prevFormData,
       eventPeriod: {
         ...prevFormData.eventPeriod,
-        [field]: date,
+        [field]: formattedDate,
       },
     }));
   };
 
   // IMP: 시작 날짜를 넣어서 끝날짜 자동으로 그 이후로 설정되도록 만드는 함수
   const handleStartDateChange = (date: Date | null) => {
+    if (!date) return;
     handleDateChange('start', date);
     if (
       date &&
       (!formData.eventPeriod.end || new Date(formData.eventPeriod.end) < date)
     ) {
-      handleDateChange('end', date); // 종료 날짜가 시작 날짜보다 이전인 경우 자동 설정
+      handleDateChange('end', date);
     }
   };
 
