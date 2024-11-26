@@ -7,11 +7,11 @@ pipeline {
 
     environment {
         DOCKER_CREDENTIALS_ID = 'dockerhub-access'
-        GITLAB_CREDENTIALS_ID = 'gitlab-access-u1qns'
+        GITLAB_CREDENTIALS_ID = 'gitlab-access-leeju1013'
         FRONTEND_DOCKERHUB_REPO = '404dreamsolutions/frontend'
         GITLAB_REPO = 'https://lab.ssafy.com/s11-final/S11P31A404.git'
         BRANCH = 'develop'
-        USER_SERVER_IP = '59seconds.site'
+        USER_SERVER_IP = 'k11a404.p.ssafy.io'
         SPRING_PROFILE = 'prod'
     }
 
@@ -81,12 +81,12 @@ pipeline {
                         }
                         stage('Deploy Frontend') {
                             steps {
-                                sshagent(['application-ec2-ssh']) {
+                                sshagent(['ssafy-ec2-ssh']) {
                                     withCredentials([usernamePassword(credentialsId: "${DOCKER_CREDENTIALS_ID}",
                                         usernameVariable: 'DOCKER_USERNAME',
                                         passwordVariable: 'DOCKER_PASSWORD')]) {
                                         sh """
-                                            ssh -o StrictHostKeyChecking=no ec2-user@${USER_SERVER_IP} '
+                                            ssh -o StrictHostKeyChecking=no ubuntu@${USER_SERVER_IP} '
                                             docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} && \
                                             docker network inspect 404_dream_solutions_network >/dev/null 2>&1 || docker network create 404_dream_solutions_network && \
                                             docker pull ${FRONTEND_DOCKERHUB_REPO}:latest && \
